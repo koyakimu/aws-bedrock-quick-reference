@@ -1,0 +1,70 @@
+// 日本語の辞書。キー集合は en.js と完全に一致させること (I18N-001 AC-007)。
+// リージョンの表示名はここに持たない。data/region-notes.json の ja / en が正 (AC-005)。
+export const ja = {
+  app: {
+    title: "Amazon Bedrock Quick Reference",
+    tagline: "モデル × 起点リージョン × 推論が実際に行われる場所",
+  },
+  lang: {
+    label: "表示言語",
+  },
+  theme: {
+    light: "ライト",
+    dark: "ダーク",
+  },
+  source: {
+    label: "起点リージョン",
+    endpointLabel: "エンドポイント",
+    optIn: "オプトイン",
+    noData: "データなし",
+    statusOk: "取得済み",
+  },
+  table: {
+    provider: "Provider",
+    modelId: "Model ID",
+    modalities: "モダリティ",
+    inRegion: "In-Region",
+    geo: "Geo",
+    global: "Global",
+    lifecycle: "lifecycle",
+    notes: "備考",
+    rowCount: "{shown} / {total} 行",
+  },
+  value: {
+    yes: "可",
+    no: "不可",
+    globalNote: "全対応リージョン、増えうる",
+    globalDocs: "公式 docs",
+    modalityArrow: "→",
+  },
+  lifecycle: {
+    ACTIVE: "提供中",
+    LEGACY: "旧世代",
+  },
+  copy: {
+    action: "コピー",
+    done: "コピーしました",
+    modelId: "モデル ID をコピー",
+    profileId: "推論プロファイル ID をコピー",
+    endpoint: "エンドポイントをコピー",
+  },
+  state: {
+    noDataTitle: "このリージョンはデータを取得できませんでした（データなし）",
+    noDataBody:
+      "「提供なし」ではありません。取得に使ったアカウントの権限またはオプトイン設定が原因です。以下は AWS API のエラー原文です。",
+    notOffered: "このリージョンでは提供なし",
+  },
+  footnote: {
+    heading: "このページについて",
+    generatedAt: "データ取得日時: {date}",
+    accountKind: "取得に使ったアカウントの種別: {kind}",
+    deniedRegions: "データを取得できなかったリージョン ({count} 件): {regions}",
+    deniedNone: "データを取得できなかったリージョンはありません。",
+    sources: "出典",
+    docListFoundationModels: "ListFoundationModels (API Reference)",
+    docListInferenceProfiles: "ListInferenceProfiles (API Reference)",
+    docGeoCris: "Geographic cross-Region inference",
+    docGlobalCris: "Global cross-Region inference",
+    docEndpoints: "Amazon Bedrock のエンドポイントとクォータ",
+  },
+};
