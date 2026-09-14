@@ -1,0 +1,173 @@
+/* 絞り込み UI (FILTER-001) と共有の通知 (SHARE-001) */
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--bg-panel);
+}
+
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  align-items: flex-start;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+
+.filter-label {
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
+
+.filter-select,
+.filter-search {
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  max-width: 100%;
+}
+
+.filter-search {
+  min-width: 14em;
+}
+
+.filter-check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  margin-top: 1.2em;
+  white-space: normal;
+}
+
+.filter-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.filter-count {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--fg-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 1px var(--sp-2);
+  border-radius: var(--radius);
+  font-size: var(--fs-xs);
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-line);
+  white-space: normal;
+}
+
+.filter-chip-remove,
+.notice-close {
+  font: inherit;
+  line-height: 1;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0 2px;
+  cursor: pointer;
+}
+.filter-chip-remove:focus-visible,
+.notice-close:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* 限定を満たさないセル。淡色 + 「限定外」の印 (AC-005 / AC-008) */
+.out-of-limit {
+  opacity: 0.55;
+}
+.limit-out {
+  display: inline-block;
+  margin-left: var(--sp-1);
+  padding: 0 4px;
+  border-radius: var(--radius);
+  font-size: var(--fs-xs);
+  color: var(--warn-fg);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+}
+
+/* 0 件の空状態 (AC-010)。データなしバナーとは別の見た目にする */
+.filter-empty {
+  border: 1px dashed var(--line);
+  background: var(--bg-inset);
+  color: var(--fg);
+}
+.filter-empty-title {
+  margin: 0 0 var(--sp-1);
+  font-weight: 600;
+  color: var(--fg-strong);
+}
+.filter-empty-body {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--fg-muted);
+}
+.filter-empty-conditions {
+  margin: 0 0 var(--sp-3);
+  padding-left: 1.2em;
+  font-size: var(--fs-sm);
+}
+
+/* SHARE-001 の通知 */
+.notice {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  color: var(--warn-fg);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+}
+.notice-list {
+  margin: 0;
+  padding-left: 1.2em;
+  font-size: var(--fs-sm);
+}
+.share-copy {
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  .filter-controls {
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+  .filter-field,
+  .filter-search,
+  .filter-select {
+    width: 100%;
+  }
+  .filter-check {
+    margin-top: 0;
+  }
+}
