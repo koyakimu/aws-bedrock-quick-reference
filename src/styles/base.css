@@ -184,16 +184,30 @@ a:hover {
     padding: var(--sp-3);
   }
 
-  /* 固定列が画面を占め切らないよう、Model ID を折り返させる */
+  /* 固定列が画面を占め切らないよう、Model ID を折り返させる。
+     max-width だけだと表のレイアウト計算が「1 文字ぶん」まで縮めてしまうので、
+     幅を固定して折り返し先の行幅を確保する */
   :root {
     --col-provider-w: 64px;
   }
   .table-frame td.sticky-modelId,
   .table-frame th.sticky-modelId {
-    max-width: 150px;
+    width: 148px;
+    min-width: 148px;
+    max-width: 148px;
     white-space: normal;
   }
+  .table-frame td.sticky-modelId .copyable {
+    display: flex;
+    align-items: flex-start;
+    gap: 2px;
+  }
   .table-frame td.sticky-modelId .id {
+    flex: 1 1 auto;
+    min-width: 0;
     word-break: break-all;
+  }
+  .table-frame td.sticky-modelId .copy-btn {
+    flex: 0 0 auto;
   }
 }
