@@ -1,4 +1,4 @@
-// TABLE-001 v2 の結合テスト (jsdom)。AC-001 / 002 / 006 / 007 / 008 / 009 / 010 / 011 / 012。
+// TABLE-001 v4 の結合テスト (jsdom)。AC-001 / 002 / 004 / 006 / 007 / 008 / 009 / 010 / 011 / 012。
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { mountTableView, DOC_LINKS, DEFAULT_REGION } from "../src/scripts/table-view.js";
 import { initI18n, setLang } from "../src/scripts/i18n.js";
@@ -166,7 +166,7 @@ describe("AC-006 列構成と 1 行の中身", () => {
     expect(cell.querySelector(".copyable")).toBeNull();
   });
 
-  it("Geo 列に地理圏の平易な名前と destination チップが昇順で並び、プロファイル ID は出ない (AC-004)", () => {
+  it("Geo 列は地理圏の見出しと地名の並びで、プロファイル ID は出ない (AC-004)", () => {
     mount();
     const cell = cells(rowFor("amazon.nova-lite-v1:0"))[4];
     expect(cell.querySelector(".geo-area").textContent).toBe("アジア太平洋");
@@ -174,16 +174,85 @@ describe("AC-006 列構成と 1 行の中身", () => {
     expect(cell.querySelector(".copyable")).toBeNull();
     // 判定の根拠となるプロファイル ID は data 属性としては残す (FILTER-001 / DETAIL-001 用)
     expect(cell.querySelector(".geo-entry").dataset.profileId).toBe("apac.amazon.nova-lite-v1:0");
-    const chips = [...cell.querySelectorAll(".chip-dest")].map((chip) => chip.textContent);
-    expect(chips).toEqual([
-      "ap-northeast-1",
-      "ap-northeast-2",
-      "ap-northeast-3",
-      "ap-south-1",
-      "ap-southeast-1",
-      "ap-southeast-2",
+    // 起点 (東京) → 同じ国 (大阪) → 残りは表示名の昇順
+    expect([...cell.querySelectorAll(".geo-place")].map((place) => place.textContent)).toEqual([
+      "東京",
+      "大阪",
+      "シドニー",
+      "シンガポール",
+      "ソウル",
+      "ムンバイ",
     ]);
-    expect(chips).toEqual([...chips].sort());
+    expect(cell.querySelector(".geo-places").textContent).toContain(" ・ ");
+  });
+
+  it("Geo セルにリージョンコードは 1 つも出ない (AC-004)", () => {
+    mount();
+    for (const tr of bodyRows()) {
+      const text = cells(tr)[4].textContent;
+      expect(text).not.toMatch(/\b(?:us|eu|ap|ca|sa|af|me|il)-[a-z]+-\d\b/);
+    }
+    // コードは data 属性としてだけ残る
+    const cell = cells(rowFor("amazon.nova-lite-v1:0"))[4];
+    expect([...cell.querySelectorAll(".geo-place")].map((place) => place.dataset.region)).toEqual([
+      "ap-northeast-1",
+      "ap-northeast-3",
+      "ap-southeast-2",
+      "ap-southeast-1",
+      "ap-northeast-2",
+      "ap-south-1",
+    ]);
+  });
+
+  it("起点の国の外の推論先に印が付き、件数が出る (AC-004)", () => {
+    mount();
+    const cell = cells(rowFor("amazon.nova-lite-v1:0"))[4];
+    const outside = [...cell.querySelectorAll(".geo-place.is-outside")];
+    expect(outside.map((place) => place.textContent)).toEqual([
+      "シドニー",
+      "シンガポール",
+      "ソウル",
+      "ムンバイ",
+    ]);
+    expect(cell.querySelector(".geo-outside-count").textContent).toBe("（国外 4）");
+    // 同じ国 (日本) の推論先には印を付けない
+    expect(cell.querySelector('.geo-place[data-region="ap-northeast-3"]').classList).not.toContain(
+      "is-outside",
+    );
+    expect(cell.querySelector('.geo-place[data-region="ap-northeast-1"]').classList).toContain(
+      "is-source",
+    );
+  });
+
+  it("国外の推論先が無いブロックには件数を出さない (AC-004)", () => {
+    mount();
+    const jp = cells(rowFor("anthropic.claude-sonnet-4-5-20250929-v1:0"))[4].querySelector(
+      '.geo-entry[data-prefix="jp"]',
+    );
+    expect([...jp.querySelectorAll(".geo-place")].map((place) => place.textContent)).toEqual([
+      "東京",
+      "大阪",
+    ]);
+    expect(jp.querySelectorAll(".geo-place.is-outside")).toHaveLength(0);
+    expect(jp.querySelector(".geo-outside-count")).toBeNull();
+  });
+
+  it("英語では地名と区切りと件数が英語になる (AC-004)", () => {
+    const view = mount();
+    setLang("en");
+    view.rerender();
+    const cell = cells(rowFor("amazon.nova-lite-v1:0"))[4];
+    expect(cell.querySelector(".geo-area").textContent).toBe("Asia Pacific");
+    expect([...cell.querySelectorAll(".geo-place")].map((place) => place.textContent)).toEqual([
+      "Asia Pacific (Tokyo)",
+      "Asia Pacific (Osaka)",
+      "Asia Pacific (Mumbai)",
+      "Asia Pacific (Seoul)",
+      "Asia Pacific (Singapore)",
+      "Asia Pacific (Sydney)",
+    ]);
+    expect(cell.querySelector(".geo-outside-count").textContent).toBe("(4 outside country)");
+    setLang("ja");
   });
 
   it("jp. プロファイルの地理圏は「日本国内」 (AC-004)", () => {
@@ -409,9 +478,10 @@ describe("言語を切り替えても表のデータ値は変わらない", () =
     const before = {
       name: cells(rowFor("cohere.embed-v4:0"))[1].textContent,
       provider: cells(rowFor("cohere.embed-v4:0"))[0].textContent,
-      chips: [...cells(rowFor("amazon.nova-lite-v1:0"))[4].querySelectorAll(".chip-dest")].map(
-        (c) => c.textContent,
-      ),
+      // 地名は翻訳されるが、その裏にあるリージョンコードは不変
+      regions: [...cells(rowFor("amazon.nova-lite-v1:0"))[4].querySelectorAll(".geo-place")]
+        .map((place) => place.dataset.region)
+        .sort(),
     };
 
     setLang("en");
@@ -421,10 +491,10 @@ describe("言語を切り替えても表のデータ値は変わらない", () =
     expect(cells(rowFor("cohere.embed-v4:0"))[1].textContent).toBe(before.name);
     expect(cells(rowFor("cohere.embed-v4:0"))[0].textContent).toBe(before.provider);
     expect(
-      [...cells(rowFor("amazon.nova-lite-v1:0"))[4].querySelectorAll(".chip-dest")].map(
-        (c) => c.textContent,
-      ),
-    ).toEqual(before.chips);
+      [...cells(rowFor("amazon.nova-lite-v1:0"))[4].querySelectorAll(".geo-place")]
+        .map((place) => place.dataset.region)
+        .sort(),
+    ).toEqual(before.regions);
   });
 
   it("denied の分類の説明文は翻訳する (原文ではないため)", () => {

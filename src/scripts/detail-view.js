@@ -30,6 +30,14 @@ function regionLabel(code, notes) {
   return `${code} — ${regionName(code, getLang(), notes)}`;
 }
 
+// 推論先のチップ。一覧 (TABLE-001 v4 AC-004) が地名だけにしたぶん、
+// 詳細パネルは地名とリージョンコードを併記する。例: 東京 (ap-northeast-1)
+function destinationChip(code, notes) {
+  const chip = el("span", "chip chip-dest", `${regionName(code, getLang(), notes)} (${code})`);
+  chip.dataset.region = code;
+  return chip;
+}
+
 // AC-010: 一覧から外したモデル ID はパネルの先頭に置く。
 function modelIdSection(detail) {
   const section = el("section", "detail-model-id");
@@ -93,9 +101,7 @@ function usageSection(detail, regionNotes) {
     } else {
       const chips = el("span", "chips");
       for (const destination of row.destinations) {
-        const chip = el("span", "chip chip-dest mono", destination);
-        chip.title = regionName(destination, getLang(), regionNotes);
-        chips.appendChild(chip);
+        chips.appendChild(destinationChip(destination, regionNotes));
       }
       destCell.appendChild(chips);
     }
@@ -199,9 +205,7 @@ function profileSection(detail, regionNotes) {
       } else {
         const chips = el("span", "chips");
         for (const destination of source.destinations) {
-          const chip = el("span", "chip chip-dest mono", destination);
-          chip.title = regionName(destination, getLang(), regionNotes);
-          chips.appendChild(chip);
+          chips.appendChild(destinationChip(destination, regionNotes));
         }
         item.appendChild(chips);
       }

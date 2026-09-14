@@ -218,6 +218,44 @@
   border-top: 1px dotted var(--line);
 }
 
+/* 推論先の地名。375px でも自然に折り返す (AC-004 / AC-NFR-001) */
+.geo-places {
+  display: inline-block;
+  white-space: normal;
+  /* 狭い画面で列が潰れて 1 語ずつ折り返さないように下限を置く。
+     はみ出したぶんは .table-frame の横スクロールで読める (AC-NFR-001) */
+  min-width: 11em;
+  max-width: 22em;
+  font-size: var(--fs-sm);
+  color: var(--fg-muted);
+  line-height: 1.7;
+}
+.geo-place {
+  white-space: nowrap;
+  color: var(--fg);
+}
+.geo-place.is-source {
+  color: var(--fg-strong);
+  font-weight: 500;
+}
+/* 起点リージョンの国の外にある推論先 (AC-004) */
+.geo-place.is-outside {
+  color: var(--warn-fg);
+}
+.geo-sep {
+  color: var(--fg-dim);
+}
+.geo-outside-count {
+  margin-left: var(--sp-1);
+  padding: 0 4px;
+  border-radius: var(--radius);
+  font-size: var(--fs-xs);
+  color: var(--warn-fg);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+  white-space: nowrap;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;

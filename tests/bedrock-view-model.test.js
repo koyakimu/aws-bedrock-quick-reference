@@ -9,6 +9,8 @@ import {
   selectableRegions,
   endpointOf,
   buildViewModel,
+  geoPlaces,
+  outsideCount,
   GEO_PREFIXES,
 } from "../src/scripts/bedrock-view-model.mjs";
 import {
@@ -141,6 +143,84 @@ describe("AC-005 judgeGlobal", () => {
   });
 });
 
+// AC-004 (v4): 推論先を地名の並びにする。起点 → 同じ国 → それ以外 (表示名の昇順)。
+describe("AC-004 geoPlaces (推論先の地名と並び)", () => {
+  const APAC = [
+    "ap-southeast-1", // シンガポール (sg)
+    "ap-northeast-3", // 大阪 (jp)
+    "ap-south-1", // ムンバイ (in)
+    "ap-northeast-1", // 東京 (jp) = 起点
+    "ap-southeast-2", // シドニー (au)
+    "ap-northeast-2", // ソウル (kr)
+  ];
+
+  it("起点リージョンが先頭、次に同じ国、残りは表示名の昇順", () => {
+    const places = geoPlaces(APAC, { region: TOKYO, regionNotes, lang: "ja" });
+    expect(places.map((place) => place.name)).toEqual([
+      "東京",
+      "大阪",
+      "シドニー",
+      "シンガポール",
+      "ソウル",
+      "ムンバイ",
+    ]);
+    expect(places[0].isSource).toBe(true);
+    expect(places.filter((place) => place.isSource)).toHaveLength(1);
+  });
+
+  it("起点リージョンの国の外だけが outside になる", () => {
+    const places = geoPlaces(APAC, { region: TOKYO, regionNotes, lang: "ja" });
+    const outside = places.filter((place) => place.outside).map((place) => place.code);
+    expect(outside).toEqual(["ap-southeast-2", "ap-southeast-1", "ap-northeast-2", "ap-south-1"]);
+    expect(outsideCount(places)).toBe(4);
+    // 同じ国 (jp) の推論先は印を付けない
+    expect(places.find((place) => place.code === "ap-northeast-3").outside).toBe(false);
+  });
+
+  it("国外が 1 件も無ければ件数は 0", () => {
+    const places = geoPlaces(["ap-northeast-1", "ap-northeast-3"], {
+      region: TOKYO,
+      regionNotes,
+      lang: "ja",
+    });
+    expect(outsideCount(places)).toBe(0);
+    expect(places.map((place) => place.name)).toEqual(["東京", "大阪"]);
+  });
+
+  it("言語を変えると表示名と並びがその言語のものになる", () => {
+    const places = geoPlaces(APAC, { region: TOKYO, regionNotes, lang: "en" });
+    expect(places.map((place) => place.name)).toEqual([
+      "Asia Pacific (Tokyo)",
+      "Asia Pacific (Osaka)",
+      "Asia Pacific (Mumbai)",
+      "Asia Pacific (Seoul)",
+      "Asia Pacific (Singapore)",
+      "Asia Pacific (Sydney)",
+    ]);
+    expect(outsideCount(places)).toBe(4);
+  });
+
+  it("起点の国が分からないときは誰も outside にしない", () => {
+    const places = geoPlaces(["ap-northeast-1"], {
+      region: "xx-unknown-1",
+      regionNotes,
+      lang: "ja",
+    });
+    expect(outsideCount(places)).toBe(0);
+  });
+
+  it("region-notes.json に無いリージョンはコードをそのまま表示名にする", () => {
+    const places = geoPlaces(["zz-nowhere-1"], { region: TOKYO, regionNotes, lang: "ja" });
+    expect(places[0].name).toBe("zz-nowhere-1");
+  });
+
+  it("入力の配列を破壊しない", () => {
+    const input = ["ap-southeast-1", "ap-northeast-1"];
+    geoPlaces(input, { region: TOKYO, regionNotes, lang: "ja" });
+    expect(input).toEqual(["ap-southeast-1", "ap-northeast-1"]);
+  });
+});
+
 describe("fetch-log の読み取り", () => {
   const { fetchLog } = buildSnapshot();
 
@@ -190,6 +270,11 @@ describe("buildViewModel", () => {
       "cohere.embed-v4:0",
       "nvidia.nemotron-nano-12b-v2",
     ]);
+  });
+
+  it("各行は起点リージョンを持つ (Geo セルが国外判定に使う)", () => {
+    const view = buildViewModel({ ...base, region: TOKYO });
+    expect(view.rows.every((row) => row.sourceRegion === TOKYO)).toBe(true);
   });
 
   it("各行が In-Region / Geo / Global の判定を持つ", () => {

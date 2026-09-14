@@ -47,6 +47,12 @@ export const en = {
     eu: "EU",
     au: "Australia",
   },
+  // AC-004: the Geo cell lists destinations as place names, never as Region codes.
+  geo: {
+    separator: ", ",
+    outsideCount: "({count} outside country)",
+    outsideMark: "Outside the source Region's country",
+  },
   value: {
     yes: "Yes",
     no: "No",

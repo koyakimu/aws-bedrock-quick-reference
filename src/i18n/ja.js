@@ -47,6 +47,12 @@ export const ja = {
     eu: "EU",
     au: "オーストラリア",
   },
+  // AC-004: Geo セルの推論先は地名で並べる。リージョンコードは表に出さない。
+  geo: {
+    separator: " ・ ",
+    outsideCount: "（国外 {count}）",
+    outsideMark: "起点リージョンの国の外",
+  },
   value: {
     yes: "可",
     no: "不可",

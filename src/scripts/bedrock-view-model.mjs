@@ -48,6 +48,50 @@ export function judgeGlobal(profiles, modelId, region) {
   return { profileId: found[0], prefix: GLOBAL_PREFIX };
 }
 
+// リージョンの表示名は region-notes.json の ja / en が正 (I18N-001 AC-005)。
+// 辞書ではなくデータなので、この純関数群から直接引いてよい。
+function localName(regionNotes, code, lang) {
+  const name = regionNotes?.[code]?.[lang];
+  return typeof name === "string" && name.length > 0 ? name : code;
+}
+
+// 並び順の段: 起点リージョン自身 → 起点と同じ国 → それ以外 (TABLE-001 v4 AC-004)。
+function placeRank(place) {
+  if (place.isSource) return 0;
+  return place.outside ? 2 : 1;
+}
+
+/**
+ * Geo の推論先を「地名の並び」にする (TABLE-001 v4 AC-004)。
+ * 起点リージョンの国 (region-notes.json の country) の外にある推論先は outside: true。
+ * 起点の国が分からないときは誰も outside にしない (判断材料が無いため)。
+ * 並びは 起点 → 同じ国 → それ以外 を表示名の昇順で。
+ */
+export function geoPlaces(destinations, { region, regionNotes, lang = "ja" } = {}) {
+  const sourceCountry = regionNotes?.[region]?.country ?? null;
+  return [...new Set(destinations ?? [])]
+    .map((code) => {
+      const country = regionNotes?.[code]?.country ?? null;
+      return {
+        code,
+        name: localName(regionNotes, code, lang),
+        isSource: code === region,
+        outside: sourceCountry != null && country !== sourceCountry,
+      };
+    })
+    .sort(
+      (a, b) =>
+        placeRank(a) - placeRank(b) ||
+        a.name.localeCompare(b.name, lang) ||
+        a.code.localeCompare(b.code),
+    );
+}
+
+/** 起点の国の外にある推論先の件数 (AC-004 の「（国外 N）」)。 */
+export function outsideCount(places) {
+  return (places ?? []).filter((place) => place.outside).length;
+}
+
 // fetch-log.json の 1 リージョン分。記録が無いリージョンは "unknown" にする。
 export function regionStatus(fetchLog, region) {
   const entry = fetchLog?.regions?.[region];
@@ -117,6 +161,8 @@ export function buildRow({ modelId, model, profiles, region, overrides }) {
   const globalProfile = judgeGlobal(profiles, modelId, region);
   return {
     modelId,
+    // 起点リージョン。Geo セルが「起点の国の外か」を判断するのに使う (AC-004)。
+    sourceRegion: region,
     provider: model.provider ?? "",
     name: model.name ?? "",
     input: model.input ?? [],
