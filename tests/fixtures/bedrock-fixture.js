@@ -9,6 +9,8 @@ import { normalizeSnapshot } from "../../scripts/lib/normalize.mjs";
 import regionNotes from "../../data/region-notes.json";
 
 export const TOKYO = "ap-northeast-1";
+// MANTLE-001: bedrock-mantle が提供されていない起点リージョン (大阪)。
+export const NON_MANTLE_REGION = "ap-northeast-3";
 export const DENIED_REGION = "us-east-1";
 export const EMPTY_REGION = "eu-west-1";
 
@@ -18,6 +20,8 @@ export function buildSnapshot() {
   return normalizeSnapshot({
     regions: {
       [TOKYO]: { fm: fmTokyo, ip: [ipTokyo] },
+      // bedrock-mantle 提供外の起点。モデルの並びは東京と同じにしておく (MANTLE-001)
+      [NON_MANTLE_REGION]: { fm: fmTokyo, ip: [] },
       // 取得に失敗したリージョン。公開データに残るのは分類 (cause) だけ (AC-009 / D-008)
       [DENIED_REGION]: { error: fmDenied },
       // 取得はできたがモデルが 1 件も無いリージョン (AC-010)

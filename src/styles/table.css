@@ -296,3 +296,8 @@
   font-size: var(--fs-xs);
   color: var(--fg-muted);
 }
+
+/* MANTLE-001 AC-003: Mantle 列。✓ でないときは淡い「—」にする */
+.cell-mantle .mantle-dash {
+  color: var(--no-fg);
+}

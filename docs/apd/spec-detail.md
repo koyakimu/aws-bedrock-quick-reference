@@ -1,13 +1,14 @@
 ---
 spec_id: "DETAIL-001"
 context: "detail"
-version: 5
+version: 6
 issue_ref: null
 title: "行の展開によるリージョン横断の詳細表示"
 decision_refs:
   - D-003
   - D-005
   - D-008
+  - D-010
 ---
 
 ## User Story
@@ -42,6 +43,7 @@ decision_refs:
 - **Given**: 起点リージョン R でモデル M の行を開く
 - **When**: 詳細パネルを描画する
 - **Then**: パネルの最後に R の `bedrock-runtime` エンドポイント（例: `bedrock-runtime.ap-northeast-1.amazonaws.com`）が出る。起点を切り替えると値も切り替わる
+- **And**: この節は「**接続先**」節として、`bedrock-runtime` と `bedrock-mantle` の 2 つの FQDN・それぞれで呼べる API・Mantle で指定するモデル ID・出典リンクを併せて出す（MANTLE-001 AC-005 / AC-006）
 
 ### AC-002 (全リージョン横断の availability)
 - **Given**: モデル M の行を開く
@@ -91,7 +93,7 @@ decision_refs:
   2. **この起点からの使い方**: 種別 / 指定する ID / 推論先リージョン の小さな表（AC-011）
   3. **提供状況**: リージョンごとに 1 行。リージョン表示名（コード併記）+ 推論タイプのバッジ、または「提供なし」/「提供あり・推論タイプの指定なし」/「未取得」
   4. **推論プロファイル**: プロファイルごとに、接頭辞バッジ + プロファイル ID（コピー可能）+ 起点 → 推論先の対応行（推論先は表示名 + コードの併記）
-  5. **エンドポイント**: 起点リージョンの `bedrock-runtime` FQDN（AC-012）
+  5. **接続先**: 起点リージョンの 2 つの接続先（`bedrock-runtime` / `bedrock-mantle`）の FQDN と呼べる API、Mantle で指定するモデル ID、cross-region inference が使えない旨の注記、出典リンク（AC-012 / MANTLE-001 AC-005・AC-006）
 - 現在の起点リージョンの行にマーカーを付ける
 - 375px 幅では 2 節を縦積みにし、推論先チップは折り返す
 
@@ -117,7 +119,7 @@ decision_refs:
 |-------|-----------|-------------|
 | AC-010 | integration (jsdom, vitest) | パネル先頭にモデル ID とコピーボタンが出て、コピーされた文字列がモデル ID と完全一致することを検証 |
 | AC-011 | unit + integration (vitest, jsdom) | `buildUsageRows(M, { models, profiles, region })` が In-Region / Geo / Global の行を種別・ID・推論先付きで返すことを検証（Global は `*` を返さない / 0 件のケースも）。描画側で 3 列の小表とコピーボタンを検証 |
-| AC-012 | integration (jsdom, vitest) | パネル末尾のエンドポイントが起点に追随することを検証 |
+| AC-012 | integration (jsdom, vitest) | パネル末尾のエンドポイントが起点に追随することを検証。接続先節の中身は MANTLE-001 の AC Coverage が受け持つ |
 | AC-001 | integration (jsdom, vitest) | 展開トグルのクリックでパネルが DOM に挿入され、`aria-expanded` が切り替わることを検証 |
 | AC-002 | unit (vitest) | `buildAvailabilityRows(M, regionNotes, fetchLog)` が全リージョン分の行を返し、`PROVISIONED` を落とさないことを検証 |
 | AC-003 | unit (vitest) | `status: ok` かつキー無しのリージョンが「提供なし」種別になることを検証 |
@@ -145,6 +147,8 @@ decision_refs:
 - 料金・クォータ・ベンチマークは詳細パネルにも出さない（Design「What Not」1・2・4）
 
 ## 変更履歴
+
+- **version 6** (2026-09-14): パネル末尾の「エンドポイント」節を「**接続先**」節に広げ、`bedrock-mantle` の FQDN・呼べる API・Mantle で指定するモデル ID・出典リンクを併せて出すようにした（AC-012 に And を追記、UI Description 5 節を改訂）。AC-001 〜 AC-011 の判定内容は変更しない。節の中身の AC は MANTLE-001 AC-005 / AC-006 が持つ
 
 - **version 5** (2026-09-14): denied リージョンの表示を「データなし」+ 理由の説明文から、**「未取得」だけ**に変えた（AC-008 を改訂）。ツールチップの理由も外した。理由: 取得できなかった分類（組織のポリシー / 権限 / 未有効化）はメンテナ向けの情報で、閲覧者には意味が無いため。`cause` は `fetch-log.json` に残る（D-008 は変更しない）
 - **version 4** (2026-09-14): 推論先リージョンの表示を「東京 (ap-northeast-1)」のように表示名とコードの併記に変えた（AC-005 / AC-011 の文言、UI Description 4 節）。理由: TABLE-001 v4 が一覧の Geo 列を地名だけにしたため、リージョンコードを読める場所を詳細パネルに残す必要があるため。AC の判定内容そのものは変えていない

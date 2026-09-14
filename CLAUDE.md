@@ -16,6 +16,7 @@ Amazon Bedrock の **モデル × リージョン × 推論が実際に行われ
 data/
 ├── region-notes.json   # 手書き。対象リージョンの正 (ja/en/optIn/endpoint/country/geo)
 ├── overrides.json      # 手書き。モデル ID / プロファイル ID ごとの備考 (ja/en)
+├── mantle.json         # 手書き。bedrock-mantle の提供リージョンと対応モデル (D-010)
 ├── models.json         # 生成物。手編集禁止
 ├── profiles.json       # 生成物。手編集禁止
 ├── fetch-log.json      # 生成物。手編集禁止
@@ -100,6 +101,18 @@ denied の行を消すと区別が壊れる (D-003)。
 - 原文を読みたいときは gitignore 対象の `data/raw/<日付>/*.err` を見る。`cause` はメンテナ向けの
   情報なので**画面には出さない**。未取得のリージョンは「未取得」とだけ表示する
   (TABLE-001 v5 AC-009 / DETAIL-001 v5 AC-008)
+
+### mantle.json を直すとき
+
+`bedrock-mantle` の提供リージョンとモデル別の対応は API から取れないので、公式 docs の
+Endpoint availability を転記した手書きファイルが正 (D-010)。出典は `_source` の 3 つの URL。
+**region-notes.json と同じく、記憶で足さず必ず doc を読んでから転記する。**
+
+- `models` のキーは `models.json` のモデル ID。docs のモデル名は `name` と大文字小文字を
+  無視した完全一致で引き、**突き合わなかった名前は推測で結び付けず `_unmatched` に残す**
+- `models.json` に無い mantle 専用モデルは `mantleOnly` に docs のモデル名で残す
+- `us-gov-west-1` は転記どおり `regions` に残すが、`region-notes.json` に無いので
+  起点リージョンとしては選べない
 
 ### region-notes.json を直すとき
 

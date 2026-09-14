@@ -91,10 +91,11 @@ tr.expanded > td {
 }
 
 .detail-endpoint {
+  /* 接続先が 2 つに増えたので 1 行 1 接続先の縦積みにする (MANTLE-001 AC-005) */
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--sp-2);
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--sp-1);
   font-size: var(--fs-sm);
 }
 .detail-endpoint-label {
@@ -231,3 +232,41 @@ tr.expanded > td {
   }
 }
 
+
+/* MANTLE-001 AC-005: 接続先の節 (bedrock-runtime / bedrock-mantle) */
+.detail-endpoint-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) 0;
+}
+
+.detail-endpoint-name {
+  color: var(--fg-strong);
+}
+
+.detail-endpoint-apis,
+.detail-mantle-no-cris,
+.detail-mantle-source,
+.detail-mantle-none {
+  color: var(--fg-muted);
+  font-size: var(--fs-xs);
+}
+
+.detail-endpoint-row.mantle-none {
+  color: var(--fg-muted);
+}
+
+.detail-mantle-model-id {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) 0;
+}
+
+.detail-mantle-no-cris,
+.detail-mantle-source {
+  margin: var(--sp-1) 0 0;
+}

@@ -99,7 +99,7 @@ describe("AC-002 エンドポイント", () => {
 
 // --- AC-006 表の列構成 ---
 describe("AC-006 列構成と 1 行の中身", () => {
-  it("列が左から プロバイダ / モデル名 / モダリティ / In-Region / Geo / Global / 備考", () => {
+  it("列が左から プロバイダ / モデル名 / モダリティ / In-Region / Geo / Global / Mantle / 備考", () => {
     mount();
     expect(headerTexts()).toEqual([
       "プロバイダ",
@@ -108,6 +108,7 @@ describe("AC-006 列構成と 1 行の中身", () => {
       "In-Region",
       "Geo",
       "Global",
+      "Mantle",
       "備考",
     ]);
   });
@@ -118,7 +119,16 @@ describe("AC-006 列構成と 1 行の中身", () => {
     expect(headerTexts()).not.toContain("モデル ID");
     expect(headerTexts()).not.toContain("lifecycle");
     const keys = [...document.querySelectorAll("thead th")].map((th) => th.dataset.key);
-    expect(keys).toEqual(["provider", "name", "capability", "inRegion", "geo", "global", "notes"]);
+    expect(keys).toEqual([
+      "provider",
+      "name",
+      "capability",
+      "inRegion",
+      "geo",
+      "global",
+      "mantle",
+      "notes",
+    ]);
   });
 
   it("1 行 = 1 モデル", () => {
@@ -290,8 +300,8 @@ describe("AC-006 列構成と 1 行の中身", () => {
 
   it("備考は overrides.json のエントリ、無ければ空", () => {
     mount(buildOverrides("cohere.embed-v4:0"));
-    expect(cells(rowFor("cohere.embed-v4:0"))[6].textContent).toBe("モデルの備考");
-    expect(cells(rowFor("amazon.nova-lite-v1:0"))[6].textContent).toBe("—");
+    expect(cells(rowFor("cohere.embed-v4:0"))[7].textContent).toBe("モデルの備考");
+    expect(cells(rowFor("amazon.nova-lite-v1:0"))[7].textContent).toBe("—");
   });
 });
 

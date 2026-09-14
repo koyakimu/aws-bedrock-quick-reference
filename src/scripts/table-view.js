@@ -199,6 +199,25 @@ function globalCell(row) {
   return wrap;
 }
 
+// MANTLE-001 AC-003: モデルが mantle 対応かつ起点が mantle 提供リージョンのときだけ ✓。
+// それ以外 (未対応 / 提供外リージョン / docs に記載なし) は「—」で、
+// ツールチップに mantle で指定する素のモデル ID か、なぜ「—」なのかを出す。
+function mantleCell(row) {
+  const judged = row.mantle;
+  const wrap = el("span", "cell-mantle");
+  if (judged?.available === true) {
+    wrap.appendChild(markYes());
+    wrap.dataset.mantleModelId = judged.mantleModelId;
+    wrap.title = t("mantle.modelIdTooltip", { id: judged.mantleModelId });
+    return wrap;
+  }
+  wrap.appendChild(el("span", "mantle-dash", EMPTY));
+  if (!judged) wrap.title = t("mantle.mantleUnknownModel");
+  else if (!judged.modelSupported) wrap.title = t("mantle.mantleUnsupportedModel");
+  else wrap.title = t("mantle.notAvailable");
+  return wrap;
+}
+
 function notesCell(row) {
   if (row.notes.length === 0) return EMPTY;
   const lang = getLang();
@@ -256,6 +275,15 @@ export function buildColumns(regionNotes) {
       sortable: false,
       format: (_value, row) => globalCell(row),
     },
+    // MANTLE-001 AC-003: 備考の手前に置く最後の列。
+    {
+      key: "mantle",
+      group: "judge",
+      labelKey: "table.mantle",
+      type: "flag",
+      sortValue: (row) => row.mantle?.available === true,
+      format: (_value, row) => mantleCell(row),
+    },
     {
       key: "notes",
       group: "spec",
@@ -272,7 +300,15 @@ export function buildColumns(regionNotes) {
  * 返り値の setRegion / rerender で再描画する。データは引数で受け取り、
  * このモジュールからファイルを読まない (テストが fixture を渡せるようにするため)。
  */
-export function mountTableView({ host, models, profiles, fetchLog, regionNotes, overrides = {} }) {
+export function mountTableView({
+  host,
+  models,
+  profiles,
+  fetchLog,
+  regionNotes,
+  overrides = {},
+  mantle = null,
+}) {
   const regions = selectableRegions(regionNotes);
   let region = regions.includes(DEFAULT_REGION) ? DEFAULT_REGION : regions[0];
   let state = { sortKey: null, sortDir: null, hiddenGroups: [] };
@@ -315,7 +351,33 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
     }, 1200);
   });
   endpointLine.append(endpointLabel, endpointValue, endpointCopy);
-  bar.append(label, select, endpointLine);
+
+  // --- もう一つの接続先 bedrock-mantle (MANTLE-001 AC-001 / AC-002) ---
+  const mantleLine = el("span", "endpoint-line mantle-line");
+  mantleLine.id = "mantle-endpoint-line";
+  const mantleLabel = el("span", "endpoint-label mantle-label");
+  mantleLabel.id = "mantle-endpoint-label";
+  const mantleValue = el("code", "endpoint mono");
+  mantleValue.id = "mantle-endpoint-value";
+  const mantleCopy = el("button", "copy-btn", "⧉");
+  mantleCopy.type = "button";
+  mantleCopy.id = "mantle-endpoint-copy";
+  mantleCopy.setAttribute("data-i18n-aria-label", "copy.mantleEndpoint");
+  mantleCopy.addEventListener("click", async () => {
+    const ok = await copyText(mantleValue.textContent);
+    mantleCopy.textContent = ok ? "✓" : "⧉";
+    setTimeout(() => {
+      mantleCopy.textContent = "⧉";
+    }, 1200);
+  });
+  mantleLine.append(mantleLabel, mantleValue, mantleCopy);
+
+  // AC-004: Mantle では cross-region inference が使えないことを接続先の近くに 1 行で置く。
+  const mantleNote = el("p", "mantle-note");
+  mantleNote.id = "mantle-no-cris";
+  mantleNote.setAttribute("data-i18n", "mantle.noCris");
+
+  bar.append(label, select, endpointLine, mantleLine, mantleNote);
 
   // FILTER-001 が後で中身を入れる場所。今は空のまま置いておく。
   const filterHost = el("div", "filter-bar");
@@ -434,9 +496,26 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
   }
 
   function render() {
-    model = buildViewModel({ models, profiles, fetchLog, regionNotes, overrides, region });
+    model = buildViewModel({ models, profiles, fetchLog, regionNotes, overrides, mantle, region });
 
     endpointValue.textContent = model.endpoint;
+
+    // AC-001 / AC-002: 提供リージョンなら FQDN + コピーボタン、無ければ提供なしの 1 行。
+    if (model.mantleEndpoint) {
+      mantleLabel.textContent = t("mantle.endpointLabel");
+      mantleValue.textContent = model.mantleEndpoint;
+      mantleValue.hidden = false;
+      mantleCopy.hidden = false;
+      mantleCopy.setAttribute("aria-label", t("copy.mantleEndpoint"));
+      mantleLine.classList.remove("mantle-none");
+    } else {
+      mantleLabel.textContent = t("mantle.notAvailable");
+      mantleValue.textContent = "";
+      mantleValue.hidden = true;
+      mantleCopy.hidden = true;
+      mantleLine.classList.add("mantle-none");
+    }
+    mantleNote.textContent = t("mantle.noCris");
 
     const denied = model.status === "denied";
     banner.hidden = !denied;
