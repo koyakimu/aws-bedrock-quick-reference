@@ -70,7 +70,7 @@
   margin-left: 3px;
 }
 
-/* 左端の固定列。Provider が 0、Model ID がその右に貼り付く。
+/* 左端の固定列。プロバイダが 0、モデル名がその右に貼り付く。
    下地が透けるとスクロールしたセルが見えるので必ず不透明にする */
 .table-frame th.sticky,
 .table-frame td.sticky {
@@ -84,8 +84,8 @@
   width: var(--col-provider-w);
   min-width: var(--col-provider-w);
 }
-.table-frame th.sticky-modelId,
-.table-frame td.sticky-modelId {
+.table-frame th.sticky-name,
+.table-frame td.sticky-name {
   left: var(--col-provider-w);
   box-shadow: 1px 0 0 var(--line); /* 影ではなく縦の細罫 */
 }
@@ -122,8 +122,27 @@
   font-size: var(--fs-sm);
 }
 
-.table-frame td.sticky-modelId {
+.table-frame td.sticky-name {
   color: var(--fg-strong);
+  font-weight: 500;
+}
+
+/* --- モデル名と旧版タグ (AC-006 / AC-012) --- */
+.model-name {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-1);
+  flex-wrap: wrap;
+}
+.legacy-tag {
+  display: inline-block;
+  padding: 0 5px;
+  border-radius: var(--radius);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--legacy-fg);
+  background: var(--legacy-bg);
+  border: 1px solid var(--legacy-line);
 }
 
 /* --- ID とコピーボタン --- */
@@ -157,8 +176,8 @@
   font-weight: 600;
 }
 
-/* --- モダリティ --- */
-.modalities {
+/* --- できること (AC-011) --- */
+.capability {
   display: inline-flex;
   align-items: baseline;
   gap: var(--sp-1);
@@ -188,6 +207,11 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+/* 地理圏の平易な名前。プロファイル ID の代わりにここが見出しになる (AC-004) */
+.geo-area {
+  font-size: var(--fs-sm);
+  color: var(--fg-strong);
 }
 .geo-entry + .geo-entry {
   padding-top: var(--sp-1);
@@ -222,27 +246,6 @@
 }
 .global-note-link {
   color: var(--accent);
-}
-
-/* --- lifecycle --- */
-.lifecycle {
-  display: inline-block;
-  padding: 0 6px;
-  border-radius: var(--radius);
-  font-size: var(--fs-xs);
-  line-height: 1.6;
-  color: var(--fg-muted);
-  border: 1px solid transparent;
-}
-.lifecycle-active {
-  color: var(--yes-fg);
-  background: var(--yes-bg);
-  border-color: var(--yes-line);
-}
-.lifecycle-legacy {
-  color: var(--legacy-fg);
-  background: var(--legacy-bg);
-  border-color: var(--legacy-line);
 }
 
 /* --- 備考 --- */

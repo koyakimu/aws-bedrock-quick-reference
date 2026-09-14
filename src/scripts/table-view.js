@@ -2,7 +2,7 @@
 // 表の骨組みは汎用の table-engine.js に任せる。
 import { createTable, EMPTY } from "./table-engine.js";
 import { buildViewModel, causeLabelKey, selectableRegions, regionStatus } from "./bedrock-view-model.mjs";
-import { createCopyable, copyText } from "./copy.js";
+import { copyText } from "./copy.js";
 import { t, getLang, applyTranslations } from "./i18n.js";
 import { regionName, regionOptionLabel } from "./region-names.js";
 
@@ -74,13 +74,37 @@ function destinationChip(code, notes) {
   return chip;
 }
 
-function modalitiesCell(row) {
-  const wrap = el("span", "modalities");
+// AC-011: TEXT / IMAGE / VIDEO / SPEECH / EMBEDDING を辞書で平易な語に置き換える。
+// 辞書に無い未知の値は列挙子のまま素通しする (DATA-001 と同じ方針)。
+export function modalityWords(values) {
+  const separator = t("value.modalitySeparator");
+  return (values ?? [])
+    .map((value) => {
+      const word = t(`modality.${value}`);
+      return word === `modality.${value}` ? value : word;
+    })
+    .join(separator);
+}
+
+function capabilityCell(row) {
+  const wrap = el("span", "capability");
   wrap.append(
-    el("span", "modality-in mono", row.input.join(", ") || EMPTY),
+    el("span", "modality-in", modalityWords(row.input) || EMPTY),
     el("span", "modality-arrow", t("value.modalityArrow")),
-    el("span", "modality-out mono", row.output.join(", ") || EMPTY),
+    el("span", "modality-out", modalityWords(row.output) || EMPTY),
   );
+  return wrap;
+}
+
+// AC-006 / AC-012: モデル名。LEGACY のときだけ小さなタグを添える。
+function modelNameCell(row) {
+  const wrap = el("span", "model-name");
+  wrap.append(el("span", "model-name-text", row.name || row.modelId));
+  if (row.lifecycle === "LEGACY") {
+    const tag = el("span", "legacy-tag", t("table.legacyTag"));
+    tag.title = row.lifecycle;
+    wrap.appendChild(tag);
+  }
   return wrap;
 }
 
@@ -90,13 +114,19 @@ function inRegionCell(row) {
     wrap.appendChild(markNo());
     return wrap;
   }
-  wrap.append(markYes(), createCopyable(row.modelId, { labelKey: "copy.modelId" }));
+  wrap.appendChild(markYes());
   // 起点 R が限定集合 L に入っていなければ In-Region は限定を満たさない (AC-007)。
   if (limitActive(row) && row.limit.inRegion !== true) {
     wrap.classList.add("out-of-limit");
     wrap.appendChild(limitBadge());
   }
   return wrap;
+}
+
+// 接頭辞 (jp / apac / us / eu / au) → 地理圏の平易な名前 (AC-004)。
+export function geoAreaLabel(prefix) {
+  const label = t(`geoArea.${prefix}`);
+  return label === `geoArea.${prefix}` ? prefix : label;
 }
 
 function geoCell(row, notes) {
@@ -106,7 +136,8 @@ function geoCell(row, notes) {
     const line = el("span", "geo-entry");
     line.dataset.profileId = entry.profileId;
     line.dataset.prefix = entry.prefix;
-    line.appendChild(createCopyable(entry.profileId, { labelKey: "copy.profileId" }));
+    // AC-004: プロファイル ID ではなく接頭辞から導いた地理圏の平易な名前を出す。
+    line.appendChild(el("span", "geo-area", geoAreaLabel(entry.prefix)));
     if (limitActive(row) && row.limit.geo?.[entry.profileId] !== true) {
       line.classList.add("out-of-limit");
       line.appendChild(limitBadge());
@@ -125,7 +156,7 @@ function geoCell(row, notes) {
 function globalCell(row) {
   if (!row.global) return markNo();
   const wrap = el("span", "cell-global");
-  wrap.append(markYes(), createCopyable(row.global.profileId, { labelKey: "copy.profileId" }));
+  wrap.appendChild(markYes());
   const note = el("span", "global-note");
   note.append(el("span", "global-note-text", t("value.globalNote")), document.createTextNode(" "));
   const link = el("a", "global-note-link", t("value.globalDocs"));
@@ -142,14 +173,6 @@ function globalCell(row) {
   return wrap;
 }
 
-function lifecycleCell(row) {
-  if (!row.lifecycle) return EMPTY;
-  const span = el("span", `lifecycle lifecycle-${row.lifecycle.toLowerCase()}`);
-  span.textContent = t(`lifecycle.${row.lifecycle}`);
-  span.title = row.lifecycle;
-  return span;
-}
-
 function notesCell(row) {
   if (row.notes.length === 0) return EMPTY;
   const lang = getLang();
@@ -162,27 +185,27 @@ function notesCell(row) {
   return wrap.childElementCount > 0 ? wrap : EMPTY;
 }
 
-// AC-006 の列構成。左から Provider / Model ID / モダリティ / In-Region / Geo / Global /
-// lifecycle / 備考。Model ID 列は横スクロールしても左端に残す (AC-NFR-001)。
+// AC-006 の列構成。左から プロバイダ / モデル名 / できること / In-Region / Geo /
+// Global / 備考。技術的な識別子 (モデル ID / プロファイル ID / lifecycle) は表に出さず
+// DETAIL-001 の詳細パネルへ移した。モデル名列は横スクロールしても左端に残す (AC-NFR-001)。
 export function buildColumns(regionNotes) {
   return [
     { key: "provider", group: "id", labelKey: "table.provider", type: "text", sticky: true },
     {
-      key: "modelId",
+      key: "name",
       group: "id",
-      labelKey: "table.modelId",
+      labelKey: "table.modelName",
       type: "text",
       sticky: true,
-      mono: true,
-      format: (value) => createCopyable(value, { labelKey: "copy.modelId" }),
+      format: (_value, row) => modelNameCell(row),
     },
     {
-      key: "modalities",
+      key: "capability",
       group: "spec",
-      labelKey: "table.modalities",
+      labelKey: "table.capability",
       type: "text",
       sortable: false,
-      format: (_value, row) => modalitiesCell(row),
+      format: (_value, row) => capabilityCell(row),
     },
     {
       key: "inRegion",
@@ -206,13 +229,6 @@ export function buildColumns(regionNotes) {
       type: "text",
       sortable: false,
       format: (_value, row) => globalCell(row),
-    },
-    {
-      key: "lifecycle",
-      group: "spec",
-      labelKey: "table.lifecycle",
-      type: "text",
-      format: (_value, row) => lifecycleCell(row),
     },
     {
       key: "notes",

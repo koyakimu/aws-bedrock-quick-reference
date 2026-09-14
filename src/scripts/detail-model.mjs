@@ -1,7 +1,15 @@
 // 行の展開で見せる「リージョン横断の詳細」を組み立てる純関数群 (DETAIL-001 / D-003 / D-005)。
 // DOM も i18n も知らない。表示用の文言は種別 (kind) で返し、翻訳は呼び出し側で行う。
 
-import { GLOBAL_PREFIX, regionStatus, selectableRegions } from "./bedrock-view-model.mjs";
+import {
+  GLOBAL_PREFIX,
+  endpointOf,
+  judgeGeo,
+  judgeGlobal,
+  judgeInRegion,
+  regionStatus,
+  selectableRegions,
+} from "./bedrock-view-model.mjs";
 
 // availability 1 行の種別。
 // types    … 推論タイプが 1 つ以上ある
@@ -61,14 +69,59 @@ export function buildProfileRows(modelId, profiles) {
 }
 
 /**
+ * 起点リージョン R から M を呼ぶときの「種別 / 指定する ID / 推論先」(AC-011)。
+ * 判定は TABLE-001 と同じ関数を使うので、表と詳細で食い違いが起きない。
+ * Global の推論先は列挙せず allRegions: true にする ("*" は返さない)。
+ */
+export function buildUsageRows(modelId, { models, profiles, region } = {}) {
+  const rows = [];
+  if (judgeInRegion(models, modelId, region)) {
+    rows.push({
+      kind: "inRegion",
+      id: modelId,
+      idKind: "modelId",
+      destinations: [region],
+      allRegions: false,
+    });
+  }
+  for (const entry of judgeGeo(profiles, modelId, region)) {
+    rows.push({
+      kind: "geo",
+      id: entry.profileId,
+      idKind: "profileId",
+      prefix: entry.prefix,
+      destinations: entry.destinations,
+      allRegions: false,
+    });
+  }
+  const globalProfile = judgeGlobal(profiles, modelId, region);
+  if (globalProfile) {
+    rows.push({
+      kind: "global",
+      id: globalProfile.profileId,
+      idKind: "profileId",
+      prefix: globalProfile.prefix,
+      destinations: [],
+      allRegions: true,
+    });
+  }
+  return rows;
+}
+
+/**
  * 詳細パネル 1 枚ぶん。プロファイルが 1 件も無いことは hasProfiles: false で示す (AC-009)。
  */
 export function buildDetail(modelId, { models, profiles, fetchLog, regionNotes, region } = {}) {
   const availability = buildAvailabilityRows(modelId, { models, regionNotes, fetchLog });
   const profileRows = buildProfileRows(modelId, profiles);
+  const usage = buildUsageRows(modelId, { models, profiles, region });
   return {
     modelId,
     region,
+    // 起点のエンドポイント (AC-012)。
+    endpoint: endpointOf(regionNotes, region),
+    usage,
+    hasUsage: usage.length > 0,
     availability,
     profiles: profileRows,
     hasProfiles: profileRows.length > 0,

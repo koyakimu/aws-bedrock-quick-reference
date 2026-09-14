@@ -20,26 +20,40 @@ export const ja = {
     statusOk: "取得済み",
   },
   table: {
-    provider: "Provider",
-    modelId: "Model ID",
-    modalities: "モダリティ",
+    provider: "プロバイダ",
+    modelName: "モデル名",
+    modelId: "モデル ID",
+    capability: "できること",
     inRegion: "In-Region",
     geo: "Geo",
     global: "Global",
-    lifecycle: "lifecycle",
     notes: "備考",
+    legacyTag: "旧版",
     rowCount: "{shown} / {total} 行",
+  },
+  // AC-011: 列挙子を出さず、その言語の平易な語に置き換える。
+  modality: {
+    TEXT: "テキスト",
+    IMAGE: "画像",
+    VIDEO: "動画",
+    SPEECH: "音声",
+    EMBEDDING: "埋め込み",
+  },
+  // AC-004: プロファイル接頭辞から導く地理圏の平易な名前。
+  geoArea: {
+    jp: "日本国内",
+    apac: "アジア太平洋",
+    us: "米国",
+    eu: "EU",
+    au: "オーストラリア",
   },
   value: {
     yes: "可",
     no: "不可",
-    globalNote: "全対応リージョン、増えうる",
+    globalNote: "全世界の対応リージョン、増えうる",
     globalDocs: "公式 docs",
     modalityArrow: "→",
-  },
-  lifecycle: {
-    ACTIVE: "提供中",
-    LEGACY: "旧世代",
+    modalitySeparator: "・",
   },
   copy: {
     action: "コピー",
@@ -51,7 +65,7 @@ export const ja = {
   state: {
     noDataTitle: "このリージョンはデータを取得できませんでした（データなし）",
     noDataBody:
-      "「提供なし」ではありません。取得に使ったアカウントの権限またはオプトイン設定が原因です。以下は AWS API のエラー原文です。",
+      "「提供なし」ではありません。取得に使ったアカウントの権限またはオプトイン設定が原因です。",
     notOffered: "このリージョンでは提供なし",
   },
   filter: {
@@ -88,6 +102,13 @@ export const ja = {
   },
   detail: {
     toggle: "詳細を開閉",
+    modelId: "モデル ID",
+    usage: "この起点からの使い方",
+    usageKind: "種別",
+    usageId: "指定する ID",
+    usageDestinations: "推論先リージョン",
+    usageNone: "この起点リージョンからは呼べません",
+    endpoint: "エンドポイント",
     availability: "提供状況",
     profiles: "推論プロファイル",
     noProfiles: "cross-region inference profile なし（モデル ID を直接指定する）",

@@ -47,6 +47,65 @@ tr.expanded > td {
   letter-spacing: 0.04em;
 }
 
+/* 一覧から外した識別子と接続先 (AC-010 / AC-011 / AC-012)。
+   提供状況と推論プロファイルの 2 段組をまたいで全幅に置く */
+.detail-model-id,
+.detail-usage,
+.detail-endpoint {
+  grid-column: 1 / -1;
+}
+
+.detail-usage-table {
+  border-collapse: collapse;
+  width: auto;
+  max-width: 100%;
+  font-size: var(--fs-sm);
+}
+.detail-usage-table th,
+.detail-usage-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--sp-1) var(--sp-3) var(--sp-1) 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.detail-usage-table th {
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--fg-muted);
+}
+.usage-badge {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: var(--radius);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--chip-fg);
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-line);
+  white-space: nowrap;
+}
+.detail-no-usage {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--fg-muted);
+}
+
+.detail-endpoint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+}
+.detail-endpoint-label {
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
+.detail-endpoint-value {
+  color: var(--fg-strong);
+  word-break: break-all;
+}
+
 .detail-region-list,
 .detail-source-list {
   list-style: none;
@@ -161,6 +220,19 @@ tr.expanded > td {
   .detail-panel {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--sp-4);
+  }
+  /* 3 列の小表は 375px でも枠内で横スクロールさせる (ページ本体は伸ばさない) */
+  .detail-usage {
+    overflow-x: auto;
+  }
+  .detail-model-id .copyable {
+    display: flex;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .detail-model-id .id {
+    min-width: 0;
+    word-break: break-all;
   }
 }
 

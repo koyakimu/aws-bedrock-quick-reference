@@ -1,4 +1,4 @@
-// TABLE-001 の結合テスト (jsdom)。AC-001 / 002 / 006 / 007 / 008 / 009 / 010。
+// TABLE-001 v2 の結合テスト (jsdom)。AC-001 / 002 / 006 / 007 / 008 / 009 / 010 / 011 / 012。
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { mountTableView, DOC_LINKS, DEFAULT_REGION } from "../src/scripts/table-view.js";
 import { initI18n, setLang } from "../src/scripts/i18n.js";
@@ -99,18 +99,26 @@ describe("AC-002 エンドポイント", () => {
 
 // --- AC-006 表の列構成 ---
 describe("AC-006 列構成と 1 行の中身", () => {
-  it("列が左から Provider / Model ID / モダリティ / In-Region / Geo / Global / lifecycle / 備考", () => {
+  it("列が左から プロバイダ / モデル名 / できること / In-Region / Geo / Global / 備考", () => {
     mount();
     expect(headerTexts()).toEqual([
-      "Provider",
-      "Model ID",
-      "モダリティ",
+      "プロバイダ",
+      "モデル名",
+      "できること",
       "In-Region",
       "Geo",
       "Global",
-      "lifecycle",
       "備考",
     ]);
+  });
+
+  it("Model ID 列と lifecycle 列は無い", () => {
+    mount();
+    expect(headerTexts()).not.toContain("Model ID");
+    expect(headerTexts()).not.toContain("モデル ID");
+    expect(headerTexts()).not.toContain("lifecycle");
+    const keys = [...document.querySelectorAll("thead th")].map((th) => th.dataset.key);
+    expect(keys).toEqual(["provider", "name", "capability", "inRegion", "geo", "global", "notes"]);
   });
 
   it("1 行 = 1 モデル", () => {
@@ -119,25 +127,53 @@ describe("AC-006 列構成と 1 行の中身", () => {
     expect(new Set(bodyRows().map((tr) => tr.dataset.modelId)).size).toBe(5);
   });
 
-  it("In-Region が可のモデルはセルにモデル ID を出す (AC-003)", () => {
+  it("モデル名列には API の modelName が出る", () => {
     mount();
-    const row = rowFor("nvidia.nemotron-nano-12b-v2");
-    const cell = cells(row)[3];
-    expect(cell.textContent).toContain("可");
-    expect(cell.querySelector(".copyable .id").textContent).toBe("nvidia.nemotron-nano-12b-v2");
+    expect(cells(rowFor("anthropic.claude-sonnet-4-5-20250929-v1:0"))[1].textContent).toBe(
+      "Claude Sonnet 4.5",
+    );
+    expect(cells(rowFor("cohere.embed-v4:0"))[1].textContent).toBe("Embed v4");
   });
 
-  it("In-Region が不可のモデルはモデル ID を出さない (AC-003)", () => {
+  it("行は プロバイダ → モデル名 の昇順", () => {
+    mount();
+    expect(bodyRows().map((tr) => [...tr.children][0].textContent)).toEqual([
+      "Amazon",
+      "Amazon",
+      "Anthropic",
+      "Cohere",
+      "NVIDIA",
+    ]);
+    expect(bodyRows().slice(0, 2).map((tr) => [...tr.children][1].textContent)).toEqual([
+      "Nova Lite",
+      "Titan Embeddings G1 - Text",
+    ]);
+  });
+
+  it("In-Region が可のセルは ✓ と「可」だけでモデル ID を出さない (AC-003)", () => {
+    mount();
+    const cell = cells(rowFor("nvidia.nemotron-nano-12b-v2"))[3];
+    expect(cell.textContent).toContain("可");
+    expect(cell.textContent).toContain("✓");
+    expect(cell.textContent).not.toContain("nvidia.nemotron-nano-12b-v2");
+    expect(cell.querySelector(".copyable")).toBeNull();
+  });
+
+  it("In-Region が不可のモデルは「不可」 (AC-003)", () => {
     mount();
     const cell = cells(rowFor("anthropic.claude-sonnet-4-5-20250929-v1:0"))[3];
     expect(cell.textContent).toContain("不可");
     expect(cell.querySelector(".copyable")).toBeNull();
   });
 
-  it("Geo 列にプロファイル ID と destination チップが昇順で並ぶ (AC-004)", () => {
+  it("Geo 列に地理圏の平易な名前と destination チップが昇順で並び、プロファイル ID は出ない (AC-004)", () => {
     mount();
     const cell = cells(rowFor("amazon.nova-lite-v1:0"))[4];
-    expect(cell.querySelector(".copyable .id").textContent).toBe("apac.amazon.nova-lite-v1:0");
+    expect(cell.querySelector(".geo-area").textContent).toBe("アジア太平洋");
+    expect(cell.textContent).not.toContain("apac.amazon.nova-lite-v1:0");
+    expect(cell.querySelector(".copyable")).toBeNull();
+    // 判定の根拠となるプロファイル ID は data 属性としては残す (FILTER-001 / DETAIL-001 用)
+    expect(cell.querySelector(".geo-entry").dataset.profileId).toBe("apac.amazon.nova-lite-v1:0");
     const chips = [...cell.querySelectorAll(".chip-dest")].map((chip) => chip.textContent);
     expect(chips).toEqual([
       "ap-northeast-1",
@@ -150,17 +186,26 @@ describe("AC-006 列構成と 1 行の中身", () => {
     expect(chips).toEqual([...chips].sort());
   });
 
+  it("jp. プロファイルの地理圏は「日本国内」 (AC-004)", () => {
+    mount();
+    const areas = [
+      ...cells(rowFor("anthropic.claude-sonnet-4-5-20250929-v1:0"))[4].querySelectorAll(".geo-area"),
+    ].map((node) => node.textContent);
+    expect(areas).toContain("日本国内");
+  });
+
   it("Geo が無い行は「不可」", () => {
     mount();
     expect(cells(rowFor("nvidia.nemotron-nano-12b-v2"))[4].textContent).toContain("不可");
   });
 
-  it("Global 列に ✓ とプロファイル ID と注記とリンクが出る (AC-005)", () => {
+  it("Global 列は ✓ と注記とリンクだけで、プロファイル ID は出ない (AC-005)", () => {
     mount();
     const cell = cells(rowFor("cohere.embed-v4:0"))[5];
     expect(cell.textContent).toContain("✓");
-    expect(cell.querySelector(".copyable .id").textContent).toBe("global.cohere.embed-v4:0");
-    expect(cell.textContent).toContain("全対応リージョン、増えうる");
+    expect(cell.textContent).not.toContain("global.cohere.embed-v4:0");
+    expect(cell.querySelector(".copyable")).toBeNull();
+    expect(cell.textContent).toContain("全世界の対応リージョン、増えうる");
     expect(cell.querySelector("a.global-note-link").href).toContain(
       "global-cross-region-inference",
     );
@@ -174,76 +219,97 @@ describe("AC-006 列構成と 1 行の中身", () => {
     }
   });
 
-  it("モダリティは入力 → 出力で出る", () => {
-    mount();
-    const cell = cells(rowFor("amazon.nova-lite-v1:0"))[2];
-    expect(cell.querySelector(".modality-in").textContent).toBe("TEXT, IMAGE, VIDEO");
-    expect(cell.querySelector(".modality-out").textContent).toBe("TEXT");
-  });
-
-  it("lifecycle は生の値を title に残しつつ説明文で出す", () => {
-    mount();
-    const cell = cells(rowFor("amazon.nova-lite-v1:0"))[6];
-    expect(cell.querySelector(".lifecycle").title).toBe("ACTIVE");
-    expect(cell.textContent).toBe("提供中");
-  });
-
   it("備考は overrides.json のエントリ、無ければ空", () => {
     mount(buildOverrides("cohere.embed-v4:0"));
-    expect(cells(rowFor("cohere.embed-v4:0"))[7].textContent).toBe("モデルの備考");
-    expect(cells(rowFor("amazon.nova-lite-v1:0"))[7].textContent).toBe("—");
+    expect(cells(rowFor("cohere.embed-v4:0"))[6].textContent).toBe("モデルの備考");
+    expect(cells(rowFor("amazon.nova-lite-v1:0"))[6].textContent).toBe("—");
   });
 });
 
-// --- AC-007 ID のコピー ---
-describe("AC-007 ID のコピー", () => {
-  let writeText;
-
-  beforeEach(() => {
-    writeText = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, "clipboard", {
-      value: { writeText },
-      configurable: true,
-    });
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it("モデル ID のコピーボタンは ID の文字列だけをコピーする", async () => {
+// --- AC-011 「できること」の平易な表記 ---
+describe("AC-011 できること列", () => {
+  it("列挙子ではなく平易な語で 入力 → 出力 が出る", () => {
     mount();
-    const button = cells(rowFor("cohere.embed-v4:0"))[1].querySelector("button.copy-btn");
+    const cell = cells(rowFor("amazon.nova-lite-v1:0"))[2];
+    expect(cell.querySelector(".modality-in").textContent).toBe("テキスト・画像・動画");
+    expect(cell.querySelector(".modality-out").textContent).toBe("テキスト");
+    expect(cell.textContent).not.toContain("TEXT");
+    expect(cell.textContent).not.toContain("IMAGE");
+    expect(cell.textContent).not.toContain("VIDEO");
+  });
+
+  it("埋め込みのモデルも平易な語になる", () => {
+    mount();
+    const cell = cells(rowFor("cohere.embed-v4:0"))[2];
+    expect(cell.querySelector(".modality-out").textContent).toBe("埋め込み");
+    expect(cell.textContent).not.toContain("EMBEDDING");
+  });
+
+  it("英語では英語の語と区切りになる", () => {
+    const view = mount();
+    setLang("en");
+    view.rerender();
+    const cell = cells(rowFor("amazon.nova-lite-v1:0"))[2];
+    expect(cell.querySelector(".modality-in").textContent).toBe("Text, Image, Video");
+    expect(cell.querySelector(".modality-out").textContent).toBe("Text");
+    setLang("ja");
+  });
+
+  it("SPEECH → SPEECH, TEXT も平易な語になる", () => {
+    const speech = structuredClone(snapshot.models);
+    speech["amazon.nova-lite-v1:0"].input = ["SPEECH"];
+    speech["amazon.nova-lite-v1:0"].output = ["SPEECH", "TEXT"];
+    mount({ mountOverrides: { models: speech } });
+    const cell = cells(rowFor("amazon.nova-lite-v1:0"))[2];
+    expect(cell.textContent).toBe("音声→音声・テキスト");
+  });
+});
+
+// --- AC-012 旧版タグ ---
+describe("AC-012 旧版タグ", () => {
+  it("LEGACY のモデルにだけ「旧版」が付く", () => {
+    const legacy = structuredClone(snapshot.models);
+    legacy["cohere.embed-v4:0"].lifecycle = "LEGACY";
+    mount({ mountOverrides: { models: legacy } });
+    const tagged = cells(rowFor("cohere.embed-v4:0"))[1];
+    expect(tagged.querySelector(".legacy-tag").textContent).toBe("旧版");
+    expect(tagged.querySelector(".legacy-tag").title).toBe("LEGACY");
+    expect(cells(rowFor("amazon.nova-lite-v1:0"))[1].querySelector(".legacy-tag")).toBeNull();
+  });
+
+  it("英語では Legacy", () => {
+    const legacy = structuredClone(snapshot.models);
+    legacy["cohere.embed-v4:0"].lifecycle = "LEGACY";
+    const view = mount({ mountOverrides: { models: legacy } });
+    setLang("en");
+    view.rerender();
+    expect(cells(rowFor("cohere.embed-v4:0"))[1].querySelector(".legacy-tag").textContent).toBe(
+      "Legacy",
+    );
+    setLang("ja");
+  });
+});
+
+// --- AC-007 表にコピーボタンを置かない ---
+describe("AC-007 表にコピーボタンを置かない", () => {
+  it("表の中に ID もコピーボタンも無い", () => {
+    mount();
+    const table = document.getElementById("models-table");
+    expect(table.querySelectorAll(".copy-btn")).toHaveLength(0);
+    expect(table.querySelectorAll(".copyable")).toHaveLength(0);
+    expect(table.textContent).not.toContain("cohere.embed-v4:0");
+    expect(table.textContent).not.toContain("apac.amazon.nova-lite-v1:0");
+  });
+
+  it("エンドポイントのコピーボタンは表の外にそのまま残る (AC-002)", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+    mount();
+    const button = document.getElementById("endpoint-copy");
+    expect(document.getElementById("models-table").contains(button)).toBe(false);
     button.click();
     await vi.waitFor(() => expect(writeText).toHaveBeenCalledTimes(1));
-    expect(writeText).toHaveBeenCalledWith("cohere.embed-v4:0");
-  });
-
-  it("プロファイル ID のコピーボタンはプロファイル ID だけをコピーする", async () => {
-    mount();
-    const button = cells(rowFor("amazon.nova-lite-v1:0"))[4].querySelector("button.copy-btn");
-    button.click();
-    await vi.waitFor(() => expect(writeText).toHaveBeenCalledTimes(1));
-    expect(writeText).toHaveBeenCalledWith("apac.amazon.nova-lite-v1:0");
-  });
-
-  it("コピーできたことが視覚的に示される", async () => {
-    mount();
-    const button = cells(rowFor("cohere.embed-v4:0"))[1].querySelector("button.copy-btn");
-    button.click();
-    await vi.waitFor(() => expect(button.classList.contains("copied")).toBe(true));
-    expect(button.textContent).toBe("✓");
-  });
-
-  it("clipboard API が無ければ execCommand に落ちる", async () => {
-    Object.defineProperty(navigator, "clipboard", { value: undefined, configurable: true });
-    const execCommand = vi.fn().mockReturnValue(true);
-    document.execCommand = execCommand;
-    mount();
-    const button = cells(rowFor("cohere.embed-v4:0"))[1].querySelector("button.copy-btn");
-    button.click();
-    await vi.waitFor(() => expect(execCommand).toHaveBeenCalledWith("copy"));
-    delete document.execCommand;
+    expect(writeText).toHaveBeenCalledWith("bedrock-runtime.ap-northeast-1.amazonaws.com");
   });
 });
 
@@ -332,12 +398,16 @@ describe("FILTER-001 / DETAIL-001 / SHARE-001 のためのフック", () => {
   });
 });
 
+afterEach(() => {
+  setLang("ja");
+});
+
 // --- 言語切替と表 (I18N-001 AC-003 / AC-004 の表側) ---
 describe("言語を切り替えても表のデータ値は変わらない", () => {
-  it("列ヘッダは英語になり、モデル ID / リージョンコード / provider は不変", () => {
+  it("列ヘッダは英語になり、モデル名 / リージョンコード / provider は不変", () => {
     const view = mount();
     const before = {
-      modelId: cells(rowFor("cohere.embed-v4:0"))[1].textContent,
+      name: cells(rowFor("cohere.embed-v4:0"))[1].textContent,
       provider: cells(rowFor("cohere.embed-v4:0"))[0].textContent,
       chips: [...cells(rowFor("amazon.nova-lite-v1:0"))[4].querySelectorAll(".chip-dest")].map(
         (c) => c.textContent,
@@ -347,8 +417,8 @@ describe("言語を切り替えても表のデータ値は変わらない", () =
     setLang("en");
     view.rerender();
 
-    expect(headerTexts()[2]).toBe("Modalities");
-    expect(cells(rowFor("cohere.embed-v4:0"))[1].textContent).toBe(before.modelId);
+    expect(headerTexts()[2]).toBe("What it does");
+    expect(cells(rowFor("cohere.embed-v4:0"))[1].textContent).toBe(before.name);
     expect(cells(rowFor("cohere.embed-v4:0"))[0].textContent).toBe(before.provider);
     expect(
       [...cells(rowFor("amazon.nova-lite-v1:0"))[4].querySelectorAll(".chip-dest")].map(
