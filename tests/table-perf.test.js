@@ -18,9 +18,10 @@ const OTHER = "us-east-1";
 const median = (values) => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)];
 
 describe("AC-NFR-002 再描画性能", () => {
-  it("68 モデルの再描画の中央値が 200ms 未満", () => {
-    expect(Object.keys(models)).toHaveLength(68);
-    expect(Object.keys(profiles)).toHaveLength(34);
+  it("実データ全件の再描画の中央値が 200ms 未満", () => {
+    // 件数はスナップショットの取り直しで変わるので固定しない。空でないことだけ確かめる
+    expect(Object.keys(models).length).toBeGreaterThan(0);
+    expect(Object.keys(profiles).length).toBeGreaterThan(0);
 
     document.body.innerHTML = '<main id="main"></main>';
     localStorage.clear();
