@@ -11,6 +11,38 @@
         "ap-south-1",
         "ap-southeast-1",
         "ap-southeast-2"
+      ],
+      "ap-northeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-south-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
       ]
     }
   },
@@ -20,6 +52,38 @@
     "name": "APAC Nova Micro",
     "sources": {
       "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-northeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-south-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-2": [
         "ap-northeast-1",
         "ap-northeast-2",
         "ap-northeast-3",
@@ -41,6 +105,38 @@
         "ap-south-1",
         "ap-southeast-1",
         "ap-southeast-2"
+      ],
+      "ap-northeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-south-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
       ]
     }
   },
@@ -50,6 +146,34 @@
     "name": "APAC Anthropic Claude 3.5 Sonnet",
     "sources": {
       "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-northeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-south-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-2": [
         "ap-northeast-1",
         "ap-northeast-2",
         "ap-south-1",
@@ -70,6 +194,62 @@
         "ap-south-1",
         "ap-southeast-1",
         "ap-southeast-2"
+      ],
+      "ap-northeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-northeast-3": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-south-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ]
+    }
+  },
+  "apac.anthropic.claude-3-7-sonnet-20250219-v1:0": {
+    "prefix": "apac",
+    "modelId": "anthropic.claude-3-7-sonnet-20250219-v1:0",
+    "name": "APAC Anthropic Claude 3.7 Sonnet",
+    "sources": {
+      "ap-south-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-south-2",
+        "ap-southeast-1",
+        "ap-southeast-2"
       ]
     }
   },
@@ -84,6 +264,34 @@
         "ap-south-1",
         "ap-southeast-1",
         "ap-southeast-2"
+      ],
+      "ap-northeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-south-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
       ]
     }
   },
@@ -93,6 +301,34 @@
     "name": "APAC Anthropic Claude 3 Sonnet",
     "sources": {
       "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-northeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-south-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ],
+      "ap-southeast-2": [
         "ap-northeast-1",
         "ap-northeast-2",
         "ap-south-1",
@@ -115,6 +351,1038 @@
         "ap-southeast-1",
         "ap-southeast-2",
         "ap-southeast-4"
+      ],
+      "ap-northeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-south-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ],
+      "ap-northeast-3": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-south-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ],
+      "ap-south-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-south-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ],
+      "ap-southeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-south-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ],
+      "ap-southeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-south-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ]
+    }
+  },
+  "apac.twelvelabs.marengo-embed-2-7-v1:0": {
+    "prefix": "apac",
+    "modelId": "twelvelabs.marengo-embed-2-7-v1:0",
+    "name": "APAC TwelveLabs Marengo Embed v2.7",
+    "sources": {
+      "ap-northeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-south-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-southeast-3",
+        "ap-southeast-4"
+      ]
+    }
+  },
+  "apac.twelvelabs.pegasus-1-2-v1:0": {
+    "prefix": "apac",
+    "modelId": "twelvelabs.pegasus-1-2-v1:0",
+    "name": "APAC Pegasus v1.2",
+    "sources": {
+      "ap-northeast-2": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-south-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ]
+    }
+  },
+  "au.anthropic.claude-haiku-4-5-20251001-v1:0": {
+    "prefix": "au",
+    "modelId": "anthropic.claude-haiku-4-5-20251001-v1:0",
+    "name": "AU Anthropic Claude Haiku 4.5",
+    "sources": {
+      "ap-southeast-2": [
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ]
+    }
+  },
+  "au.anthropic.claude-opus-4-6-v1": {
+    "prefix": "au",
+    "modelId": "anthropic.claude-opus-4-6-v1",
+    "name": "AU Anthropic Claude Opus 4.6",
+    "sources": {
+      "ap-southeast-2": [
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ]
+    }
+  },
+  "au.anthropic.claude-opus-4-7": {
+    "prefix": "au",
+    "modelId": "anthropic.claude-opus-4-7",
+    "name": "AU Anthropic Claude Opus 4.7",
+    "sources": {
+      "ap-southeast-2": [
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ]
+    }
+  },
+  "au.anthropic.claude-opus-4-8": {
+    "prefix": "au",
+    "modelId": "anthropic.claude-opus-4-8",
+    "name": "AU Anthropic Claude Opus 4.8",
+    "sources": {
+      "ap-southeast-2": [
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ]
+    }
+  },
+  "au.anthropic.claude-opus-5": {
+    "prefix": "au",
+    "modelId": "anthropic.claude-opus-5",
+    "name": "AU Anthropic Claude Opus 5",
+    "sources": {
+      "ap-southeast-2": [
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ]
+    }
+  },
+  "au.anthropic.claude-sonnet-4-5-20250929-v1:0": {
+    "prefix": "au",
+    "modelId": "anthropic.claude-sonnet-4-5-20250929-v1:0",
+    "name": "AU AU Anthropic Claude Sonnet 4.5",
+    "sources": {
+      "ap-southeast-2": [
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ]
+    }
+  },
+  "au.anthropic.claude-sonnet-4-6": {
+    "prefix": "au",
+    "modelId": "anthropic.claude-sonnet-4-6",
+    "name": "AU Anthropic Claude Sonnet 4.6",
+    "sources": {
+      "ap-southeast-2": [
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ]
+    }
+  },
+  "au.anthropic.claude-sonnet-5": {
+    "prefix": "au",
+    "modelId": "anthropic.claude-sonnet-5",
+    "name": "AU Anthropic Claude Sonnet 5",
+    "sources": {
+      "ap-southeast-2": [
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ]
+    }
+  },
+  "ca.amazon.nova-lite-v1:0": {
+    "prefix": "ca",
+    "modelId": "amazon.nova-lite-v1:0",
+    "name": "CA Nova Lite",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "ca-west-1"
+      ]
+    }
+  },
+  "eu.amazon.nova-2-lite-v1:0": {
+    "prefix": "eu",
+    "modelId": "amazon.nova-2-lite-v1:0",
+    "name": "EU Amazon Nova 2 Lite",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.amazon.nova-lite-v1:0": {
+    "prefix": "eu",
+    "modelId": "amazon.nova-lite-v1:0",
+    "name": "EU Nova Lite",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.amazon.nova-micro-v1:0": {
+    "prefix": "eu",
+    "modelId": "amazon.nova-micro-v1:0",
+    "name": "EU Nova Micro",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.amazon.nova-pro-v1:0": {
+    "prefix": "eu",
+    "modelId": "amazon.nova-pro-v1:0",
+    "name": "EU Nova Pro",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.anthropic.claude-3-haiku-20240307-v1:0": {
+    "prefix": "eu",
+    "modelId": "anthropic.claude-3-haiku-20240307-v1:0",
+    "name": "EU Anthropic Claude 3 Haiku",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.anthropic.claude-3-sonnet-20240229-v1:0": {
+    "prefix": "eu",
+    "modelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "name": "EU Anthropic Claude 3 Sonnet",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.anthropic.claude-haiku-4-5-20251001-v1:0": {
+    "prefix": "eu",
+    "modelId": "anthropic.claude-haiku-4-5-20251001-v1:0",
+    "name": "EU Anthropic Claude Haiku 4.5",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-2": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.anthropic.claude-opus-4-5-20251101-v1:0": {
+    "prefix": "eu",
+    "modelId": "anthropic.claude-opus-4-5-20251101-v1:0",
+    "name": "EU Anthropic Claude Opus 4.5",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-2": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.anthropic.claude-opus-4-6-v1": {
+    "prefix": "eu",
+    "modelId": "anthropic.claude-opus-4-6-v1",
+    "name": "EU Anthropic Claude Opus 4.6",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-2": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.anthropic.claude-opus-4-7": {
+    "prefix": "eu",
+    "modelId": "anthropic.claude-opus-4-7",
+    "name": "EU Anthropic Claude Opus 4.7",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-2": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.anthropic.claude-opus-4-8": {
+    "prefix": "eu",
+    "modelId": "anthropic.claude-opus-4-8",
+    "name": "EU Anthropic Claude Opus 4.8",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-2": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.anthropic.claude-opus-5": {
+    "prefix": "eu",
+    "modelId": "anthropic.claude-opus-5",
+    "name": "EU Anthropic Claude Opus 5",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-2": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.anthropic.claude-sonnet-4-20250514-v1:0": {
+    "prefix": "eu",
+    "modelId": "anthropic.claude-sonnet-4-20250514-v1:0",
+    "name": "EU Claude Sonnet 4",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.anthropic.claude-sonnet-4-5-20250929-v1:0": {
+    "prefix": "eu",
+    "modelId": "anthropic.claude-sonnet-4-5-20250929-v1:0",
+    "name": "EU Anthropic Claude Sonnet 4.5",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-2": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.anthropic.claude-sonnet-4-6": {
+    "prefix": "eu",
+    "modelId": "anthropic.claude-sonnet-4-6",
+    "name": "EU Anthropic Claude Sonnet 4.6",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-2": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.anthropic.claude-sonnet-5": {
+    "prefix": "eu",
+    "modelId": "anthropic.claude-sonnet-5",
+    "name": "EU Anthropic Claude Sonnet 5",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-2": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.cohere.embed-v4:0": {
+    "prefix": "eu",
+    "modelId": "cohere.embed-v4:0",
+    "name": "EU Cohere Embed v4",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-2": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.meta.llama3-2-1b-instruct-v1:0": {
+    "prefix": "eu",
+    "modelId": "meta.llama3-2-1b-instruct-v1:0",
+    "name": "EU Meta Llama 3.2 1B Instruct",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.meta.llama3-2-3b-instruct-v1:0": {
+    "prefix": "eu",
+    "modelId": "meta.llama3-2-3b-instruct-v1:0",
+    "name": "EU Meta Llama 3.2 3B Instruct",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.mistral.pixtral-large-2502-v1:0": {
+    "prefix": "eu",
+    "modelId": "mistral.pixtral-large-2502-v1:0",
+    "name": "EU Mistral Pixtral Large 25.02",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.twelvelabs.marengo-embed-2-7-v1:0": {
+    "prefix": "eu",
+    "modelId": "twelvelabs.marengo-embed-2-7-v1:0",
+    "name": "EU TwelveLabs Marengo Embed v2.7",
+    "sources": {
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.twelvelabs.marengo-embed-3-0-v1:0": {
+    "prefix": "eu",
+    "modelId": "twelvelabs.marengo-embed-3-0-v1:0",
+    "name": "EU TwelveLabs Marengo Embed 3.0",
+    "sources": {
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ]
+    }
+  },
+  "eu.twelvelabs.pegasus-1-2-v1:0": {
+    "prefix": "eu",
+    "modelId": "twelvelabs.pegasus-1-2-v1:0",
+    "name": "EU TwelveLabs Pegasus v1.2",
+    "sources": {
+      "eu-central-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-north-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-1": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
+      ],
+      "eu-west-2": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3"
+      ],
+      "eu-west-3": [
+        "eu-central-1",
+        "eu-north-1",
+        "eu-south-1",
+        "eu-south-2",
+        "eu-west-1",
+        "eu-west-3"
       ]
     }
   },
@@ -124,6 +1392,48 @@
     "name": "GLOBAL Amazon Nova 2 Lite",
     "sources": {
       "ap-northeast-1": [
+        "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
         "*"
       ]
     }
@@ -135,6 +1445,54 @@
     "sources": {
       "ap-northeast-1": [
         "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
+        "*"
       ]
     }
   },
@@ -144,6 +1502,54 @@
     "name": "Global Anthropic Claude Fable 5.1",
     "sources": {
       "ap-northeast-1": [
+        "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
         "*"
       ]
     }
@@ -155,6 +1561,54 @@
     "sources": {
       "ap-northeast-1": [
         "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
+        "*"
       ]
     }
   },
@@ -164,6 +1618,54 @@
     "name": "GLOBAL Anthropic Claude Opus 4.5",
     "sources": {
       "ap-northeast-1": [
+        "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
         "*"
       ]
     }
@@ -175,6 +1677,54 @@
     "sources": {
       "ap-northeast-1": [
         "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
+        "*"
       ]
     }
   },
@@ -184,6 +1734,54 @@
     "name": "Global Anthropic Claude Opus 4.7",
     "sources": {
       "ap-northeast-1": [
+        "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
         "*"
       ]
     }
@@ -195,6 +1793,54 @@
     "sources": {
       "ap-northeast-1": [
         "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
+        "*"
       ]
     }
   },
@@ -204,6 +1850,54 @@
     "name": "Global Anthropic Claude Opus 5",
     "sources": {
       "ap-northeast-1": [
+        "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
         "*"
       ]
     }
@@ -215,6 +1909,18 @@
     "sources": {
       "ap-northeast-1": [
         "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-2": [
+        "*"
       ]
     }
   },
@@ -224,6 +1930,54 @@
     "name": "Global Claude Sonnet 4.5",
     "sources": {
       "ap-northeast-1": [
+        "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
         "*"
       ]
     }
@@ -235,6 +1989,54 @@
     "sources": {
       "ap-northeast-1": [
         "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
+        "*"
       ]
     }
   },
@@ -244,6 +2046,54 @@
     "name": "Global Anthropic Claude Sonnet 5",
     "sources": {
       "ap-northeast-1": [
+        "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
         "*"
       ]
     }
@@ -255,6 +2105,54 @@
     "sources": {
       "ap-northeast-1": [
         "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
+        "*"
       ]
     }
   },
@@ -264,6 +2162,54 @@
     "name": "Global OpenAI GPT-5.6 Luna",
     "sources": {
       "ap-northeast-1": [
+        "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
         "*"
       ]
     }
@@ -275,6 +2221,54 @@
     "sources": {
       "ap-northeast-1": [
         "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
+        "*"
       ]
     }
   },
@@ -284,6 +2278,54 @@
     "name": "Global OpenAI GPT-5.6 Terra",
     "sources": {
       "ap-northeast-1": [
+        "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
         "*"
       ]
     }
@@ -295,6 +2337,54 @@
     "sources": {
       "ap-northeast-1": [
         "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
+        "*"
       ]
     }
   },
@@ -304,6 +2394,54 @@
     "name": "GLOBAL TwelveLabs Pegasus v1.2",
     "sources": {
       "ap-northeast-1": [
+        "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
         "*"
       ]
     }
@@ -315,6 +2453,76 @@
     "sources": {
       "ap-northeast-1": [
         "*"
+      ],
+      "ap-northeast-2": [
+        "*"
+      ],
+      "ap-northeast-3": [
+        "*"
+      ],
+      "ap-south-1": [
+        "*"
+      ],
+      "ap-southeast-1": [
+        "*"
+      ],
+      "ap-southeast-2": [
+        "*"
+      ],
+      "ca-central-1": [
+        "*"
+      ],
+      "eu-central-1": [
+        "*"
+      ],
+      "eu-north-1": [
+        "*"
+      ],
+      "eu-west-1": [
+        "*"
+      ],
+      "eu-west-2": [
+        "*"
+      ],
+      "eu-west-3": [
+        "*"
+      ],
+      "sa-east-1": [
+        "*"
+      ],
+      "us-east-1": [
+        "*"
+      ],
+      "us-east-2": [
+        "*"
+      ],
+      "us-west-1": [
+        "*"
+      ],
+      "us-west-2": [
+        "*"
+      ]
+    }
+  },
+  "in.openai.gpt-5.6-luna": {
+    "prefix": "in",
+    "modelId": "openai.gpt-5.6-luna",
+    "name": "IN OpenAI GPT-5.6 Luna",
+    "sources": {
+      "ap-south-1": [
+        "ap-south-1",
+        "ap-south-2"
+      ]
+    }
+  },
+  "in.openai.gpt-5.6-terra": {
+    "prefix": "in",
+    "modelId": "openai.gpt-5.6-terra",
+    "name": "IN OpenAI GPT-5.6 Terra",
+    "sources": {
+      "ap-south-1": [
+        "ap-south-1",
+        "ap-south-2"
       ]
     }
   },
@@ -337,6 +2545,10 @@
       "ap-northeast-1": [
         "ap-northeast-1",
         "ap-northeast-3"
+      ],
+      "ap-northeast-3": [
+        "ap-northeast-1",
+        "ap-northeast-3"
       ]
     }
   },
@@ -346,6 +2558,10 @@
     "name": "JP Anthropic Claude Opus 4.7",
     "sources": {
       "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-3"
+      ],
+      "ap-northeast-3": [
         "ap-northeast-1",
         "ap-northeast-3"
       ]
@@ -359,6 +2575,10 @@
       "ap-northeast-1": [
         "ap-northeast-1",
         "ap-northeast-3"
+      ],
+      "ap-northeast-3": [
+        "ap-northeast-1",
+        "ap-northeast-3"
       ]
     }
   },
@@ -368,6 +2588,10 @@
     "name": "JP Anthropic Claude Sonnet 4.5",
     "sources": {
       "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-3"
+      ],
+      "ap-northeast-3": [
         "ap-northeast-1",
         "ap-northeast-3"
       ]
@@ -381,6 +2605,1455 @@
       "ap-northeast-1": [
         "ap-northeast-1",
         "ap-northeast-3"
+      ],
+      "ap-northeast-3": [
+        "ap-northeast-1",
+        "ap-northeast-3"
+      ]
+    }
+  },
+  "us.amazon.nova-2-lite-v1:0": {
+    "prefix": "us",
+    "modelId": "amazon.nova-2-lite-v1:0",
+    "name": "US Amazon Nova 2 Lite",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.amazon.nova-lite-v1:0": {
+    "prefix": "us",
+    "modelId": "amazon.nova-lite-v1:0",
+    "name": "US Nova Lite",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.amazon.nova-micro-v1:0": {
+    "prefix": "us",
+    "modelId": "amazon.nova-micro-v1:0",
+    "name": "US Nova Micro",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.amazon.nova-premier-v1:0": {
+    "prefix": "us",
+    "modelId": "amazon.nova-premier-v1:0",
+    "name": "US Nova Premier",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.amazon.nova-pro-v1:0": {
+    "prefix": "us",
+    "modelId": "amazon.nova-pro-v1:0",
+    "name": "US Nova Pro",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-3-haiku-20240307-v1:0": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-3-haiku-20240307-v1:0",
+    "name": "US Anthropic Claude 3 Haiku",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-3-sonnet-20240229-v1:0": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "name": "US Anthropic Claude 3 Sonnet",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-fable-5": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-fable-5",
+    "name": "US Anthropic Claude Fable 5",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-fable-5-1": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-fable-5-1",
+    "name": "US Anthropic Claude Fable 5.1",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-haiku-4-5-20251001-v1:0": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-haiku-4-5-20251001-v1:0",
+    "name": "US Anthropic Claude Haiku 4.5",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-opus-4-1-20250805-v1:0": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-opus-4-1-20250805-v1:0",
+    "name": "US Claude Opus 4.1",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-opus-4-5-20251101-v1:0": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-opus-4-5-20251101-v1:0",
+    "name": "US Anthropic Claude Opus 4.5",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-opus-4-6-v1": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-opus-4-6-v1",
+    "name": "US Anthropic Claude Opus 4.6",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-opus-4-7": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-opus-4-7",
+    "name": "US Anthropic Claude Opus 4.7",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-opus-4-8": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-opus-4-8",
+    "name": "US Anthropic Claude Opus 4.8",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-opus-5": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-opus-5",
+    "name": "US Anthropic Claude Opus 5",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-sonnet-4-20250514-v1:0": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-sonnet-4-20250514-v1:0",
+    "name": "US Claude Sonnet 4",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-sonnet-4-5-20250929-v1:0": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-sonnet-4-5-20250929-v1:0",
+    "name": "US Anthropic Claude Sonnet 4.5",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-sonnet-4-6": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-sonnet-4-6",
+    "name": "US Anthropic Claude Sonnet 4.6",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.anthropic.claude-sonnet-5": {
+    "prefix": "us",
+    "modelId": "anthropic.claude-sonnet-5",
+    "name": "US Anthropic Claude Sonnet 5",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.cohere.embed-v4:0": {
+    "prefix": "us",
+    "modelId": "cohere.embed-v4:0",
+    "name": "US Cohere Embed v4",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.deepseek.r1-v1:0": {
+    "prefix": "us",
+    "modelId": "deepseek.r1-v1:0",
+    "name": "US DeepSeek-R1",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.meta.llama3-1-405b-instruct-v1:0": {
+    "prefix": "us",
+    "modelId": "meta.llama3-1-405b-instruct-v1:0",
+    "name": "US Meta Llama 3.1 Instruct 405B",
+    "sources": {
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.meta.llama3-1-70b-instruct-v1:0": {
+    "prefix": "us",
+    "modelId": "meta.llama3-1-70b-instruct-v1:0",
+    "name": "US Meta Llama 3.1 70B Instruct",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.meta.llama3-1-8b-instruct-v1:0": {
+    "prefix": "us",
+    "modelId": "meta.llama3-1-8b-instruct-v1:0",
+    "name": "US Meta Llama 3.1 8B Instruct",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.meta.llama3-2-11b-instruct-v1:0": {
+    "prefix": "us",
+    "modelId": "meta.llama3-2-11b-instruct-v1:0",
+    "name": "US Meta Llama 3.2 11B Instruct",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.meta.llama3-2-1b-instruct-v1:0": {
+    "prefix": "us",
+    "modelId": "meta.llama3-2-1b-instruct-v1:0",
+    "name": "US Meta Llama 3.2 1B Instruct",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.meta.llama3-2-3b-instruct-v1:0": {
+    "prefix": "us",
+    "modelId": "meta.llama3-2-3b-instruct-v1:0",
+    "name": "US Meta Llama 3.2 3B Instruct",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.meta.llama3-2-90b-instruct-v1:0": {
+    "prefix": "us",
+    "modelId": "meta.llama3-2-90b-instruct-v1:0",
+    "name": "US Meta Llama 3.2 90B Instruct",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.meta.llama3-3-70b-instruct-v1:0": {
+    "prefix": "us",
+    "modelId": "meta.llama3-3-70b-instruct-v1:0",
+    "name": "US Meta Llama 3.3 70B Instruct",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.meta.llama4-maverick-17b-instruct-v1:0": {
+    "prefix": "us",
+    "modelId": "meta.llama4-maverick-17b-instruct-v1:0",
+    "name": "US Llama 4 Maverick 17B Instruct",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.meta.llama4-scout-17b-instruct-v1:0": {
+    "prefix": "us",
+    "modelId": "meta.llama4-scout-17b-instruct-v1:0",
+    "name": "US Llama 4 Scout 17B Instruct",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.mistral.pixtral-large-2502-v1:0": {
+    "prefix": "us",
+    "modelId": "mistral.pixtral-large-2502-v1:0",
+    "name": "US Mistral Pixtral Large 25.02",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.openai.gpt-5.6-luna": {
+    "prefix": "us",
+    "modelId": "openai.gpt-5.6-luna",
+    "name": "US OpenAI GPT-5.6 Luna",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.openai.gpt-5.6-sol": {
+    "prefix": "us",
+    "modelId": "openai.gpt-5.6-sol",
+    "name": "US OpenAI GPT-5.6 Sol",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.openai.gpt-5.6-terra": {
+    "prefix": "us",
+    "modelId": "openai.gpt-5.6-terra",
+    "name": "US OpenAI GPT-5.6 Terra",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.openai.gpt-6-astra": {
+    "prefix": "us",
+    "modelId": "openai.gpt-6-astra",
+    "name": "US OpenAI GPT-6 Astra",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-conservative-upscale-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-conservative-upscale-v1:0",
+    "name": "US Stable Image Conservative Upscale",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-creative-upscale-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-creative-upscale-v1:0",
+    "name": "US Stable Image Creative Upscale",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-fast-upscale-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-fast-upscale-v1:0",
+    "name": "US Stable Image Fast Upscale",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-image-control-sketch-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-image-control-sketch-v1:0",
+    "name": "US Stable Image Control Sketch",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-image-control-structure-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-image-control-structure-v1:0",
+    "name": "US Stable Image Control Structure",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-image-erase-object-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-image-erase-object-v1:0",
+    "name": "US Stable Image Erase Object",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-image-inpaint-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-image-inpaint-v1:0",
+    "name": "US Stable Image Inpaint",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-image-remove-background-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-image-remove-background-v1:0",
+    "name": "US Stable Image Remove Background",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-image-search-recolor-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-image-search-recolor-v1:0",
+    "name": "US Stable Image Search and Recolor",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-image-search-replace-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-image-search-replace-v1:0",
+    "name": "US Stable Image Search and Replace",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-image-style-guide-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-image-style-guide-v1:0",
+    "name": "US Stable Image Style Guide",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-outpaint-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-outpaint-v1:0",
+    "name": "US Stable Image Outpaint",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.stability.stable-style-transfer-v1:0": {
+    "prefix": "us",
+    "modelId": "stability.stable-style-transfer-v1:0",
+    "name": "US Stable Image Style Transfer",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.twelvelabs.marengo-embed-2-7-v1:0": {
+    "prefix": "us",
+    "modelId": "twelvelabs.marengo-embed-2-7-v1:0",
+    "name": "US TwelveLabs Marengo Embed v2.7",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.twelvelabs.marengo-embed-3-0-v1:0": {
+    "prefix": "us",
+    "modelId": "twelvelabs.marengo-embed-3-0-v1:0",
+    "name": "US TwelveLabs Marengo Embed 3.0",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.twelvelabs.pegasus-1-2-v1:0": {
+    "prefix": "us",
+    "modelId": "twelvelabs.pegasus-1-2-v1:0",
+    "name": "US Pegasus v1.2",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.writer.palmyra-x4-v1:0": {
+    "prefix": "us",
+    "modelId": "writer.palmyra-x4-v1:0",
+    "name": "US Writer Palmyra X4",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.writer.palmyra-x5-v1:0": {
+    "prefix": "us",
+    "modelId": "writer.palmyra-x5-v1:0",
+    "name": "US Writer Palmyra X5",
+    "sources": {
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ]
+    }
+  },
+  "us.xai.grok-4.6": {
+    "prefix": "us",
+    "modelId": "xai.grok-4.6",
+    "name": "US xAI Grok 4.6",
+    "sources": {
+      "ca-central-1": [
+        "ca-central-1",
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-east-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
+      ],
+      "us-west-1": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2"
+      ],
+      "us-west-2": [
+        "us-east-1",
+        "us-east-2",
+        "us-west-2"
       ]
     }
   }
