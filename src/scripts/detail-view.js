@@ -179,11 +179,14 @@ export function mountDetailView({
     for (const [region, reason] of [...reasons].sort(([a], [b]) => a.localeCompare(b))) {
       const item = el("li", "detail-reason");
       item.id = `detail-reason-${region}`;
-      item.append(
-        el("span", "detail-reason-region mono", region),
-        // reason は AWS API のエラー原文。翻訳も要約もしない。
-        el("pre", "detail-reason-text mono", reason),
-      );
+      // 対象リージョンが多いと原文だけでページが埋まるので、既定は畳んでおく。
+      const box = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.className = "detail-reason-region mono";
+      summary.textContent = region;
+      // reason は AWS API のエラー原文。翻訳も要約もしない。
+      box.append(summary, el("pre", "detail-reason-text mono", reason));
+      item.appendChild(box);
       list.appendChild(item);
     }
     host.replaceChildren(el("h4", null, t("detail.reasonHeading")), list);

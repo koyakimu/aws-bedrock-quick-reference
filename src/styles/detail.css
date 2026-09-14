@@ -179,3 +179,9 @@ tr.expanded > td {
     gap: var(--sp-4);
   }
 }
+
+.detail-reason > details > summary {
+  cursor: pointer;
+  color: var(--fg-muted);
+  font-size: var(--fs-xs);
+}
