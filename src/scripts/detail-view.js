@@ -30,6 +30,92 @@ function regionLabel(code, notes) {
   return `${code} — ${regionName(code, getLang(), notes)}`;
 }
 
+// AC-010: 一覧から外したモデル ID はパネルの先頭に置く。
+function modelIdSection(detail) {
+  const section = el("section", "detail-model-id");
+  section.appendChild(el("h4", null, t("detail.modelId")));
+  section.appendChild(createCopyable(detail.modelId, { labelKey: "copy.modelId" }));
+  return section;
+}
+
+// AC-011: 種別 / 指定する ID / 推論先リージョン の 3 列。
+const USAGE_LABEL = Object.freeze({
+  inRegion: "table.inRegion",
+  geo: "table.geo",
+  global: "table.global",
+});
+
+function usageSection(detail, regionNotes) {
+  const section = el("section", "detail-usage");
+  section.appendChild(el("h4", null, t("detail.usage")));
+
+  if (!detail.hasUsage) {
+    // 起点から呼べない組み合わせでも空欄にしない。
+    section.appendChild(el("p", "detail-no-usage", t("detail.usageNone")));
+    return section;
+  }
+
+  const table = el("table", "detail-usage-table");
+  const thead = document.createElement("thead");
+  const headRow = document.createElement("tr");
+  for (const key of ["detail.usageKind", "detail.usageId", "detail.usageDestinations"]) {
+    const th = el("th", null, t(key));
+    th.setAttribute("scope", "col");
+    headRow.appendChild(th);
+  }
+  thead.appendChild(headRow);
+
+  const tbody = document.createElement("tbody");
+  for (const row of detail.usage) {
+    const tr = el("tr", `detail-usage-row detail-usage-${row.kind}`);
+    tr.dataset.kind = row.kind;
+    tr.dataset.id = row.id;
+
+    const kindCell = document.createElement("td");
+    kindCell.className = "detail-usage-kind";
+    kindCell.appendChild(el("span", `usage-badge usage-${row.kind}`, t(USAGE_LABEL[row.kind])));
+    tr.appendChild(kindCell);
+
+    const idCell = document.createElement("td");
+    idCell.className = "detail-usage-id";
+    idCell.appendChild(
+      createCopyable(row.id, {
+        labelKey: row.idKind === "modelId" ? "copy.modelId" : "copy.profileId",
+      }),
+    );
+    tr.appendChild(idCell);
+
+    const destCell = document.createElement("td");
+    destCell.className = "detail-usage-dest";
+    if (row.allRegions) {
+      // "*" は出さず注記にする (AC-011 / AC-006)。
+      destCell.appendChild(el("span", "detail-all-regions", t("detail.allRegions")));
+    } else {
+      const chips = el("span", "chips");
+      for (const destination of row.destinations) {
+        const chip = el("span", "chip chip-dest mono", destination);
+        chip.title = regionName(destination, getLang(), regionNotes);
+        chips.appendChild(chip);
+      }
+      destCell.appendChild(chips);
+    }
+    tr.appendChild(destCell);
+    tbody.appendChild(tr);
+  }
+
+  table.append(thead, tbody);
+  section.appendChild(table);
+  return section;
+}
+
+// AC-012: 起点リージョンの接続先。
+function endpointSection(detail) {
+  const section = el("section", "detail-endpoint");
+  section.appendChild(el("span", "detail-endpoint-label", t("detail.endpoint")));
+  section.appendChild(el("code", "detail-endpoint-value mono", detail.endpoint));
+  return section;
+}
+
 function availabilitySection(detail, regionNotes) {
   const section = el("section", "detail-availability");
   const heading = el("h4", null, t("detail.availability"));
@@ -155,7 +241,14 @@ export function mountDetailView({
     const td = document.createElement("td");
     td.colSpan = columnCount;
     const panel = el("div", "detail-panel");
-    panel.append(availabilitySection(detail, regionNotes), profileSection(detail, regionNotes));
+    // 上から 技術的な識別子 → 横断の事実 → 接続先 の順 (AC-010 〜 AC-012)。
+    panel.append(
+      modelIdSection(detail),
+      usageSection(detail, regionNotes),
+      availabilitySection(detail, regionNotes),
+      profileSection(detail, regionNotes),
+      endpointSection(detail),
+    );
     td.appendChild(panel);
     tr.appendChild(td);
     return { tr, detail };

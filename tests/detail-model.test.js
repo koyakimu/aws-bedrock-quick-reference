@@ -1,9 +1,10 @@
-// DETAIL-001 の単体テスト。AC-002 / 003 / 004 / 005 / 006 / 008 / 009。
+// DETAIL-001 v2 の単体テスト。AC-002 / 003 / 004 / 005 / 006 / 008 / 009 / 011 / 012。
 import { describe, it, expect } from "vitest";
 import {
   buildAvailabilityRows,
   buildDetail,
   buildProfileRows,
+  buildUsageRows,
 } from "../src/scripts/detail-model.mjs";
 import { selectableRegions } from "../src/scripts/bedrock-view-model.mjs";
 import {
@@ -161,5 +162,71 @@ describe("DETAIL-001 AC-009 対象プロファイルが 1 件も無い", () => {
     });
     expect(detail.profiles).toEqual([]);
     expect(detail.hasProfiles).toBe(false);
+  });
+});
+
+// --- AC-011 使い方ごとの「指定する ID」 ---
+describe("DETAIL-001 AC-011 使い方ごとの指定する ID", () => {
+  const usage = (modelId, region = TOKYO) =>
+    buildUsageRows(modelId, { models: snapshot.models, profiles: snapshot.profiles, region });
+
+  it("In-Region だけのモデルはモデル ID と起点リージョンを返す", () => {
+    expect(usage(NVIDIA)).toEqual([
+      {
+        kind: "inRegion",
+        id: NVIDIA,
+        idKind: "modelId",
+        destinations: [TOKYO],
+        allRegions: false,
+      },
+    ]);
+  });
+
+  it("Geo と Global を持つモデルは Geo → Global の順で返す (In-Region 不可なので先頭は geo)", () => {
+    const rows = usage(CLAUDE);
+    expect(rows.map((row) => row.kind)).toEqual(["geo", "global"]);
+    const jp = rows.find((row) => row.prefix === "jp");
+    expect(jp.id).toBe("jp.anthropic.claude-sonnet-4-5-20250929-v1:0");
+    expect(jp.idKind).toBe("profileId");
+    expect(jp.destinations).toEqual(["ap-northeast-1", "ap-northeast-3"]);
+  });
+
+  it("Global の推論先は列挙せず、'*' を返さない (AC-006)", () => {
+    const global = usage(CLAUDE).find((row) => row.kind === "global");
+    expect(global.allRegions).toBe(true);
+    expect(global.destinations).toEqual([]);
+    expect(JSON.stringify(usage(CLAUDE))).not.toContain("*");
+  });
+
+  it("起点から呼べる使い方が無ければ空配列", () => {
+    expect(usage(CLAUDE, "eu-west-1")).toEqual([]);
+  });
+
+  it("buildDetail は usage と hasUsage を持つ", () => {
+    const detail = buildDetail(NVIDIA, {
+      models: snapshot.models,
+      profiles: snapshot.profiles,
+      fetchLog: snapshot.fetchLog,
+      regionNotes,
+      region: TOKYO,
+    });
+    expect(detail.hasUsage).toBe(true);
+    expect(detail.usage).toHaveLength(1);
+  });
+});
+
+// --- AC-012 起点のエンドポイント ---
+describe("DETAIL-001 AC-012 起点のエンドポイント", () => {
+  it("buildDetail が起点リージョンの bedrock-runtime FQDN を返す", () => {
+    const detail = (region) =>
+      buildDetail(CLAUDE, {
+        models: snapshot.models,
+        profiles: snapshot.profiles,
+        fetchLog: snapshot.fetchLog,
+        regionNotes,
+        region,
+      });
+    expect(detail(TOKYO).endpoint).toBe("bedrock-runtime.ap-northeast-1.amazonaws.com");
+    expect(detail("eu-west-1").endpoint).toBe("bedrock-runtime.eu-west-1.amazonaws.com");
   });
 });

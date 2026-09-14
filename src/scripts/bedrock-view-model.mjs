@@ -156,9 +156,13 @@ export function buildViewModel({
     fetch.status === "ok"
       ? modelsVisibleFrom(models, region)
           .map(([modelId, model]) => buildRow({ modelId, model, profiles, region, overrides }))
+          // 一覧は プロバイダ → モデル名 の昇順 (TABLE-001 v2 AC-006)。
+          // 同名のモデルが複数あるときだけモデル ID で決着させる。
           .sort(
             (a, b) =>
-              a.provider.localeCompare(b.provider) || a.modelId.localeCompare(b.modelId),
+              a.provider.localeCompare(b.provider) ||
+              a.name.localeCompare(b.name) ||
+              a.modelId.localeCompare(b.modelId),
           )
       : [];
 

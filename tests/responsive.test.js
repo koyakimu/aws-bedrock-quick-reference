@@ -2,7 +2,7 @@
 // TABLE-001 AC-NFR-001 の構造側。
 // 実際の 375px の見た目は Playwright のスクリーンショットで目視確認する
 // (Test Strategy の e2e)。ここでは「ページ本体は横に伸びず、横スクロールを
-// 持つのは表の枠だけ」「Model ID 列が sticky」という CSS の取り決めが
+// 持つのは表の枠だけ」「モデル名列が sticky」という CSS の取り決めが
 // 消えていないことを固定する。
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
@@ -25,17 +25,24 @@ describe("AC-NFR-001 スマートフォン幅", () => {
     expect(table).toMatch(/\.table-frame\s*\{[^}]*max-width:\s*100%/);
   });
 
-  it("Model ID 列が左端に固定される", () => {
+  it("モデル名列が左端に固定される (TABLE-001 v2 AC-NFR-001)", () => {
     expect(table).toContain("position: sticky");
-    expect(table).toMatch(/\.sticky-modelId[\s\S]*?left:\s*var\(--col-provider-w\)/);
+    expect(table).toMatch(/\.sticky-name[\s\S]*?left:\s*var\(--col-provider-w\)/);
+    expect(table).not.toContain("sticky-modelId");
     expect(table).toMatch(/\.sticky-provider[\s\S]*?left:\s*0/);
     expect(tokens).toContain("--col-provider-w");
   });
 
-  it("768px 以下では固定列の幅を詰め、Model ID を折り返す", () => {
+  it("768px 以下では固定列の幅を詰め、モデル名を折り返す", () => {
     const mobile = base.slice(base.indexOf("@media (max-width: 768px)"));
     expect(mobile).toContain("--col-provider-w");
-    expect(mobile).toMatch(/sticky-modelId[\s\S]*?white-space:\s*normal/);
+    expect(mobile).toMatch(/sticky-name[\s\S]*?white-space:\s*normal/);
+  });
+
+  it("詳細パネルの使い方の表も枠内で横スクロールする (DETAIL-001 v2 AC-011)", () => {
+    const detail = read("styles/detail.css");
+    const mobile = detail.slice(detail.indexOf("@media (max-width: 768px)"));
+    expect(mobile).toMatch(/\.detail-usage\s*\{[^}]*overflow-x:\s*auto/);
   });
 });
 

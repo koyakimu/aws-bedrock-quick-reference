@@ -1,6 +1,6 @@
-// DETAIL-001 の結合テスト (jsdom)。AC-001 / 007 / 008 / 009 と、
+// DETAIL-001 v2 の結合テスト (jsdom)。AC-001 / 007 / 008 / 009 / 010 / 011 / 012 と、
 // 単体で作った行が画面にそのまま出ていること (AC-002 〜 006)。
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { mountFixtureApp, rowFor, cells, $ } from "./app-harness.js";
 import { panelId } from "../src/scripts/detail-view.js";
 import { DENIED_REGION, TOKYO, EMPTY_REGION } from "./fixtures/bedrock-fixture.js";
@@ -34,13 +34,14 @@ describe("DETAIL-001 AC-001 行の展開", () => {
     expect(toggleOf(CLAUDE).getAttribute("aria-expanded")).toBe("false");
   });
 
-  it("行クリックでも開く (コピーボタンのクリックでは開かない)", () => {
+  it("行クリックでも開く (パネル内のコピーボタンでは閉じない)", () => {
     mountFixtureApp();
     cells(rowFor(CLAUDE))[0].click();
     expect(panelOf(CLAUDE)).not.toBeNull();
 
-    cells(rowFor(NVIDIA))[1].querySelector("button.copy-btn").click();
-    expect(panelOf(NVIDIA)).toBeNull();
+    // 表にコピーボタンは無い (TABLE-001 v2 AC-007)。パネル内のボタンを押しても閉じない
+    panelOf(CLAUDE).querySelector("button.copy-btn").click();
+    expect(panelOf(CLAUDE)).not.toBeNull();
   });
 
   it("複数行を同時に開ける", () => {
@@ -206,5 +207,132 @@ describe("DETAIL-001 AC-009 対象プロファイルが 1 件も無い", () => {
     expect(panel.querySelector(".detail-no-profiles").textContent).toBe(
       "cross-region inference profile なし（モデル ID を直接指定する）",
     );
+  });
+});
+
+// --- AC-010 モデル ID をパネルの先頭に出す ---
+describe("DETAIL-001 AC-010 モデル ID", () => {
+  it("パネルの先頭にモデル ID がコピーボタン付きで出る", () => {
+    mountFixtureApp();
+    toggleOf(CLAUDE).click();
+    const panel = panelOf(CLAUDE);
+    const section = panel.querySelector(".detail-panel").firstElementChild;
+    expect(section.classList.contains("detail-model-id")).toBe(true);
+    expect(section.querySelector(".copyable .id").textContent).toBe(CLAUDE);
+    expect(section.querySelector("button.copy-btn")).not.toBeNull();
+  });
+
+  it("コピーボタンはモデル ID の文字列だけをコピーする", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+    mountFixtureApp();
+    toggleOf(CLAUDE).click();
+    panelOf(CLAUDE).querySelector(".detail-model-id button.copy-btn").click();
+    await vi.waitFor(() => expect(writeText).toHaveBeenCalledTimes(1));
+    expect(writeText).toHaveBeenCalledWith(CLAUDE);
+  });
+});
+
+// --- AC-011 使い方ごとの「指定する ID」 ---
+describe("DETAIL-001 AC-011 種別 / 指定する ID / 推論先リージョン", () => {
+  it("3 列の表が出て、Geo は プロファイル ID と destination を出す", () => {
+    mountFixtureApp();
+    toggleOf(CLAUDE).click();
+    const usage = panelOf(CLAUDE).querySelector(".detail-usage");
+    expect([...usage.querySelectorAll("thead th")].map((th) => th.textContent)).toEqual([
+      "種別",
+      "指定する ID",
+      "推論先リージョン",
+    ]);
+    const geo = usage.querySelector('.detail-usage-row[data-kind="geo"]');
+    expect(geo.querySelector(".usage-badge").textContent).toBe("Geo");
+    expect(geo.querySelector(".copyable .id").textContent).toBe(
+      "jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
+    );
+    expect([...geo.querySelectorAll(".chip-dest")].map((chip) => chip.textContent)).toEqual([
+      "ap-northeast-1",
+      "ap-northeast-3",
+    ]);
+  });
+
+  it("Global は推論先を列挙せず注記にする ('*' を出さない)", () => {
+    mountFixtureApp();
+    toggleOf(CLAUDE).click();
+    const global = panelOf(CLAUDE).querySelector(
+      '.detail-usage .detail-usage-row[data-kind="global"]',
+    );
+    expect(global.querySelector(".usage-badge").textContent).toBe("Global");
+    expect(global.querySelector(".detail-usage-dest").textContent).toBe(
+      "全対応リージョン（今後増えうる）",
+    );
+    expect(global.querySelectorAll(".chip-dest")).toHaveLength(0);
+  });
+
+  it("In-Region で呼べるモデルはモデル ID と起点リージョンの行を出す", () => {
+    mountFixtureApp();
+    toggleOf(NVIDIA).click();
+    const row = panelOf(NVIDIA).querySelector('.detail-usage-row[data-kind="inRegion"]');
+    expect(row.querySelector(".usage-badge").textContent).toBe("In-Region");
+    expect(row.querySelector(".copyable .id").textContent).toBe(NVIDIA);
+    expect([...row.querySelectorAll(".chip-dest")].map((chip) => chip.textContent)).toEqual([
+      TOKYO,
+    ]);
+  });
+
+  it("プロファイル ID のコピーボタンはプロファイル ID だけをコピーする", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+    mountFixtureApp();
+    toggleOf(CLAUDE).click();
+    panelOf(CLAUDE)
+      .querySelector('.detail-usage-row[data-kind="geo"] button.copy-btn')
+      .click();
+    await vi.waitFor(() => expect(writeText).toHaveBeenCalledTimes(1));
+    expect(writeText).toHaveBeenCalledWith("jp.anthropic.claude-sonnet-4-5-20250929-v1:0");
+  });
+
+  it("起点から呼べる使い方が無ければ説明文を出す", () => {
+    const app = mountFixtureApp();
+    toggleOf(CLAUDE).click();
+    app.view.setRegion(EMPTY_REGION);
+    app.view.setRegion(TOKYO);
+    // 起点を東京に戻した状態では使い方がある
+    expect(panelOf(CLAUDE).querySelector(".detail-no-usage")).toBeNull();
+    expect(panelOf(CLAUDE).querySelectorAll(".detail-usage-row").length).toBeGreaterThan(0);
+  });
+});
+
+// --- AC-012 起点のエンドポイント ---
+describe("DETAIL-001 AC-012 起点のエンドポイント", () => {
+  it("パネルの最後に起点のエンドポイントが出て、ページ上部の表示と一致する", () => {
+    mountFixtureApp();
+    toggleOf(CLAUDE).click();
+    const panel = panelOf(CLAUDE).querySelector(".detail-panel");
+    expect(panel.lastElementChild.classList.contains("detail-endpoint")).toBe(true);
+    expect(panel.querySelector(".detail-endpoint-value").textContent).toBe(
+      "bedrock-runtime.ap-northeast-1.amazonaws.com",
+    );
+    expect(panel.querySelector(".detail-endpoint-value").textContent).toBe(
+      document.getElementById("endpoint-value").textContent,
+    );
+    expect(panel.textContent).toContain("エンドポイント");
+  });
+});
+
+// --- パネルの節の並び (UI Description) ---
+describe("DETAIL-001 詳細パネルの節の並び", () => {
+  it("モデル ID → 使い方 → 提供状況 → 推論プロファイル → エンドポイント", () => {
+    mountFixtureApp();
+    toggleOf(CLAUDE).click();
+    const sections = [...panelOf(CLAUDE).querySelector(".detail-panel").children].map(
+      (node) => node.className,
+    );
+    expect(sections).toEqual([
+      "detail-model-id",
+      "detail-usage",
+      "detail-availability",
+      "detail-profiles",
+      "detail-endpoint",
+    ]);
   });
 });
