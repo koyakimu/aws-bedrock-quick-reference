@@ -34,7 +34,8 @@ D-001〜D-005 は brainstorming の対話で内容が固まり、技術設計
 - **AI Recommendation**: **C**。まず A だけを実装して公開し、「リストに無い国で絞りたい」という要望が実際に出た時点で B の経路を足す。A と C は判定関数が同じ（`satisfiesLimit(destinations, L)` に渡す `L` の作り方だけが違う）ため、後から足しても手戻りが小さい
 - **Decision**: **C**
 - **Reason**: よくある問い（自国内・地理圏内）は 1 選択で済ませたい。今回のサイクルは固定リスト（A の経路）だけを実装し、カスタムのリージョン複数選択は要望が出た時点で足す。判定関数は同じなので後から足しても手戻りが小さい
-- **Refs**: `spec-filter.md`（FILTER-001。暫定で Option A の形で記述してある）、`spec-share.md`（SHARE-001 の `limit` パラメータ）
+- **Refs**: `spec-filter.md`（FILTER-001 v3）、`spec-share.md`（SHARE-001 v2 の `limit` パラメータ）
+- **実装状況** (2026-09-14 追記): カスタムのリージョン複数選択も実装済み（Issue #1）。Decision は C のまま変わらない。固定リストは初回サイクル、カスタムは Issue #1 で、推奨どおり判定関数 `satisfiesLimit(destinations, L)` は変えずに `L` の作り方（FILTER-001 AC-012〜AC-015）と `limit` の表現（AC-016 / AC-017、SHARE-001 AC-010）だけを足した
 
 ---
 

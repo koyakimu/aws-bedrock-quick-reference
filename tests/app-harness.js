@@ -82,3 +82,17 @@ export function setCheckbox(id, checked) {
   box.dispatchEvent(new Event("change"));
   return box;
 }
+
+// --- カスタムのリージョン複数選択 (FILTER-001 AC-012 〜 AC-017) ---
+export const customBox = (code) => document.getElementById(`filter-custom-${code}`);
+
+export function checkCustomRegion(code, checked = true) {
+  const box = customBox(code);
+  box.checked = checked;
+  box.dispatchEvent(new Event("change"));
+  return box;
+}
+
+export function customGroup(geo) {
+  return document.querySelector(`#filter-custom-groups .filter-custom-group[data-geo="${geo}"]`);
+}

@@ -1,11 +1,12 @@
 ---
 spec_id: "SHARE-001"
 context: "share"
-version: 1
-issue_ref: null
+version: 2
+issue_ref: "#1"
 title: "URL による起点リージョンと絞り込みの共有"
 decision_refs:
   - D-001
+  - D-007
 ---
 
 ## User Story
@@ -61,6 +62,11 @@ decision_refs:
 - **When**: 初期描画する
 - **Then**: FILTER-001 AC-010 の空状態（条件一覧とリセット操作）が表示される。「壊れている」と誤解される無言の空表にしない
 
+### AC-010 (limit のカスタム集合)
+- **Given**: 推論先の限定で「カスタム…」を選び、`ap-northeast-3` と `ap-northeast-1` にチェックを入れた状態（FILTER-001 AC-012）
+- **When**: URL を見る / その URL を開き直す
+- **Then**: `limit` の値は `custom:ap-northeast-1+ap-northeast-3` になる。リージョンコードは昇順・重複なしで `+` で連結し、アプリが URL を書くときは `+` が `%2B` に percent encode される（手で書いた生の `+` は空白に復号されるが、区切りとして同じに扱う）。空集合は `custom`。開き直すとピッカーが開いて同じリージョンにチェックが入り、表も同じ結果になる。`region-notes.json` に無いコードはコードごとに落として通知し（AC-008 と同じ扱い）、URL を残ったコードだけの値に書き換える
+
 ## UI Description
 
 - URL の更新はアドレスバーに反映されるのみで、専用の UI は持たない
@@ -98,6 +104,7 @@ decision_refs:
 | AC-007 | unit + integration (vitest, jsdom) | 未知リージョンで既定にフォールバックし通知が出ること、URL が書き換わることを検証 |
 | AC-008 | unit (vitest) | `parseState` が不正値のみを落とし、有効値を残すことを複数パターンで検証 |
 | AC-009 | integration (jsdom, vitest) | 0 件になる URL で空状態 UI が出ることを検証 |
+| AC-010 | unit (vitest) + integration (jsdom, vitest) | `parseState` / `serializeState` の往復、コードの昇順・重複除去、未知コードの除去と通知、生の `+` の受け入れ、空集合 `custom` の扱いを検証 |
 | — (実 URL 確認) | e2e（Playwright MCP で URL を開いてスクリーンショットを手動確認） | ビルド後の単一 HTML を GitHub Pages 相当のパスで開き、URL 復元が動くことを目視 |
 
 ## Deliverable Previews
@@ -114,3 +121,9 @@ decision_refs:
 - 起点リージョンを URL で共有できることは Design FAQ Q13 で約束している。絞り込みの共有はその自然な拡張として同じ仕組みに載せる
 - 展開中の行（DETAIL-001）は URL に載せない。行数が増えると URL が長くなり、共有の主目的（起点と条件）がぼやけるため
 - GitHub Pages のサブパス（`/aws-bedrock-quick-reference/`）配下で動くこと。URL の組み立てで先頭スラッシュの絶対パスを使わない
+- `limit` の値の文法は `none` / `country:<code>` / `geo:<code>` / `custom` / `custom:<code>(+<code>)*`。固定リストの値は選択肢の一覧（FILTER-001 `buildLimitOptions()`）と突き合わせて検査し、カスタムはコードを 1 件ずつ `region-notes.json` のキーと突き合わせる。値の全体を弾かず、解釈できない部分だけを落とすのは AC-008 と同じ方針
+
+## 変更履歴
+
+- **version 2** (2026-09-14): `limit` の値の文法に カスタム集合（`custom` / `custom:<code>+<code>...`）を足し、AC-010 を追加した。未知のリージョンコードはコードごとに落として通知し、URL を書き換える。AC-001〜AC-009 と他のパラメータは変更しない。理由: Issue #1（FILTER-001 v3 のカスタム経路）
+- **version 1** (2026-09-14): 初版

@@ -9,6 +9,9 @@ import {
   setSelect,
   setSearch,
   setCheckbox,
+  checkCustomRegion,
+  customBox,
+  customGroup,
   $,
 } from "./app-harness.js";
 import { setLang } from "../src/scripts/i18n.js";
@@ -86,7 +89,7 @@ describe("FILTER-001 AC-005 推論先の限定 (国) の画面表示", () => {
     expect(claudeGeo.querySelector(".geo-entry").classList.contains("out-of-limit")).toBe(false);
   });
 
-  it("セレクタは 制限なし + 国 3 件 + 地理圏 5 件の 2 グループ", () => {
+  it("セレクタは 制限なし + 国 3 件 + 地理圏 5 件の 2 グループ + 末尾のカスタム", () => {
     mountFixtureApp();
     const select = document.getElementById("filter-limit");
     expect(select.value).toBe("none");
@@ -104,7 +107,10 @@ describe("FILTER-001 AC-005 推論先の限定 (国) の画面表示", () => {
       "geo:eu",
       "geo:us",
       "geo:au",
+      "custom",
     ]);
+    // 「カスタム…」は国にも地理圏にも属さず、最後の選択肢として並ぶ (AC-012)
+    expect([...select.options].at(-1).textContent).toBe("カスタム…");
   });
 });
 
@@ -238,5 +244,150 @@ describe("FILTER-001 言語を切り替えても絞り込みは保たれる", ()
     expect(modelIds()).toEqual(before);
     expect(document.getElementById("filter-count").textContent).toBe("1 of 5");
     expect(document.getElementById("filter-limit").options[0].textContent).toBe("No limit");
+  });
+});
+
+// --- AC-012 〜 AC-015 カスタムのリージョン複数選択 (画面、Issue #1) ---
+describe("FILTER-001 AC-012 カスタムを選ぶとリージョンのピッカーが開く", () => {
+  it("ピッカーは既定で閉じており、カスタムを選ぶと開く", () => {
+    mountFixtureApp();
+    expect(document.getElementById("filter-custom").hidden).toBe(true);
+    setSelect("filter-limit", ["custom"]);
+    expect(document.getElementById("filter-custom").hidden).toBe(false);
+    // 全 33 リージョンがチェックボックスとして並ぶ
+    expect(document.querySelectorAll("#filter-custom .filter-custom-box")).toHaveLength(33);
+    expect(customBox("ap-northeast-1").checked).toBe(false);
+  });
+
+  it("ラベルはコードと現地名 (region-notes.json 由来)", () => {
+    mountFixtureApp();
+    setSelect("filter-limit", ["custom"]);
+    expect(customBox("ap-northeast-1").closest("label").textContent).toBe(
+      "ap-northeast-1 — 東京",
+    );
+    setLang("en");
+    expect(customBox("ap-northeast-1").closest("label").textContent).toBe(
+      "ap-northeast-1 — Asia Pacific (Tokyo)",
+    );
+  });
+
+  it("2 件選ぶと固定リストの「日本国内のみ」と同じ結果になり、チップが件数を出す", () => {
+    mountFixtureApp();
+    setSelect("filter-limit", ["custom"]);
+    checkCustomRegion("ap-northeast-1");
+    checkCustomRegion("ap-northeast-3");
+
+    expect(modelIds()).toEqual([
+      NOVA,
+      CLAUDE,
+      "cohere.embed-v4:0",
+      "nvidia.nemotron-nano-12b-v2",
+    ]);
+    const chips = [...document.querySelectorAll("#filter-chips .filter-chip")];
+    expect(chips).toHaveLength(1);
+    expect(chips[0].textContent).toContain("カスタム（2 リージョン）");
+    expect(chips[0].dataset.value).toBe("custom:ap-northeast-1+ap-northeast-3");
+    // 限定外の印も固定リストと同じように付く
+    expect(cells(rowFor(NOVA))[4].textContent).toContain("限定外");
+  });
+
+  it("選択を外すと集合から消える", () => {
+    mountFixtureApp();
+    setSelect("filter-limit", ["custom"]);
+    checkCustomRegion("ap-northeast-1");
+    checkCustomRegion("ap-northeast-3");
+    checkCustomRegion("ap-northeast-3", false);
+    expect(document.querySelector("#filter-chips .filter-chip").dataset.value).toBe(
+      "custom:ap-northeast-1",
+    );
+  });
+});
+
+describe("FILTER-001 AC-013 地理圏グループの一括選択", () => {
+  it("グループごとに区切られ、一括選択でそのグループが全部入る", () => {
+    mountFixtureApp();
+    setSelect("filter-limit", ["custom"]);
+    const legends = [...document.querySelectorAll("#filter-custom .filter-custom-legend")];
+    expect(legends.map((legend) => legend.textContent)).toEqual([
+      "日本国内",
+      "アジア太平洋",
+      "EU",
+      "米国",
+      "オーストラリア",
+      "その他",
+    ]);
+
+    customGroup("jp").querySelector(".filter-custom-all").click();
+    expect(customBox("ap-northeast-1").checked).toBe(true);
+    expect(customBox("ap-northeast-3").checked).toBe(true);
+    expect(customBox("us-east-1").checked).toBe(false);
+    expect(document.querySelector("#filter-chips .filter-chip").dataset.value).toBe(
+      "custom:ap-northeast-1+ap-northeast-3",
+    );
+  });
+
+  it("別のグループを一括選択すると既存の選択に足し込まれる", () => {
+    mountFixtureApp();
+    setSelect("filter-limit", ["custom"]);
+    customGroup("jp").querySelector(".filter-custom-all").click();
+    customGroup("us").querySelector(".filter-custom-all").click();
+    expect(document.querySelector("#filter-chips .filter-chip").textContent).toContain(
+      "カスタム（6 リージョン）",
+    );
+    expect(customBox("us-west-2").checked).toBe(true);
+  });
+});
+
+describe("FILTER-001 AC-014 クリアと固定リストへの復帰", () => {
+  it("クリアで全部のチェックが外れ、全行に戻る", () => {
+    mountFixtureApp();
+    setSelect("filter-limit", ["custom"]);
+    customGroup("jp").querySelector(".filter-custom-all").click();
+    expect(bodyRows()).toHaveLength(4);
+
+    document.getElementById("filter-custom-clear").click();
+    expect(customBox("ap-northeast-1").checked).toBe(false);
+    expect(bodyRows()).toHaveLength(5);
+    // ピッカーは開いたまま (続けて選べる)
+    expect(document.getElementById("filter-custom").hidden).toBe(false);
+  });
+
+  it("固定の選択肢に戻すとピッカーが閉じ、カスタムの集合は残らない", () => {
+    mountFixtureApp();
+    setSelect("filter-limit", ["custom"]);
+    checkCustomRegion("ap-northeast-1");
+    setSelect("filter-limit", ["geo:apac"]);
+    expect(document.getElementById("filter-custom").hidden).toBe(true);
+    expect(document.querySelector("#filter-chips .filter-chip").textContent).toContain(
+      "APAC 内のみ",
+    );
+
+    setSelect("filter-limit", ["custom"]);
+    expect(customBox("ap-northeast-1").checked).toBe(false);
+    expect(document.getElementById("filter-custom").hidden).toBe(false);
+  });
+});
+
+describe("FILTER-001 AC-015 空のカスタム集合は限定しない", () => {
+  it("1 つも選んでいなければヒントを出し、行は落ちず、チップも出ない", () => {
+    mountFixtureApp();
+    setSelect("filter-limit", ["custom"]);
+    const hint = document.getElementById("filter-custom-hint");
+    expect(hint.hidden).toBe(false);
+    expect(hint.textContent).toContain("推論先を限定していません");
+    expect(hint.getAttribute("role")).toBe("status");
+    expect(bodyRows()).toHaveLength(5);
+    expect(document.querySelectorAll("#filter-chips .filter-chip")).toHaveLength(0);
+    // 限定の印も付かない
+    expect(cells(rowFor(NOVA))[4].textContent).not.toContain("限定外");
+  });
+
+  it("1 件選ぶとヒントが消え、外すと戻る", () => {
+    mountFixtureApp();
+    setSelect("filter-limit", ["custom"]);
+    checkCustomRegion("ap-northeast-1");
+    expect(document.getElementById("filter-custom-hint").hidden).toBe(true);
+    checkCustomRegion("ap-northeast-1", false);
+    expect(document.getElementById("filter-custom-hint").hidden).toBe(false);
   });
 });

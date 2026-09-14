@@ -7,6 +7,8 @@ import {
   setSelect,
   setSearch,
   setCheckbox,
+  checkCustomRegion,
+  customBox,
   BASE_URL,
 } from "./app-harness.js";
 import { setLang } from "../src/scripts/i18n.js";
@@ -180,5 +182,67 @@ describe("SHARE-001 AC-009 復元後に結果が 0 件", () => {
     expect(empty.textContent).toContain("条件に一致するモデルがありません");
     expect(document.querySelectorAll("#filter-empty-conditions li")).toHaveLength(1);
     expect(document.getElementById("denied-banner").hidden).toBe(true);
+  });
+});
+
+// --- AC-010 カスタム集合の URL 往復 (Issue #1) ---
+describe("SHARE-001 AC-010 カスタム集合の URL 往復", () => {
+  it("カスタムで選んだリージョンが limit に載る (コードは昇順・+ 連結)", () => {
+    const app = mountFixtureApp();
+    setSelect("filter-limit", ["custom"]);
+    checkCustomRegion("ap-northeast-3");
+    checkCustomRegion("ap-northeast-1");
+    expect(new URLSearchParams(query(app)).get("limit")).toBe(
+      "custom:ap-northeast-1+ap-northeast-3",
+    );
+    expect(query(app)).toContain("limit=custom%3Aap-northeast-1%2Bap-northeast-3");
+  });
+
+  it("URL から復元するとピッカーが開き、チェックと表が揃う", () => {
+    mountFixtureApp({ search: "?limit=custom:ap-northeast-1%2Bap-northeast-3" });
+    expect(document.getElementById("filter-limit").value).toBe("custom");
+    expect(document.getElementById("filter-custom").hidden).toBe(false);
+    expect(customBox("ap-northeast-1").checked).toBe(true);
+    expect(customBox("ap-northeast-3").checked).toBe(true);
+    expect(customBox("us-east-1").checked).toBe(false);
+    expect(bodyRows()).toHaveLength(4);
+    expect(document.querySelector("#filter-chips .filter-chip").textContent).toContain(
+      "カスタム（2 リージョン）",
+    );
+  });
+
+  it("手で書いた生の + (空白に復号される) でも復元できる", () => {
+    mountFixtureApp({ search: "?limit=custom:ap-northeast-1+ap-northeast-3" });
+    expect(customBox("ap-northeast-1").checked).toBe(true);
+    expect(customBox("ap-northeast-3").checked).toBe(true);
+  });
+
+  it("未知のリージョンコードは落として通知し、URL を書き換える", () => {
+    const app = mountFixtureApp({
+      search: "?limit=custom:ap-northeast-1%2Bxx-nowhere-9",
+    });
+    expect(customBox("ap-northeast-1").checked).toBe(true);
+    const notice = document.getElementById("share-notice");
+    expect(notice.hidden).toBe(false);
+    expect(notice.textContent).toContain("limit=xx-nowhere-9");
+    expect(new URLSearchParams(query(app)).get("limit")).toBe("custom:ap-northeast-1");
+  });
+
+  it("空のカスタム集合では絞り込まれず、限定なしと同じ表になる", () => {
+    mountFixtureApp({ search: "?limit=custom" });
+    expect(document.getElementById("filter-custom").hidden).toBe(false);
+    expect(document.getElementById("filter-custom-hint").hidden).toBe(false);
+    expect(bodyRows()).toHaveLength(5);
+    expect(document.querySelectorAll("#filter-chips .filter-chip")).toHaveLength(0);
+  });
+
+  it("固定の選択肢に戻すと limit が置き換わる", () => {
+    const app = mountFixtureApp();
+    setSelect("filter-limit", ["custom"]);
+    checkCustomRegion("ap-northeast-1");
+    setSelect("filter-limit", ["country:jp"]);
+    expect(new URLSearchParams(query(app)).get("limit")).toBe("country:jp");
+    setSelect("filter-limit", ["none"]);
+    expect(query(app)).toBe("");
   });
 });
