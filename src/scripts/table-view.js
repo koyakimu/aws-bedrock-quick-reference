@@ -56,6 +56,17 @@ function markYes() {
   return span;
 }
 
+// 推論先の限定を満たさないセルの印 (FILTER-001 AC-005 / AC-008)。
+// 行ごと消さずにセルを淡色にするのは「この使い方なら条件を満たす」を残すため。
+function limitBadge() {
+  return el("span", "limit-out", t("filter.outOfLimit"));
+}
+
+// 限定が設定されているか (FILTER-001 が annotateRow で付ける)。
+function limitActive(row) {
+  return row.limit?.active === true;
+}
+
 // destination リージョンのチップ。コードは翻訳しないが、表示名を title に出す。
 function destinationChip(code, notes) {
   const chip = el("span", "chip chip-dest mono", code);
@@ -80,6 +91,11 @@ function inRegionCell(row) {
     return wrap;
   }
   wrap.append(markYes(), createCopyable(row.modelId, { labelKey: "copy.modelId" }));
+  // 起点 R が限定集合 L に入っていなければ In-Region は限定を満たさない (AC-007)。
+  if (limitActive(row) && row.limit.inRegion !== true) {
+    wrap.classList.add("out-of-limit");
+    wrap.appendChild(limitBadge());
+  }
   return wrap;
 }
 
@@ -91,6 +107,10 @@ function geoCell(row, notes) {
     line.dataset.profileId = entry.profileId;
     line.dataset.prefix = entry.prefix;
     line.appendChild(createCopyable(entry.profileId, { labelKey: "copy.profileId" }));
+    if (limitActive(row) && row.limit.geo?.[entry.profileId] !== true) {
+      line.classList.add("out-of-limit");
+      line.appendChild(limitBadge());
+    }
     const chips = el("span", "chips");
     for (const destination of entry.destinations) {
       chips.appendChild(destinationChip(destination, notes));
@@ -114,6 +134,11 @@ function globalCell(row) {
   link.rel = "noreferrer";
   note.appendChild(link);
   wrap.appendChild(note);
+  // Global の destination は ["*"] なので、限定が付いていれば常に満たさない (AC-008)。
+  if (limitActive(row)) {
+    wrap.classList.add("out-of-limit");
+    wrap.appendChild(limitBadge());
+  }
   return wrap;
 }
 
@@ -210,6 +235,12 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
   let region = regions.includes(DEFAULT_REGION) ? DEFAULT_REGION : regions[0];
   let state = { sortKey: null, sortDir: null, hiddenGroups: [] };
 
+  // FILTER-001 が挿す「行を絞る関数」と、描画結果を聞きたい側 (FILTER-001 / DETAIL-001)。
+  // 表自身は絞り込みの条件を知らない。
+  let rowTransform = null;
+  const renderListeners = [];
+  let shownRows = [];
+
   // --- 起点リージョンセレクタとエンドポイント (AC-001 / AC-002) ---
   const bar = el("section", "source-bar");
   bar.id = "source-bar";
@@ -271,7 +302,7 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
     i18n: t,
     onStateChange(next) {
       state = next;
-      table.update(current().rows, state);
+      table.update(shownRows, state);
     },
     // DETAIL-001 が行を特定できるようにしておく。
     rowAttrs: (row) => ({ "data-model-id": row.modelId }),
@@ -370,12 +401,19 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
     bannerReason.textContent = denied ? (model.reason ?? "") : "";
 
     // 取得できているのに 0 件なら「提供なし」。バナーは出さない (AC-010)。
+    // 絞り込みで 0 件になった場合は別の空状態 (FILTER-001 AC-010) なのでここでは出さない。
     emptyState.hidden = denied || model.rows.length > 0;
     emptyState.textContent = t("state.notOffered");
 
-    table.update(model.rows, state);
+    shownRows = typeof rowTransform === "function" ? rowTransform(model.rows, region) : model.rows;
+
+    table.update(shownRows, state);
     renderFootnote();
     applyTranslations(banner);
+
+    for (const listener of renderListeners) {
+      listener({ region, rows: model.rows, shown: shownRows, status: model.status });
+    }
   }
 
   select.addEventListener("change", () => {
@@ -402,9 +440,27 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
 
   return {
     el: host,
+    table: table.el,
     getRegion: () => region,
+    getRegions: () => [...regions],
     getModel: () => model,
+    getShownRows: () => shownRows,
     setRegion,
     rerender,
+    // 表自身を再描画せずに絞り込みだけを掛け直す入口 (FILTER-001)。
+    setRowTransform(fn) {
+      rowTransform = fn;
+      render();
+    },
+    refresh: render,
+    onRender(listener) {
+      renderListeners.push(listener);
+      // 登録直後の状態も 1 度渡す (後から mount する側が初期描画を取りこぼさないため)。
+      listener({ region, rows: model.rows, shown: shownRows, status: model.status });
+      return () => {
+        const index = renderListeners.indexOf(listener);
+        if (index >= 0) renderListeners.splice(index, 1);
+      };
+    },
   };
 }

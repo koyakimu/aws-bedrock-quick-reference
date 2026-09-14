@@ -148,7 +148,12 @@ describe("AC-005 リージョン表示名", () => {
     const flat = JSON.stringify({ ja, en });
     for (const code of codes) {
       expect(flat, `${code} が辞書に入っている`).not.toContain(code);
-      expect(flat, `${regionNotes[code].ja} が辞書に入っている`).not.toContain(regionNotes[code].ja);
+      // 2 文字以下の表示名は普通の日本語の部分文字列と衝突する
+      // (ap-southeast-7 の「タイ」は「推論タイプ」に含まれる)。リージョンコード側の
+      // 検査はそのまま全件に効くので、名前側だけ 3 文字以上を対象にする。
+      const name = regionNotes[code].ja;
+      if (name.length <= 2) continue;
+      expect(flat, `${name} が辞書に入っている`).not.toContain(name);
     }
   });
 });
