@@ -3,7 +3,6 @@
 import { createTable, EMPTY } from "./table-engine.js";
 import {
   buildViewModel,
-  causeLabelKey,
   geoPlaces,
   outsideCount,
   selectableRegions,
@@ -324,7 +323,7 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
   filterHost.dataset.hook = "FILTER-001";
   filterHost.hidden = true;
 
-  // --- データなしバナー (AC-009) ---
+  // --- 未取得バナー (AC-009) ---
   const banner = el("section", "banner banner-nodata");
   banner.id = "denied-banner";
   banner.setAttribute("role", "status");
@@ -333,10 +332,8 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
   bannerTitle.setAttribute("data-i18n", "state.noDataTitle");
   const bannerBody = el("p", "banner-body");
   bannerBody.setAttribute("data-i18n", "state.noDataBody");
-  // 取得失敗の理由は分類から起こした平易な説明文だけを出す。エラー原文は載せない (DATA-001 D-008)。
-  const bannerCause = el("p", "banner-cause");
-  bannerCause.id = "denied-cause";
-  banner.append(bannerTitle, bannerBody, bannerCause);
+  // 取得できなかった理由 (cause) はメンテナ向けの情報なので画面には出さない (D-008)。
+  banner.append(bannerTitle, bannerBody);
 
   // --- 表と空状態 ---
   const table = createTable({
@@ -383,9 +380,9 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
         const option = document.createElement("option");
         option.value = code;
         const denied = regionStatus(fetchLog, code).status === "denied";
-        option.textContent = denied
-          ? `${regionOptionLabel(code, lang, regionNotes)} (${t("source.noData")})`
-          : regionOptionLabel(code, lang, regionNotes);
+        const label = regionOptionLabel(code, lang, regionNotes);
+        // 未取得のリージョンも選べる。ラベルに「（未取得）」だけを添える (AC-009)。
+        option.textContent = denied ? t("source.optionUnfetched", { label }) : label;
         option.dataset.status = regionStatus(fetchLog, code).status;
         if (denied) option.classList.add("denied");
         return option;
@@ -443,8 +440,6 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
 
     const denied = model.status === "denied";
     banner.hidden = !denied;
-    // cause は分類なので翻訳する。エラー原文は公開データに無い (I18N-001 AC-004)。
-    bannerCause.textContent = denied ? t(causeLabelKey(model.cause)) : "";
 
     // 取得できているのに 0 件なら「提供なし」。バナーは出さない (AC-010)。
     // 絞り込みで 0 件になった場合は別の空状態 (FILTER-001 AC-010) なのでここでは出さない。

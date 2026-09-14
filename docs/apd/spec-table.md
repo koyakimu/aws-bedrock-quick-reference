@@ -1,7 +1,7 @@
 ---
 spec_id: "TABLE-001"
 context: "table"
-version: 4
+version: 5
 issue_ref: null
 title: "起点リージョン選択とメイン比較表"
 decision_refs:
@@ -71,17 +71,18 @@ decision_refs:
 ### AC-008 (脚注)
 - **Given**: ページを開く
 - **When**: 表の下を見る
-- **Then**: `fetch-log.json` の `generatedAt`（取得日時）、`accountKind`、`status` が `denied` のリージョンの一覧、および出典 docs（ListFoundationModels / ListInferenceProfiles / geographic cross-region inference / global cross-region inference / Bedrock エンドポイント）へのリンクが表示される
+- **Then**: `fetch-log.json` の `generatedAt`（取得日時）、`accountKind`、「未取得のリージョン」の見出しの下に `status` が `denied` のリージョンの一覧（取得できなかった理由は書かない）、および出典 docs（ListFoundationModels / ListInferenceProfiles / geographic cross-region inference / global cross-region inference / Bedrock エンドポイント）へのリンクが表示される
 
-### AC-009 (Error Case: denied リージョンを選んだとき)
+### AC-009 (Error Case: 未取得のリージョンを選んだとき)
 - **Given**: `fetch-log.json.regions["us-east-1"].status` が `"denied"` の状態で、起点リージョンに `us-east-1` を選ぶ
 - **When**: 表を描画する
-- **Then**: 表の上にバナーが出て「このリージョンはデータを取得できなかった（データなし）」ことと、`cause` に対応する平易な説明文（例: 「組織のポリシーで取得できませんでした」）が表示される。**API のエラー原文は表示しない**（D-008。公開データに原文が無い）。表は 0 行になり、「提供なし」とは異なる見た目（バナー付きの空状態）になる。空の表を無言で出してはいけない
+- **Then**: 表の上にバナーが出て、見出し「このリージョンのデータはまだ取得できていません」と本文「提供がないという意味ではありません。取得済みのリージョンを選ぶと表を表示できます。」の 2 文だけが表示される。**取得できなかった理由（`cause`）も、アカウント・権限・オプトインに触れる文言も表示しない**（D-008。`cause` はメンテナ向けの情報で `fetch-log.json` にのみ残る）。表は 0 行になり、「提供なし」とは異なる見た目（バナー付きの空状態）になる。空の表を無言で出してはいけない
+- **And**: 起点リージョンのセレクタでは、未取得のリージョンも選べるまま、選択肢のラベルに「（未取得）」の接尾辞が付く
 
 ### AC-010 (Error Case: 取得済みだがモデルが 0 件)
 - **Given**: `fetch-log.json.regions[R].status` が `"ok"` で `models` が 0
 - **When**: そのリージョンを選ぶ
-- **Then**: 「このリージョンでは提供なし」と表示される。AC-009 の「データなし」バナーは出ない
+- **Then**: 「このリージョンでは提供なし」と表示される。AC-009 の「未取得」バナーは出ない
 
 ### AC-011 (「できること」の平易な表記)
 - **Given**: モデル M の `input` / `output` に `TEXT` / `IMAGE` / `VIDEO` / `SPEECH` / `EMBEDDING` が入っている
@@ -112,9 +113,9 @@ decision_refs:
   - In-Region セル: ✓ / ✕ のみ
   - Geo セル: プロファイルごとのブロック。見出しが地理圏の平易な名前、本文が推論先の地名の並び（「 ・ 」区切り）。起点の国の外の地名は注意色にし、末尾に「（国外 N）」を添える。リージョンコードは出さない
   - Global セル: ✓ + 「全世界の対応リージョン」注記（docs リンク付き）
-  - 不可のセルは ✕ または「—」で、データなしとは別の見た目
+  - 不可のセルは ✕ または「—」で、未取得とは別の見た目
   - 表の中に ID とコピーボタンは置かない。行を開くと DETAIL-001 が技術的な識別子を出す
-- **下部**: 脚注（取得日時、accountKind、denied リージョン一覧、出典リンク）
+- **下部**: 脚注（取得日時、accountKind、未取得のリージョン一覧、出典リンク）
 - 表の描画は先例の `table-engine.js` 相当の汎用モジュールで行い、Bedrock 固有の知識を持たせない（列定義とセルレンダラを外から渡す）
 
 ## Context Boundary
@@ -146,8 +147,8 @@ decision_refs:
 | AC-005 | unit (vitest) | `judgeGlobal` が `global.` のみを拾い、`["*"]` を destination 列挙に展開しないことを検証 |
 | AC-006 | integration (jsdom, vitest) | 描画された `<th>` の並び（7 列）と 1 行分のセル内容、行の並び順（プロバイダ → モデル名）を検証 |
 | AC-007 | integration (jsdom, vitest) | 表の中に `.copy-btn` と `.copyable` が 0 個であること、エンドポイントのコピーボタンは残っていることを検証 |
-| AC-008 | integration (jsdom, vitest) | 脚注に `generatedAt` / `accountKind` / denied リージョン名 / 出典リンク数が出ることを検証 |
-| AC-009 | integration (jsdom, vitest) | denied の fixture でバナーの有無・`cause` の説明文の表示・表 0 行を検証。併せて画面上にエラー原文（`AccessDenied` / `arn:aws` など）が現れないことを検証 |
+| AC-008 | integration (jsdom, vitest) | 脚注に `generatedAt` / `accountKind` / 「未取得のリージョン」の見出しと該当リージョン名 / 出典リンク数が出ることと、理由の文が出ないことを検証 |
+| AC-009 | integration (jsdom, vitest) | denied の fixture でバナーの有無・2 文の文言・選択肢の「（未取得）」接尾辞・表 0 行を検証。併せて画面上に `cause` の説明文もエラー原文（`AccessDenied` / `arn:aws` など）も現れないことを検証 |
 | AC-010 | integration (jsdom, vitest) | `ok` かつ 0 件の fixture で「提供なし」表示になり、バナーが出ないことを検証 |
 | AC-011 | integration (jsdom, vitest) | ja / en の両方で「できること」セルの文字列を検証（列挙子が出ないこと） |
 | AC-012 | integration (jsdom, vitest) | `LEGACY` の行にだけタグが付くことを検証 |
@@ -173,6 +174,7 @@ decision_refs:
 
 ## 変更履歴
 
+- **version 5** (2026-09-14): 未取得のリージョンについて、取得できなかった理由（`cause` の説明文）を画面から全て外した（AC-009 を改訂、AC-008 の脚注の文言を調整）。バナーは「このリージョンのデータはまだ取得できていません」と「提供がないという意味ではありません。取得済みのリージョンを選ぶと表を表示できます。」の 2 文だけにし、起点リージョンのセレクタでは選択肢に「（未取得）」の接尾辞を付ける。脚注は「未取得のリージョン」の見出しで一覧だけを残す。理由: 組織のポリシー・権限・オプトインといった分類は取得作業をするメンテナ向けの情報で、閲覧者には意味が無く、かえって「使えないリージョン」と誤読されるため。`cause` は `fetch-log.json` に残す（D-008 は変更しない）
 - **version 4** (2026-09-14): Geo 列の推論先を、リージョンコードのチップから `region-notes.json` の地名の並びに変えた（AC-004 を改訂、AC-NFR-001 に折り返しの条件を追記）。プロファイルごとに「地理圏の見出し + 地名の並び」のブロックにし、起点リージョンの国（`country`）の外にある推論先を注意色で区別して「（国外 N）」の件数を添える。並びは 起点 → 同じ国 → それ以外（表示名の昇順）。コードと表示名の併記は DETAIL-001 v4 の詳細パネルが引き受ける。理由: AWS のリージョンコードを読まない読み手に「実際にどこで推論されるか」を地名で伝え、国外に出る推論先を見落とさないようにするため。判定ルール（D-003）・列構成・絞り込み・URL 共有・脚注・denied バナーは変更しない
 - **version 3** (2026-09-14): 非技術者向けの情報順に列を並べ替えた。プロバイダ → モデル名 → できること → In-Region / Geo / Global → 備考 とし、Model ID 列・lifecycle 列・表中のコピーボタンを外して技術的な識別子を DETAIL-001 の詳細パネルへ移した（AC-003 / AC-004 / AC-005 / AC-006 / AC-007 / AC-NFR-001 を改訂、AC-011「できること」の平易な表記と AC-012 旧版タグを追加）。理由: AWS を知らない読み手が最初に読む情報（誰が作ったどのモデルで、何ができるか）から並べるため。判定ルール（D-003）・絞り込み・URL 共有・脚注・denied バナー（version 2 の `cause` 表示）は変更しない
 - **version 2** (2026-09-14): AC-009 のバナーを、API のエラー原文の表示から `cause`（取得失敗の分類）の説明文の表示に改めた（D-008）

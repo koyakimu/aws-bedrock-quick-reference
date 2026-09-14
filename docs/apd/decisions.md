@@ -21,6 +21,7 @@ D-001〜D-005 は brainstorming の対話で内容が固まり、技術設計
 - **Decision**: **D**。理由の原文は公開データに一切載せず、分類（`cause`）だけを残す。原文は gitignore の `data/raw` にのみ残る
 - **Reason**: オーナーの指示「エラー情報は出さない」。B は伏字の網羅性に依存し、AWS 側がエラー文の書式を変えたら伏せ漏れが公開リポジトリに出る。分類だけを残せば、載る値が 5 種の enum に閉じるので、伏せ漏れという失敗様式そのものが無くなる。「提供なし」と「データなし」の区別（D-003）は `status` で付き、閲覧者が知りたい粒度（組織のポリシー / 未有効化 / 接続不可）は `cause` で足りる。原因の追跡が要るときは手元の `data/raw/<日付>/*.err` を読む
 - **cause の値**: `scp-deny`（AccessDeniedException かつ SCP の明示 Deny）/ `access-denied`（それ以外の AccessDeniedException）/ `not-opted-in`（未有効化の opt-in リージョン）/ `timeout`（接続できない）/ `other`
+- **2026-09-14 追記**: 画面には分類（`cause`）も出さないことにした。取得できなかったリージョンは「未取得」とだけ表示し、理由は書かない（TABLE-001 v5 AC-009、DETAIL-001 v5 AC-008）。分類は取得作業をするメンテナ向けの情報で、閲覧者には意味が無く、「使えないリージョン」と誤読されるため。**Decision 自体は変えない**: `cause` は `fetch-log.json` に残り、エラー原文は引き続き公開データに載せない
 - **Refs**: `spec-data.md`（DATA-001 AC-010 / AC-011 / AC-012）、`spec-table.md`（AC-009）、`spec-detail.md`（AC-008）、`spec-i18n.md`、実装は `scripts/lib/normalize.mjs` の `classifyFetchError`
 
 ## D-007: 推論先の限定フィルタの指定方法

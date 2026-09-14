@@ -16,7 +16,7 @@ export const en = {
     label: "Source Region",
     endpointLabel: "Endpoint",
     optIn: "opt-in",
-    noData: "no data",
+    optionUnfetched: "{label} (not fetched)",
     statusOk: "fetched",
   },
   table: {
@@ -69,9 +69,9 @@ export const en = {
     endpoint: "Copy endpoint",
   },
   state: {
-    noDataTitle: "This Region could not be fetched (no data)",
+    noDataTitle: "Data for this Region has not been fetched yet",
     noDataBody:
-      "This is not the same as “not offered”. The account used for the snapshot lacked permission, or the Region was not opted in.",
+      "This does not mean the models are not offered here. Choose a fetched Region to see the table.",
     notOffered: "Not offered in this Region",
   },
   filter: {
@@ -128,18 +128,10 @@ export const en = {
     noProfiles: "No cross-Region inference profile (call the model ID directly)",
     notOffered: "Not offered",
     noTypes: "Offered, no inference type reported",
-    noData: "No data",
+    noData: "Not fetched",
     allRegions: "all supported Regions (may grow)",
     currentSource: "current source",
     arrow: "→",
-  },
-  // Why a Region could not be fetched. A coarse cause, never the raw error text (DATA-001 D-008).
-  cause: {
-    scpDeny: "Blocked by an organization policy",
-    accessDenied: "Not permitted to fetch this Region",
-    notOptedIn: "This Region is not enabled for this account",
-    timeout: "Could not connect",
-    other: "Could not be fetched",
   },
   share: {
     copy: "Copy the URL of this view",
@@ -152,8 +144,8 @@ export const en = {
     heading: "About this page",
     generatedAt: "Snapshot taken at: {date}",
     accountKind: "Account kind used for the snapshot: {kind}",
-    deniedRegions: "Regions that could not be fetched ({count}): {regions}",
-    deniedNone: "Every Region was fetched successfully.",
+    deniedRegions: "Regions not fetched ({count}): {regions}",
+    deniedNone: "Every Region has been fetched.",
     sources: "Sources",
     docListFoundationModels: "ListFoundationModels (API Reference)",
     docListInferenceProfiles: "ListInferenceProfiles (API Reference)",

@@ -74,7 +74,7 @@ describe("画面が実際に読むキー", () => {
     "theme.dark",
     "source.label",
     "source.endpointLabel",
-    "source.noData",
+    "source.optionUnfetched",
     "table.provider",
     "table.modelName",
     "table.modelId",
@@ -133,11 +133,20 @@ describe("画面が実際に読むキー", () => {
     }
   });
 
+  // D-008: 取得失敗の分類 (cause) はメンテナ向けの情報で、画面には出さない。
+  it("cause.* の説明文はどの辞書にも無い", () => {
+    for (const lang of SUPPORTED_LANGS) {
+      const causeKeys = [...keySet(dictionaries[lang])].filter((key) => key.startsWith("cause."));
+      expect(causeKeys, `${lang} must not carry cause.* labels`).toEqual([]);
+    }
+  });
+
   it("置換子を含む文はどの言語でも同じ置換子を持つ", () => {
     const withParams = {
       "footnote.generatedAt": ["{date}"],
       "footnote.accountKind": ["{kind}"],
       "footnote.deniedRegions": ["{count}", "{regions}"],
+      "source.optionUnfetched": ["{label}"],
       "table.rowCount": ["{shown}", "{total}"],
       "geo.outsideCount": ["{count}"],
     };

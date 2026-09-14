@@ -16,7 +16,7 @@ export const ja = {
     label: "起点リージョン",
     endpointLabel: "エンドポイント",
     optIn: "オプトイン",
-    noData: "データなし",
+    optionUnfetched: "{label}（未取得）",
     statusOk: "取得済み",
   },
   table: {
@@ -69,9 +69,9 @@ export const ja = {
     endpoint: "エンドポイントをコピー",
   },
   state: {
-    noDataTitle: "このリージョンはデータを取得できませんでした（データなし）",
+    noDataTitle: "このリージョンのデータはまだ取得できていません",
     noDataBody:
-      "「提供なし」ではありません。取得に使ったアカウントの権限またはオプトイン設定が原因です。",
+      "提供がないという意味ではありません。取得済みのリージョンを選ぶと表を表示できます。",
     notOffered: "このリージョンでは提供なし",
   },
   filter: {
@@ -128,18 +128,10 @@ export const ja = {
     noProfiles: "cross-region inference profile なし（モデル ID を直接指定する）",
     notOffered: "提供なし",
     noTypes: "提供あり・推論タイプの指定なし",
-    noData: "データなし",
+    noData: "未取得",
     allRegions: "全対応リージョン（今後増えうる）",
     currentSource: "現在の起点",
     arrow: "→",
-  },
-  // 取得に失敗したリージョンの理由。原文ではなく分類 (cause) に対応する説明文 (DATA-001 D-008)。
-  cause: {
-    scpDeny: "組織のポリシーで取得できませんでした",
-    accessDenied: "権限が足りず取得できませんでした",
-    notOptedIn: "このアカウントで有効化されていないリージョンです",
-    timeout: "接続できませんでした",
-    other: "取得できませんでした",
   },
   share: {
     copy: "この表示の URL をコピー",
@@ -152,8 +144,8 @@ export const ja = {
     heading: "このページについて",
     generatedAt: "データ取得日時: {date}",
     accountKind: "取得に使ったアカウントの種別: {kind}",
-    deniedRegions: "データを取得できなかったリージョン ({count} 件): {regions}",
-    deniedNone: "データを取得できなかったリージョンはありません。",
+    deniedRegions: "未取得のリージョン ({count} 件): {regions}",
+    deniedNone: "未取得のリージョンはありません。",
     sources: "出典",
     docListFoundationModels: "ListFoundationModels (API Reference)",
     docListInferenceProfiles: "ListInferenceProfiles (API Reference)",
