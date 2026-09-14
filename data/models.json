@@ -1,4 +1,38 @@
 {
+  "ai21.jamba-1-5-large-v1:0": {
+    "provider": "AI21 Labs",
+    "name": "Jamba 1.5 Large",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "LEGACY",
+    "availability": {
+      "us-east-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "ai21.jamba-1-5-mini-v1:0": {
+    "provider": "AI21 Labs",
+    "name": "Jamba 1.5 Mini",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "LEGACY",
+    "availability": {
+      "us-east-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
   "amazon.nova-2-lite-v1:0": {
     "provider": "Amazon",
     "name": "Nova 2 Lite",
@@ -15,6 +49,87 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "amazon.nova-2-lite-v1:0:256k": {
+    "provider": "Amazon",
+    "name": "Nova 2 Lite",
+    "input": [
+      "TEXT",
+      "IMAGE",
+      "VIDEO"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "PROVISIONED"
+      ]
+    }
+  },
+  "amazon.nova-2-multimodal-embeddings-v1:0": {
+    "provider": "Amazon",
+    "name": "Amazon Nova Multimodal Embeddings",
+    "input": [
+      "TEXT",
+      "IMAGE",
+      "AUDIO",
+      "VIDEO"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -32,6 +147,15 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -51,6 +175,13 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND",
+        "PROVISIONED"
       ]
     }
   },
@@ -71,6 +202,91 @@
       "ap-northeast-1": [
         "INFERENCE_PROFILE",
         "ON_DEMAND"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE",
+        "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE",
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "amazon.nova-lite-v1:0:24k": {
+    "provider": "Amazon",
+    "name": "Nova Lite",
+    "input": [
+      "TEXT",
+      "IMAGE",
+      "VIDEO"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "PROVISIONED"
+      ]
+    }
+  },
+  "amazon.nova-lite-v1:0:300k": {
+    "provider": "Amazon",
+    "name": "Nova Lite",
+    "input": [
+      "TEXT",
+      "IMAGE",
+      "VIDEO"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "PROVISIONED"
       ]
     }
   },
@@ -88,6 +304,78 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE",
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "amazon.nova-micro-v1:0:128k": {
+    "provider": "Amazon",
+    "name": "Nova Micro",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "PROVISIONED"
+      ]
+    }
+  },
+  "amazon.nova-micro-v1:0:24k": {
+    "provider": "Amazon",
+    "name": "Nova Micro",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "PROVISIONED"
       ]
     }
   },
@@ -107,6 +395,91 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE",
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "amazon.nova-pro-v1:0:24k": {
+    "provider": "Amazon",
+    "name": "Nova Pro",
+    "input": [
+      "TEXT",
+      "IMAGE",
+      "VIDEO"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "eu-west-2": [
+        "PROVISIONED"
+      ],
+      "us-east-1": [
+        "PROVISIONED"
+      ]
+    }
+  },
+  "amazon.nova-pro-v1:0:300k": {
+    "provider": "Amazon",
+    "name": "Nova Pro",
+    "input": [
+      "TEXT",
+      "IMAGE",
+      "VIDEO"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "eu-west-2": [
+        "PROVISIONED"
+      ],
+      "us-east-1": [
+        "PROVISIONED"
       ]
     }
   },
@@ -125,6 +498,30 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "amazon.nova-reel-v1:1": {
+    "provider": "Amazon",
+    "name": "Nova Reel",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "VIDEO"
+    ],
+    "streaming": false,
+    "lifecycle": "LEGACY",
+    "availability": {
+      "us-east-1": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -142,6 +539,125 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "amazon.titan-embed-g1-text-02": {
+    "provider": "Amazon",
+    "name": "Titan Text Embeddings v2",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "amazon.titan-embed-image-v1": {
+    "provider": "Amazon",
+    "name": "Titan Multimodal Embeddings G1",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-3": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "amazon.titan-embed-image-v1:0": {
+    "provider": "Amazon",
+    "name": "Titan Multimodal Embeddings G1",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-south-1": [
+        "PROVISIONED"
+      ],
+      "ap-southeast-2": [
+        "PROVISIONED"
+      ],
+      "ca-central-1": [
+        "PROVISIONED"
+      ],
+      "eu-central-1": [
+        "PROVISIONED"
+      ],
+      "eu-west-1": [
+        "PROVISIONED"
+      ],
+      "eu-west-2": [
+        "PROVISIONED"
+      ],
+      "eu-west-3": [
+        "PROVISIONED"
+      ],
+      "sa-east-1": [
+        "PROVISIONED"
+      ],
+      "us-east-1": [
+        "PROVISIONED"
+      ],
+      "us-west-2": [
+        "PROVISIONED"
       ]
     }
   },
@@ -159,6 +675,15 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -174,7 +699,14 @@
     "streaming": false,
     "lifecycle": "ACTIVE",
     "availability": {
-      "ap-northeast-1": []
+      "ap-northeast-1": [],
+      "eu-central-1": [],
+      "us-east-1": [
+        "PROVISIONED"
+      ],
+      "us-west-2": [
+        "PROVISIONED"
+      ]
     }
   },
   "amazon.titan-embed-text-v2:0": {
@@ -191,7 +723,263 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-northeast-2": [
+        "ON_DEMAND"
+      ],
+      "ap-northeast-3": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-3": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
+    }
+  },
+  "amazon.titan-embed-text-v2:0:8k": {
+    "provider": "Amazon",
+    "name": "Titan Text Embeddings V2",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-3": [],
+      "us-east-1": []
+    }
+  },
+  "anthropic.claude-3-5-sonnet-20240620-v1:0": {
+    "provider": "Anthropic",
+    "name": "Claude 3.5 Sonnet",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-2": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "anthropic.claude-3-5-sonnet-20241022-v2:0": {
+    "provider": "Anthropic",
+    "name": "Claude 3.5 Sonnet v2",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-3-7-sonnet-20250219-v1:0": {
+    "provider": "Anthropic",
+    "name": "Claude 3.7 Sonnet",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "anthropic.claude-3-haiku-20240307-v1:0": {
+    "provider": "Anthropic",
+    "name": "Claude 3 Haiku",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-2": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-1": [
+        "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "anthropic.claude-3-haiku-20240307-v1:0:200k": {
+    "provider": "Anthropic",
+    "name": "Claude 3 Haiku",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-2": []
+    }
+  },
+  "anthropic.claude-3-haiku-20240307-v1:0:48k": {
+    "provider": "Anthropic",
+    "name": "Claude 3 Haiku",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-south-1": [
+        "PROVISIONED"
+      ]
+    }
+  },
+  "anthropic.claude-3-sonnet-20240229-v1:0": {
+    "provider": "Anthropic",
+    "name": "Claude 3 Sonnet",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "anthropic.claude-3-sonnet-20240229-v1:0:200k": {
+    "provider": "Anthropic",
+    "name": "Claude 3 Sonnet",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-southeast-1": []
+    }
+  },
+  "anthropic.claude-3-sonnet-20240229-v1:0:28k": {
+    "provider": "Anthropic",
+    "name": "Claude 3 Sonnet",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-south-1": [
+        "PROVISIONED"
+      ],
+      "ap-southeast-1": []
     }
   },
   "anthropic.claude-fable-5": {
@@ -208,6 +996,54 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
         "INFERENCE_PROFILE"
       ]
     }
@@ -227,6 +1063,54 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -244,6 +1128,78 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-opus-4-1-20250805-v1:0": {
+    "provider": "Anthropic",
+    "name": "Claude Opus 4.1",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "LEGACY",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
         "INFERENCE_PROFILE"
       ]
     }
@@ -263,6 +1219,54 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -280,6 +1284,55 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
         "INFERENCE_PROFILE"
       ]
     }
@@ -299,6 +1352,54 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -316,6 +1417,54 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
         "INFERENCE_PROFILE"
       ]
     }
@@ -335,6 +1484,54 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -353,7 +1550,78 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
+    }
+  },
+  "anthropic.claude-sonnet-4-20250514-v1:0:200k": {
+    "provider": "Anthropic",
+    "name": "Claude Sonnet 4",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "LEGACY",
+    "availability": {
+      "us-west-1": []
+    }
+  },
+  "anthropic.claude-sonnet-4-20250514-v1:0:32k": {
+    "provider": "Anthropic",
+    "name": "Claude Sonnet 4",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "LEGACY",
+    "availability": {
+      "us-west-1": []
     }
   },
   "anthropic.claude-sonnet-4-5-20250929-v1:0": {
@@ -370,6 +1638,54 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
         "INFERENCE_PROFILE"
       ]
     }
@@ -389,6 +1705,55 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -407,6 +1772,54 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -424,6 +1837,68 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-3": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "cohere.embed-english-v3:0:512": {
+    "provider": "Cohere",
+    "name": "Embed English",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ca-central-1": [
+        "PROVISIONED"
+      ],
+      "eu-west-2": [
+        "PROVISIONED"
+      ],
+      "sa-east-1": [
+        "PROVISIONED"
+      ],
+      "us-east-1": [
+        "PROVISIONED"
+      ],
+      "us-west-2": [
+        "PROVISIONED"
       ]
     }
   },
@@ -441,6 +1916,68 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-3": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "cohere.embed-multilingual-v3:0:512": {
+    "provider": "Cohere",
+    "name": "Embed Multilingual",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ca-central-1": [
+        "PROVISIONED"
+      ],
+      "eu-west-2": [
+        "PROVISIONED"
+      ],
+      "sa-east-1": [
+        "PROVISIONED"
+      ],
+      "us-east-1": [
+        "PROVISIONED"
+      ],
+      "us-west-2": [
+        "PROVISIONED"
       ]
     }
   },
@@ -460,6 +1997,56 @@
       "ap-northeast-1": [
         "ON_DEMAND",
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -477,6 +2064,41 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "deepseek.r1-v1:0": {
+    "provider": "DeepSeek",
+    "name": "DeepSeek-R1",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -494,6 +2116,24 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -510,6 +2150,30 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -529,6 +2193,30 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -546,6 +2234,30 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -565,7 +2277,347 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
+    }
+  },
+  "luma.ray-v2:0": {
+    "provider": "Luma AI",
+    "name": "Ray v2",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "VIDEO"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "meta.llama3-1-70b-instruct-v1:0": {
+    "provider": "Meta",
+    "name": "Llama 3.1 70B Instruct",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "meta.llama3-1-70b-instruct-v1:0:128k": {
+    "provider": "Meta",
+    "name": "Llama 3.1 70B Instruct",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-2": [],
+      "us-west-2": [
+        "PROVISIONED"
+      ]
+    }
+  },
+  "meta.llama3-1-8b-instruct-v1:0": {
+    "provider": "Meta",
+    "name": "Llama 3.1 8B Instruct",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "meta.llama3-1-8b-instruct-v1:0:128k": {
+    "provider": "Meta",
+    "name": "Llama 3.1 8B Instruct",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-2": [],
+      "us-west-2": [
+        "PROVISIONED"
+      ]
+    }
+  },
+  "meta.llama3-3-70b-instruct-v1:0": {
+    "provider": "Meta",
+    "name": "Llama 3.3 70B Instruct",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "meta.llama3-3-70b-instruct-v1:0:128k": {
+    "provider": "Meta",
+    "name": "Llama 3.3 70B Instruct",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-west-2": []
+    }
+  },
+  "meta.llama3-70b-instruct-v1:0": {
+    "provider": "Meta",
+    "name": "Llama 3 70B Instruct",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "meta.llama3-8b-instruct-v1:0": {
+    "provider": "Meta",
+    "name": "Llama 3 8B Instruct",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "meta.llama4-maverick-17b-instruct-v1:0": {
+    "provider": "Meta",
+    "name": "Llama 4 Maverick 17B Instruct",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "meta.llama4-maverick-17b-instruct-v1:0:128k": {
+    "provider": "Meta",
+    "name": "Llama 4 Maverick 17B Instruct",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-west-1": []
+    }
+  },
+  "meta.llama4-maverick-17b-instruct-v1:0:1m": {
+    "provider": "Meta",
+    "name": "Llama 4 Maverick 17B Instruct",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-west-1": []
+    }
+  },
+  "meta.llama4-scout-17b-instruct-v1:0": {
+    "provider": "Meta",
+    "name": "Llama 4 Scout 17B Instruct",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "meta.llama4-scout-17b-instruct-v1:0:10m": {
+    "provider": "Meta",
+    "name": "Llama 4 Scout 17B Instruct",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-west-1": []
+    }
+  },
+  "meta.llama4-scout-17b-instruct-v1:0:128k": {
+    "provider": "Meta",
+    "name": "Llama 4 Scout 17B Instruct",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-west-1": []
     }
   },
   "minimax.minimax-m2": {
@@ -581,6 +2633,30 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -599,6 +2675,36 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -616,6 +2722,36 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -632,6 +2768,36 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -651,6 +2817,30 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -668,6 +2858,30 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -687,6 +2901,30 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -704,6 +2942,129 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.mistral-7b-instruct-v0:2": {
+    "provider": "Mistral AI",
+    "name": "Mistral 7B Instruct",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-3": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.mistral-large-2402-v1:0": {
+    "provider": "Mistral AI",
+    "name": "Mistral Large (24.02)",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-3": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.mistral-large-2407-v1:0": {
+    "provider": "Mistral AI",
+    "name": "Mistral Large (24.07)",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -723,6 +3084,118 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.mistral-small-2402-v1:0": {
+    "provider": "Mistral AI",
+    "name": "Mistral Small (24.02)",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.mixtral-8x7b-instruct-v0:1": {
+    "provider": "Mistral AI",
+    "name": "Mixtral 8x7B Instruct",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "ca-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-3": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.pixtral-large-2502-v1:0": {
+    "provider": "Mistral AI",
+    "name": "Pixtral Large (25.02)",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -740,6 +3213,30 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -759,6 +3256,30 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -775,6 +3296,24 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -794,6 +3333,30 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -812,6 +3375,30 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -828,6 +3415,30 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -846,6 +3457,30 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -862,6 +3497,36 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -881,6 +3546,54 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -898,6 +3611,54 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
         "INFERENCE_PROFILE"
       ]
     }
@@ -917,6 +3678,54 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -935,6 +3744,54 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -951,6 +3808,36 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -969,6 +3856,36 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -985,6 +3902,30 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -1003,6 +3944,30 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -1019,6 +3984,27 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -1037,6 +4023,36 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -1053,6 +4069,36 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -1071,6 +4117,47 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "qwen.qwen3-coder-next": {
+    "provider": "Qwen",
+    "name": "Qwen3 Coder Next",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -1087,6 +4174,30 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -1106,6 +4217,447 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "stability.sd3-5-large-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Diffusion 3.5 Large",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "stability.stable-conservative-upscale-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Conservative Upscale",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "stability.stable-creative-upscale-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Creative Upscale",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "stability.stable-fast-upscale-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Fast Upscale",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "stability.stable-image-control-sketch-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Control Sketch",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "stability.stable-image-control-structure-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Control Structure",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "stability.stable-image-core-v1:1": {
+    "provider": "Stability AI",
+    "name": "Stable Image Core 1.0",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "stability.stable-image-erase-object-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Erase Object",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "stability.stable-image-inpaint-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Inpaint",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "stability.stable-image-remove-background-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Remove Background",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "stability.stable-image-search-recolor-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Search and Recolor",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "stability.stable-image-search-replace-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Search and Replace",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "stability.stable-image-style-guide-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Style Guide",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "stability.stable-image-ultra-v1:1": {
+    "provider": "Stability AI",
+    "name": "Stable Image Ultra 1.0",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "stability.stable-outpaint-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Outpaint",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "stability.stable-style-transfer-v1:0": {
+    "provider": "Stability AI",
+    "name": "Stable Image Style Transfer",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "twelvelabs.marengo-embed-2-7-v1:0": {
+    "provider": "TwelveLabs",
+    "name": "Marengo Embed v2.7",
+    "input": [
+      "TEXT",
+      "IMAGE",
+      "SPEECH",
+      "VIDEO"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "LEGACY",
+    "availability": {
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "twelvelabs.marengo-embed-3-0-v1:0": {
+    "provider": "TwelveLabs",
+    "name": "Marengo Embed 3.0",
+    "input": [
+      "TEXT",
+      "IMAGE",
+      "SPEECH",
+      "VIDEO"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE",
+        "ON_DEMAND"
       ]
     }
   },
@@ -1123,6 +4675,132 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE",
+        "ON_DEMAND"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE",
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "writer.palmyra-vision-7b": {
+    "provider": "Writer",
+    "name": "Writer Palmyra Vision 7B",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "writer.palmyra-x4-v1:0": {
+    "provider": "Writer",
+    "name": "Palmyra X4",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "writer.palmyra-x5-v1:0": {
+    "provider": "Writer",
+    "name": "Palmyra X5",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
         "INFERENCE_PROFILE"
       ]
     }
@@ -1142,6 +4820,54 @@
     "availability": {
       "ap-northeast-1": [
         "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-northeast-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-south-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "ap-southeast-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "ca-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-central-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-north-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "eu-west-3": [
+        "INFERENCE_PROFILE"
+      ],
+      "sa-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-east-2": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-1": [
+        "INFERENCE_PROFILE"
+      ],
+      "us-west-2": [
+        "INFERENCE_PROFILE"
       ]
     }
   },
@@ -1158,6 +4884,30 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }
@@ -1176,6 +4926,36 @@
     "availability": {
       "ap-northeast-1": [
         "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-central-1": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
+        "ON_DEMAND"
       ]
     }
   },
@@ -1192,6 +4972,30 @@
     "lifecycle": "ACTIVE",
     "availability": {
       "ap-northeast-1": [
+        "ON_DEMAND"
+      ],
+      "ap-south-1": [
+        "ON_DEMAND"
+      ],
+      "ap-southeast-2": [
+        "ON_DEMAND"
+      ],
+      "eu-north-1": [
+        "ON_DEMAND"
+      ],
+      "eu-west-2": [
+        "ON_DEMAND"
+      ],
+      "sa-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-1": [
+        "ON_DEMAND"
+      ],
+      "us-east-2": [
+        "ON_DEMAND"
+      ],
+      "us-west-2": [
         "ON_DEMAND"
       ]
     }

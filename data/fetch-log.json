@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-14T08:57:12.692Z",
-  "accountKind": "sandbox",
+  "generatedAt": "2026-09-14T13:32:42.541Z",
+  "accountKind": "sandbox-readonly",
   "regions": {
     "af-south-1": {
       "status": "denied",
@@ -16,28 +16,33 @@
       "profiles": 34
     },
     "ap-northeast-2": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 30,
+      "profiles": 29
     },
     "ap-northeast-3": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 21,
+      "profiles": 25
     },
     "ap-south-1": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 75,
+      "profiles": 30
     },
     "ap-south-2": {
       "status": "denied",
       "cause": "not-opted-in"
     },
     "ap-southeast-1": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 31,
+      "profiles": 27
     },
     "ap-southeast-2": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 67,
+      "profiles": 35
     },
     "ap-southeast-3": {
       "status": "denied",
@@ -60,24 +65,27 @@
       "cause": "not-opted-in"
     },
     "ca-central-1": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 36,
+      "profiles": 37
     },
     "ca-west-1": {
       "status": "denied",
       "cause": "not-opted-in"
     },
     "eu-central-1": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 43,
+      "profiles": 40
     },
     "eu-central-2": {
       "status": "denied",
       "cause": "not-opted-in"
     },
     "eu-north-1": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 42,
+      "profiles": 36
     },
     "eu-south-1": {
       "status": "denied",
@@ -88,16 +96,19 @@
       "cause": "not-opted-in"
     },
     "eu-west-1": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 62,
+      "profiles": 43
     },
     "eu-west-2": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 72,
+      "profiles": 30
     },
     "eu-west-3": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 32,
+      "profiles": 40
     },
     "il-central-1": {
       "status": "denied",
@@ -116,24 +127,29 @@
       "cause": "not-opted-in"
     },
     "sa-east-1": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 62,
+      "profiles": 18
     },
     "us-east-1": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 114,
+      "profiles": 75
     },
     "us-east-2": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 85,
+      "profiles": 73
     },
     "us-west-1": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 32,
+      "profiles": 45
     },
     "us-west-2": {
-      "status": "denied",
-      "cause": "scp-deny"
+      "status": "ok",
+      "models": 108,
+      "profiles": 73
     }
   }
 }
