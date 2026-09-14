@@ -1,12 +1,13 @@
 ---
 spec_id: "DETAIL-001"
 context: "detail"
-version: 1
+version: 2
 issue_ref: null
 title: "行の展開によるリージョン横断の詳細表示"
 decision_refs:
   - D-003
   - D-005
+  - D-008
 ---
 
 ## User Story
@@ -55,7 +56,7 @@ decision_refs:
 ### AC-008 (Error Case: denied リージョンは「データなし」)
 - **Given**: `fetch-log.json.regions["us-east-1"].status` が `"denied"`
 - **When**: 詳細パネルの availability 一覧を描画する
-- **Then**: `us-east-1` は **「データなし」** と表示され、「提供なし」（AC-003）と異なる見た目になる。`reason` の原文はツールチップまたは脚注リンクから参照できる。取得できていないだけのリージョンを「提供なし」と表示してはいけない
+- **Then**: `us-east-1` は **「データなし」** と表示され、「提供なし」（AC-003）と異なる見た目になる。理由は `cause` に対応する平易な説明文（例: 「組織のポリシーで取得できませんでした」）を並記し、ツールチップにも同じ文を入れる。**API のエラー原文は表示せず、原文を開く脚注も置かない**（D-008）。取得できていないだけのリージョンを「提供なし」と表示してはいけない
 
 ### AC-009 (Error Case: 対象プロファイルが 1 件も無い)
 - **Given**: モデル M に対応するプロファイルが `profiles.json` に 1 件も無い（In-Region のみのモデル）
@@ -98,7 +99,7 @@ decision_refs:
 | AC-005 | unit (vitest) | `jp.` プロファイルの fixture で 2 起点分の行が destination 昇順で返ることを検証 |
 | AC-006 | unit (vitest) | `["*"]` が注記種別に変換され、`*` の文字列が返り値に含まれないことを検証 |
 | AC-007 | integration (jsdom, vitest) | 起点マーカーが該当リージョンの行にだけ付くことを検証 |
-| AC-008 | unit + integration (vitest, jsdom) | denied の fixture で「データなし」種別になり、「提供なし」と異なるクラス名で描画されることを検証 |
+| AC-008 | unit + integration (vitest, jsdom) | denied の fixture で「データなし」種別になり、「提供なし」と異なるクラス名で描画されることを検証。`cause` の説明文が出ること、パネルにエラー原文が現れないことも検証 |
 | AC-009 | integration (jsdom, vitest) | プロファイル 0 件のモデルで説明文が出ることを検証 |
 | — (375px 表示) | e2e（Playwright MCP で 375px のスクリーンショットを手動確認） | 詳細パネルが縦積みになり崩れないことを目視。スクリーンショットはリポジトリに入れない |
 
@@ -116,3 +117,8 @@ decision_refs:
 - 「データなし」と「提供なし」の区別は Design の Success Criteria（混同する表示ゼロ）と FAQ Q3 に対応する、この Spec の中心的な要件
 - アカウント固有の `APPLICATION` 型 inference profile は表示しない（Design「What Not」3、技術設計 §8）
 - 料金・クォータ・ベンチマークは詳細パネルにも出さない（Design「What Not」1・2・4）
+
+## 変更履歴
+
+- **version 2** (2026-09-14): AC-008 の「reason の原文をツールチップ / 脚注リンクから参照できる」を取りやめ、`cause`（取得失敗の分類）の説明文だけを出すようにした（D-008）
+- **version 1** (2026-09-14): 初版

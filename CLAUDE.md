@@ -67,6 +67,14 @@ node scripts/fetch-bedrock-snapshot.mjs --profile <名前> --account-kind sandbo
 - `--regions a,b` で対象を絞れる。省くと `data/region-notes.json` のキー全件 (33 リージョン)
 - `--date YYYY-MM-DD` で `data/raw/<日付>/` の日付を上書きできる。既定は JST の今日
 - `--dry-run` は取得と生データの保存だけ行い、`data/*.json` を書かない
+- 正規化の規則を変えたときは、取り直さずに `data/raw/<日付>/` から作り直せる。`aws` は呼ばない:
+
+  ```
+  node scripts/fetch-bedrock-snapshot.mjs --from-raw 2026-09-14 --account-kind sandbox
+  ```
+
+  `--from-raw` では `--profile` は要らない（`--account-kind` は必須）。既存の
+  `fetch-log.json` に `generatedAt` があれば、取得し直していないのでその値を引き継ぐ
 - 更新のタイミングは新しいモデルや推論プロファイルが出たとき。取得日時を画面に出すので、
   古さは読み手が判断できる
 
@@ -75,7 +83,7 @@ Bash のサンドボックスを外す必要がある。
 
 ### denied リージョンは消さない
 
-取得に失敗したリージョンは **`fetch-log.json` に `status: "denied"` と API のエラー原文を
+取得に失敗したリージョンは **`fetch-log.json` に `status: "denied"` と `cause` (取得失敗の分類) を
 残したまま**にする。「提供なし」と「データなし」は画面で区別して表示するため、
 denied の行を消すと区別が壊れる (D-003)。
 
@@ -84,9 +92,13 @@ denied の行を消すと区別が壊れる (D-003)。
 - 全リージョンを取れるようにするには `bedrock:ListFoundationModels` と
   `bedrock:ListInferenceProfiles` だけを許可した読み取り専用ロールを aws-foundation 側に
   用意する (D-005)。それまでは取れたリージョンだけで公開してよい
-- `reason` は原文のまま入れるが、**12 桁のアカウント ID だけは `<account-id>` に伏せる**。
-  AC-010 (原文のまま) と AC-011 (アカウント ID を残さない) が衝突するため、公開リポジトリに
-  載る側を優先している。伏字前の原文は gitignore 対象の `data/raw/<日付>/*.err` に残る
+- **API のエラー原文は生成物に一切入れない** (D-008)。原文には principal ARN・アカウント ID・
+  組織 ID・SCP ポリシー ID・permission set 名・IAM セッション名が入り、生成物は公開リポジトリに
+  載って公開サイトにも描画されるため。代わりに `cause` (分類) だけを残す:
+  `scp-deny` / `access-denied` / `not-opted-in` / `timeout` / `other`。
+  分類は `scripts/lib/normalize.mjs` の `classifyFetchError` が原文から機械的に決める
+- 原文を読みたいときは gitignore 対象の `data/raw/<日付>/*.err` を見る。画面に出るのは
+  `cause` に対応する平易な説明文 (i18n の `cause.*`) で、原文を開くトグルは置かない
 
 ### region-notes.json を直すとき
 

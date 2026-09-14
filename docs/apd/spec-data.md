@@ -1,7 +1,7 @@
 ---
 spec_id: "DATA-001"
 context: "data"
-version: 1
+version: 2
 issue_ref: null
 title: "スナップショット取得スクリプトと正規化"
 decision_refs:
@@ -10,6 +10,7 @@ decision_refs:
   - D-003
   - D-004
   - D-005
+  - D-008
 ---
 
 ## User Story
@@ -68,12 +69,17 @@ decision_refs:
 ### AC-010 (Error Case: denied リージョン)
 - **Given**: `us-east-1` が SCP の明示 Deny で `AccessDeniedException` を返す
 - **When**: スクリプトがそのリージョンを取得する
-- **Then**: 例外で停止せず残りのリージョンを続行する。`fetch-log.json.regions["us-east-1"]` に `{"status":"denied","reason":"<API のエラー文をそのまま>"}` が記録され、`models.json` / `profiles.json` に `us-east-1` のキーは一切現れない。`reason` は要約・整形しない
+- **Then**: 例外で停止せず残りのリージョンを続行する。`fetch-log.json.regions["us-east-1"]` に `{"status":"denied","cause":"scp-deny"}` が記録され、`models.json` / `profiles.json` に `us-east-1` のキーは一切現れない。**API のエラー原文は生成物に一切載せない**（D-008）。`cause` は原文から機械的に決まる分類で、値は `scp-deny` / `access-denied` / `not-opted-in` / `timeout` / `other` の 5 つ。原文は `.gitignore` 対象の `data/raw/<日付>/*.err` にのみ残る。片方の API だけ失敗した `partial` も同じ `cause` を持つ
 
-### AC-011 (Error Case: アカウント ID を残さない)
-- **Given**: `inferenceProfileArn` やエラー文に AWS アカウント ID が含まれる
-- **When**: `profiles.json` / `models.json` を生成する
-- **Then**: 生成物にアカウント ID を持つフィールドを作らない（`inferenceProfileArn` は保存せず `inferenceProfileId` を使う）。`fetch-log.json` の `accountKind` は `--account-kind` で与えた表示用の種別のみ
+### AC-011 (Error Case: 識別子もエラー原文も残さない)
+- **Given**: `inferenceProfileArn` やエラー文に AWS アカウント ID・principal ARN・組織 ID・SCP ポリシー ID・permission set 名・IAM セッション名が含まれる
+- **When**: `profiles.json` / `models.json` / `fetch-log.json` を生成する
+- **Then**: 生成物にアカウント ID を持つフィールドを作らない（`inferenceProfileArn` は保存せず `inferenceProfileId` を使う）。加えて **API のエラー原文を一切保存しない**ので、上記の識別子も例外クラス名も生成物には現れない。`fetch-log.json` の `accountKind` は `--account-kind` で与えた表示用の種別のみ
+
+### AC-012 (生データからの再正規化)
+- **Given**: `data/raw/<日付>/` に前回の取得結果が残っている
+- **When**: `node scripts/fetch-bedrock-snapshot.mjs --from-raw <日付> --account-kind <種別>` を実行する
+- **Then**: `aws` を一度も起動せずに生データだけを読み直し、`models.json` / `profiles.json` / `fetch-log.json` を書き直す。既存の `fetch-log.json` があれば `generatedAt` を引き継ぐ（取得し直していないため）。`--profile` は不要、`--account-kind` は必須
 
 ### AC-NFR-001 (正規化の純粋性)
 - **Given**: 同じ生 JSON を入力する
@@ -114,8 +120,9 @@ decision_refs:
 | AC-007 | unit (vitest) | `nextToken` を持つ 2 ページ分の fixture を結合する関数のテスト（CLI 呼び出しはスタブ） |
 | AC-008 | integration (vitest, `aws` をスタブ) | 一時ディレクトリで実行し、`data/raw/<日付>/` と 3 つの生成物が書かれることを検証。`--regions` 省略時に `region-notes.json` のキーが使われることも検証 |
 | AC-009 | unit (vitest) | `package.json` の `dependencies` が空であること、`scripts/` 配下に `@aws-sdk` の import が無いことを検証 |
-| AC-010 | integration (vitest, `aws` をスタブ) | 1 リージョンだけ非ゼロ終了＋`AccessDeniedException` 文字列を返すスタブで、`fetch-log.json` の原文記録と生成物からの除外を検証 |
-| AC-011 | unit (vitest) | 生成した JSON 全体を文字列化し、12 桁の数字列（アカウント ID）に一致しないことを検証 |
+| AC-010 | integration (vitest, `aws` をスタブ) | 1 リージョンだけ非ゼロ終了＋`AccessDeniedException` 文字列を返すスタブで、`fetch-log.json` に `cause` だけが残ること・生成物から除外されることを検証。分類関数 `classifyFetchError` は `.err` fixture（SCP 拒否 / opt-in 未有効化 / timeout）で単体検証 |
+| AC-011 | unit (vitest) | 生成した JSON 全体を文字列化し、12 桁の数字列・`arn:`・`AccessDenied`・`Exception`・組織 ID・ポリシー ID・`AWSReservedSSO` のいずれにも一致しないことを検証。リージョンコード（`ap-northeast-1` の `p-northeast` など）は誤検出しないことも検証 |
+| AC-012 | integration (vitest) | 偽 runner で取得した生データを `--from-raw` 経路で読み直し、同じ生成物になること・`aws` 相当の runner が呼ばれないこと・`generatedAt` を引き継ぐことを検証 |
 | AC-NFR-001 | unit (vitest) | 同一入力で 2 回呼び、`generatedAt` を除いて `toEqual` かつ `JSON.stringify` が一致することを検証 |
 
 ## Deliverable Previews
@@ -125,7 +132,7 @@ decision_refs:
 
 ## 委譲する非機能要件
 
-- **セキュリティレビュー: 不要。** 生成物は AWS の公開情報のみで、認証情報も個人情報も含まない。ただし AC-011（アカウント ID を出力に残さない）を機械的なテストとして持つことで代替する
+- **セキュリティレビュー: 不要。** 生成物は AWS の公開情報のみで、認証情報も個人情報も含まない。ただし AC-011（識別子とエラー原文を出力に残さない）を機械的なテストとして持つことで代替する
 - **AWS 側の権限**: `bedrock:ListFoundationModels` と `bedrock:ListInferenceProfiles` だけを許可した読み取り専用ロールの用意は aws-foundation（統治リポジトリ）側の PR に委譲する（D-005）。合格基準は「全対象リージョンで `denied` が 0 件になること」。それまでは sandbox プロファイルで取得し、denied リージョンは「データなし」として公開してよい
 
 ## Notes
@@ -134,3 +141,8 @@ decision_refs:
 - `inferenceTypesSupported` に API Reference の enum に無い `INFERENCE_PROFILE` が返る。enum で弾かず未知の値も素通しする
 - spike で観測したプロファイル接頭辞は `apac` / `jp` / `global` の 3 種のみだが、`us` / `eu` / `au` も同じ規則で扱う
 - 取得アカウントは手元の SSO で手動実行する。CI に AWS 認証情報は置かない（DEPLOY-001 参照）
+
+## 変更履歴
+
+- **version 2** (2026-09-14): 取得失敗の理由を公開データから外した。AC-010 は `reason`（API のエラー原文）ではなく `cause`（分類）を記録すると改め、AC-011 をアカウント ID だけでなく識別子全般とエラー原文に広げた。取り直さずに正規化だけやり直す `--from-raw` を AC-012 として追加（D-008）
+- **version 1** (2026-09-14): 初版

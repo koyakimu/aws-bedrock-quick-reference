@@ -116,8 +116,9 @@ tr.expanded > td {
   border-radius: var(--radius);
   padding: 0 4px;
 }
-.detail-reason-link {
-  color: var(--accent);
+.detail-region-cause {
+  color: var(--fg-muted);
+  font-size: var(--fs-xs);
 }
 
 .detail-profile {
@@ -151,25 +152,8 @@ tr.expanded > td {
   color: var(--fg-muted);
 }
 
-/* denied の reason 原文 (AC-008)。翻訳も要約もしない */
 .detail-host {
   margin-top: var(--sp-4);
-}
-.detail-reason-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.detail-reason-text {
-  margin: var(--sp-1) 0 var(--sp-3);
-  padding: var(--sp-2);
-  font-size: var(--fs-xs);
-  white-space: pre-wrap;
-  overflow-x: auto;
-  color: var(--fg-muted);
-  background: var(--bg-inset);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
 }
 
 /* 375px ではパネルを縦積みにし、推論先チップは折り返す */
@@ -180,8 +164,3 @@ tr.expanded > td {
   }
 }
 
-.detail-reason > details > summary {
-  cursor: pointer;
-  color: var(--fg-muted);
-  font-size: var(--fs-xs);
-}

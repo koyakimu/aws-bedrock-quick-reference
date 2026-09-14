@@ -2,20 +2,36 @@
 // ファイル I/O・時刻取得・ネットワークは一切行わない (AC-NFR-001)。
 // 入力の生 JSON は scripts/lib/snapshot.mjs 側が読んで渡す。
 
-// AWS アカウント ID (12 桁) の伏字。
+// 取得に失敗したリージョンの「理由」の扱い (D-008)。
 //
-// AC-010 は denied の reason を「API のエラー文をそのまま」入れよと言い、
-// AC-011 と Test Strategy は「生成した JSON 全体に 12 桁の数字列が現れないこと」を求める。
-// エラー文には呼び出し元のアカウント ID と Organizations の ID がそのまま入るため、
-// 2 つは同時には満たせない。生成物は公開リポジトリに載るので AC-011 を優先し、
-// 12 桁の数字列だけを置き換える。語順・改行・語彙は一切変えないので、AC-010 の
-// 「要約・整形しない」という意図は保たれる。伏字前の原文は data/raw/<日付>/*.err
-// (gitignore 対象) に残る。
-export const ACCOUNT_ID_MASK = "<account-id>";
-const ACCOUNT_ID_PATTERN = /(?<!\d)\d{12}(?!\d)/g;
+// AC-010 はもともと denied の reason に API のエラー原文を入れよと言っていたが、
+// SCP 拒否の AccessDeniedException の原文には呼び出し元の principal ARN
+// (アカウント ID・permission set 名・IAM セッション名)、Organizations のポリシー ARN
+// (組織 ID・ポリシー ID) が埋め込まれる。生成物は公開リポジトリにコミットされ、
+// 公開サイトにもそのまま描画されるので、原文は公開データに一切載せない。
+// 代わりに、機械的に決まる粗い分類 (cause) だけを残す。原文は gitignore 対象の
+// data/raw/<日付>/*.err にのみ残り、必要なら手元で読める。
+//
+// cause の値:
+//   scp-deny      … AccessDeniedException かつ SCP の明示 Deny
+//   access-denied … それ以外の AccessDeniedException (IAM 権限不足など)
+//   not-opted-in  … 有効化していない opt-in リージョン (資格情報が通らない)
+//   timeout       … エンドポイントに繋がらない
+//   other         … 上のどれにも当てはまらない
+export const CAUSES = Object.freeze(["scp-deny", "access-denied", "not-opted-in", "timeout", "other"]);
 
-export function redactAccountIds(text) {
-  return typeof text === "string" ? text.replace(ACCOUNT_ID_PATTERN, ACCOUNT_ID_MASK) : text;
+const NOT_OPTED_IN_PATTERN = /UnrecognizedClientException|InvalidClientTokenId|OptInRequired|AuthFailure/;
+const TIMEOUT_PATTERN = /connect timeout|read timeout|timed out/i;
+
+// エラー原文 → cause。純関数。呼び出し側は戻り値だけを保存する。
+export function classifyFetchError(text) {
+  if (typeof text !== "string" || text.trim() === "") return "other";
+  if (text.includes("AccessDenied")) {
+    return /service control policy/i.test(text) ? "scp-deny" : "access-denied";
+  }
+  if (NOT_OPTED_IN_PATTERN.test(text)) return "not-opted-in";
+  if (TIMEOUT_PATTERN.test(text)) return "timeout";
+  return "other";
 }
 
 // arn:aws:bedrock:<region>:<account>:... の <region> を返す。
@@ -86,10 +102,9 @@ export function normalizeSnapshot({ regions = {}, generatedAt = null, accountKin
     const ipError = result.error ?? result.ipError ?? null;
 
     // 両方失敗したリージョンは fetch-log にだけ残し、models/profiles には一切出さない (AC-010)。
-    // reason は API のエラー文をそのまま入れる。要約も整形もしない
-    // (12 桁のアカウント ID だけは redactAccountIds で伏せる。上のコメント参照)。
+    // 残すのは分類 (cause) だけで、エラー原文は載せない。上のコメント参照。
     if (fmError && ipError) {
-      log[region] = { status: "denied", reason: redactAccountIds(result.error ?? fmError) };
+      log[region] = { status: "denied", cause: classifyFetchError(result.error ?? fmError) };
       continue;
     }
 
@@ -143,11 +158,11 @@ export function normalizeSnapshot({ regions = {}, generatedAt = null, accountKin
     }
 
     // 片方だけ失敗したリージョンは partial。取れた側のデータは載せ、
-    // 取れなかった側のエラー原文を reason に残す。
+    // 取れなかった側の分類だけを cause に残す。
     if (fmError || ipError) {
       log[region] = {
         status: "partial",
-        reason: redactAccountIds(fmError ?? ipError),
+        cause: classifyFetchError(fmError ?? ipError),
         models: modelCount,
         profiles: profileCount,
       };

@@ -4,22 +4,24 @@
 
 D-001〜D-005 は brainstorming の対話で内容が固まり、技術設計
 （`docs/superpowers/specs/2026-09-14-bedrock-quick-reference-design.md`）から転記したものを
-2026-09-14 にユーザーが確定した。D-006・D-007 は Spec フェーズで決定した。D-008 は Build 中に発生した矛盾の解消で、AI が暫定決定し人間の確認待ち。
+2026-09-14 にユーザーが確定した。D-006・D-007 は Spec フェーズで決定した。D-008 は Build 中に発生した矛盾の解消で、暫定決定 B をオーナーの指示で D に差し替えた。
 
 ---
 
-## D-008: fetch-log.json の理由文に含まれるアカウント ID の扱い
+## D-008: fetch-log.json に残す「取得できなかった理由」の形
 
-- **Date**: 2026-09-14
-- **Context**: DATA-001 AC-010 は denied リージョンの理由を「要約せず原文で」残すことを求め、AC-011 は生成 JSON に 12 桁のアカウント ID が含まれないことを求める。SCP 拒否の AccessDeniedException の原文には呼び出し元ロール ARN（アカウント ID 入り）と Organizations の ID が埋め込まれており、両立しない。生成 JSON は public リポジトリにコミットされる。
+- **Date**: 2026-09-14（Decision を D に差し替え）
+- **Context**: DATA-001 AC-010 は denied リージョンの理由を「要約せず原文で」残すことを求め、AC-011 は生成 JSON に 12 桁のアカウント ID が含まれないことを求める。SCP 拒否の AccessDeniedException の原文には、呼び出し元の principal ARN（アカウント ID・permission set 名・IAM セッション名）と Organizations のポリシー ARN（組織 ID・ポリシー ID）が埋め込まれており、両立しない。生成 JSON は public リポジトリにコミットされ、公開サイトにもそのまま描画される。
 - **Options**:
   - A: 原文をそのまま残す（AC-010 優先）。アカウント ID が公開リポジトリに載る
-  - B: 理由文中の 12 桁の数字列だけを `<account-id>` に置換し、それ以外は一字も変えない（AC-011 優先）。原文は gitignore 済みの `data/raw/<日付>/*.err` に残る
+  - B: 理由文中の 12 桁の数字列だけを `<account-id>` に置換し、それ以外は一字も変えない
   - C: 理由文を例外クラス名だけに要約する
-- **AI Recommendation**: **B**。公開リポジトリにアカウント ID を載せない方が優先で、置換は機械的で可逆に説明できる。C は「データなし」の根拠が読めなくなる
-- **Decision**: **B**（Build 中に AI が採用。人間の実機確認で覆してよい）
-- **Reason**: AC-011 の Test Strategy が生成 JSON 全体を対象に 12 桁列の不在を検査しており、公開リポジトリの前提と整合する。実装は `scripts/lib/normalize.mjs` の 1 箇所
-- **Refs**: `spec-data.md`（DATA-001 AC-010 / AC-011）
+  - D: 理由の原文は公開データに一切載せず、分類（`cause`）だけを残す。原文は gitignore の `data/raw/<日付>/*.err` にのみ残る
+- **AI Recommendation**: 当初は **B** を採った（置換が機械的で、根拠も読める）
+- **Decision**: **D**。理由の原文は公開データに一切載せず、分類（`cause`）だけを残す。原文は gitignore の `data/raw` にのみ残る
+- **Reason**: オーナーの指示「エラー情報は出さない」。B は伏字の網羅性に依存し、AWS 側がエラー文の書式を変えたら伏せ漏れが公開リポジトリに出る。分類だけを残せば、載る値が 5 種の enum に閉じるので、伏せ漏れという失敗様式そのものが無くなる。「提供なし」と「データなし」の区別（D-003）は `status` で付き、閲覧者が知りたい粒度（組織のポリシー / 未有効化 / 接続不可）は `cause` で足りる。原因の追跡が要るときは手元の `data/raw/<日付>/*.err` を読む
+- **cause の値**: `scp-deny`（AccessDeniedException かつ SCP の明示 Deny）/ `access-denied`（それ以外の AccessDeniedException）/ `not-opted-in`（未有効化の opt-in リージョン）/ `timeout`（接続できない）/ `other`
+- **Refs**: `spec-data.md`（DATA-001 AC-010 / AC-011 / AC-012）、`spec-table.md`（AC-009）、`spec-detail.md`（AC-008）、`spec-i18n.md`、実装は `scripts/lib/normalize.mjs` の `classifyFetchError`
 
 ## D-007: 推論先の限定フィルタの指定方法
 

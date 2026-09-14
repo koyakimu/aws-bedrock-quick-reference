@@ -73,12 +73,9 @@ a:hover {
   margin-bottom: var(--sp-2);
 }
 
-/* reason は AWS API のエラー原文。折り返して全文を見せる */
-.banner-reason {
-  white-space: pre-wrap;
+/* 取得できなかった理由。分類から起こした 1 文だけを出す (D-008) */
+.banner-cause {
   word-break: break-word;
-  font-family: var(--font-mono);
-  font-size: var(--fs-xs);
   line-height: 1.6;
   color: var(--fg);
   background: var(--bg-panel);

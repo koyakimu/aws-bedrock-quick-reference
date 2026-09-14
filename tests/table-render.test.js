@@ -264,16 +264,25 @@ describe("AC-008 脚注", () => {
 
 // --- AC-009 denied リージョン ---
 describe("AC-009 denied リージョンを選んだとき", () => {
-  it("バナーが出て reason の原文が表示され、表は 0 行になる", () => {
+  it("バナーが出て分類の説明文が表示され、表は 0 行になる", () => {
     const view = mount();
     view.setRegion(DENIED_REGION);
     const banner = document.getElementById("denied-banner");
     expect(banner.hidden).toBe(false);
     expect(banner.textContent).toContain("データを取得できませんでした");
-    const reason = document.getElementById("denied-reason").textContent;
-    expect(reason).toContain("AccessDeniedException");
-    expect(reason).toContain("explicit deny in a service control policy");
+    const cause = document.getElementById("denied-cause").textContent;
+    expect(cause).toBe("組織のポリシーで取得できませんでした");
     expect(bodyRows()).toHaveLength(0);
+  });
+
+  it("エラー原文は画面のどこにも出さない (D-008)", () => {
+    const view = mount();
+    view.setRegion(DENIED_REGION);
+    const text = document.body.textContent;
+    expect(text).not.toContain("AccessDenied");
+    expect(text).not.toContain("service control policy");
+    expect(text).not.toContain("arn:aws");
+    expect(text).not.toContain("AWSReservedSSO");
   });
 
   it("「提供なし」の空状態は出さない (データなしと区別する)", () => {
@@ -348,12 +357,12 @@ describe("言語を切り替えても表のデータ値は変わらない", () =
     ).toEqual(before.chips);
   });
 
-  it("denied の reason は翻訳しない", () => {
+  it("denied の分類の説明文は翻訳する (原文ではないため)", () => {
     const view = mount();
     view.setRegion(DENIED_REGION);
-    const before = document.getElementById("denied-reason").textContent;
+    expect(document.getElementById("denied-cause").textContent).toBe("組織のポリシーで取得できませんでした");
     setLang("en");
     view.rerender();
-    expect(document.getElementById("denied-reason").textContent).toBe(before);
+    expect(document.getElementById("denied-cause").textContent).toBe("Blocked by an organization policy");
   });
 });

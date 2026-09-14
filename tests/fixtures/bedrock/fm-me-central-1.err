@@ -1,0 +1,2 @@
+
+aws: [ERROR]: Connect timeout on endpoint URL: "https://bedrock.me-central-1.amazonaws.com/foundation-models"

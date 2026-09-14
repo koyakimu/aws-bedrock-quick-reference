@@ -97,8 +97,14 @@ export const ja = {
     allRegions: "全対応リージョン（今後増えうる）",
     currentSource: "現在の起点",
     arrow: "→",
-    reasonLink: "エラー原文",
-    reasonHeading: "「データなし」の理由 (AWS API のエラー原文)",
+  },
+  // 取得に失敗したリージョンの理由。原文ではなく分類 (cause) に対応する説明文 (DATA-001 D-008)。
+  cause: {
+    scpDeny: "組織のポリシーで取得できませんでした",
+    accessDenied: "権限が足りず取得できませんでした",
+    notOptedIn: "このアカウントで有効化されていないリージョンです",
+    timeout: "接続できませんでした",
+    other: "取得できませんでした",
   },
   share: {
     copy: "この表示の URL をコピー",

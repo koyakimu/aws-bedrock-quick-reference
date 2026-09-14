@@ -1,2 +1,2 @@
 
-aws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::123456789012:assumed-role/<role>/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::111122223333:policy/<org-id>/service_control_policy/<policy-id>
+aws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_ExampleAdminAccess_0123456789abcdef/example-user is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::111122223333:policy/o-exampleorg1/service_control_policy/p-examplescp

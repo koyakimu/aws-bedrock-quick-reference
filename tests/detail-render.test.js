@@ -174,25 +174,25 @@ describe("DETAIL-001 AC-008 denied リージョンは「データなし」", () 
     expect(denied.textContent).not.toContain("提供なし");
   });
 
-  it("reason の原文はツールチップと脚注リンクから参照できる", () => {
+  it("理由は分類から起こした平易な説明文だけを出す (D-008)", () => {
     mountFixtureApp();
     toggleOf(CLAUDE).click();
     const denied = panelOf(CLAUDE).querySelector(
       `.detail-region[data-region="${DENIED_REGION}"] .state-nodata`,
     );
-    expect(denied.title).toContain("AccessDeniedException");
-    expect(denied.querySelector("a").getAttribute("href")).toBe(`#detail-reason-${DENIED_REGION}`);
-    const footnote = document.getElementById(`detail-reason-${DENIED_REGION}`);
-    expect(footnote).not.toBeNull();
-    expect(footnote.textContent).toContain("explicit deny in a service control policy");
-    expect($("#detail-host").hidden).toBe(false);
+    expect(denied.textContent).toContain("組織のポリシーで取得できませんでした");
+    expect(denied.title).toBe("組織のポリシーで取得できませんでした");
+    expect(denied.querySelector("a")).toBeNull();
   });
 
-  it("閉じると reason の脚注も消える", () => {
+  it("エラー原文は詳細パネルのどこにも出ない", () => {
     mountFixtureApp();
     toggleOf(CLAUDE).click();
-    toggleOf(CLAUDE).click();
-    expect($("#detail-host").hidden).toBe(true);
+    const text = document.body.textContent;
+    expect(text).not.toContain("AccessDenied");
+    expect(text).not.toContain("service control policy");
+    expect(text).not.toContain("arn:aws:sts");
+    expect(text).not.toContain("AWSReservedSSO");
   });
 });
 

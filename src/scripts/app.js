@@ -32,7 +32,6 @@ export function mountApp({
     profiles,
     fetchLog,
     regionNotes,
-    host: host.querySelector("#detail-host"),
   });
 
   const share = mountShare({ view, filter, regionNotes, host, location: loc, history: hist });

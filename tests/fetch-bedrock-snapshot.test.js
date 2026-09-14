@@ -2,12 +2,12 @@
 // fixture や package.json をファイルパスで読むので node 環境で走らせる
 // (jsdom 環境だと import.meta.url が file: スキームにならない)。
 import { describe, it, expect } from "vitest";
-import { mkdtempSync, mkdirSync, readFileSync, existsSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseArgs, regionsFromNotes, USAGE } from "../scripts/lib/cli-args.mjs";
 import { listFoundationModels, listInferenceProfiles } from "../scripts/lib/aws-cli.mjs";
-import { runSnapshot, summarize, serialize } from "../scripts/lib/snapshot.mjs";
+import { collectFromRaw, runFromRaw, runSnapshot, summarize, serialize } from "../scripts/lib/snapshot.mjs";
 
 const fixture = (name) => new URL(`./fixtures/bedrock/${name}`, import.meta.url);
 const FM_TOKYO_RAW = readFileSync(fixture("fm-ap-northeast-1.json"), "utf8");
@@ -67,6 +67,7 @@ describe("CLI の引数解析", () => {
       regions: ["ap-northeast-1", "us-east-1"],
       date: "2026-09-14",
       dryRun: true,
+      fromRaw: null,
     });
     expect(() => parseArgs(["--profile", "p", "--account-kind", "k", "--date", "2026/09/14"])).toThrow("--date");
     expect(() => parseArgs(["--profile", "p", "--account-kind", "k", "--regions", " , "])).toThrow("--regions");
@@ -245,8 +246,8 @@ describe("AC-010 失敗しても止まらない", () => {
       generatedAt: "2026-09-14T08:10:00Z",
     });
 
-    expect(fetchLog.regions["us-east-1"].status).toBe("denied");
-    expect(fetchLog.regions["us-east-1"].reason).toContain("explicit deny in a service control policy");
+    expect(fetchLog.regions["us-east-1"]).toEqual({ status: "denied", cause: "scp-deny" });
+    expect(JSON.stringify(fetchLog)).not.toContain("service control policy");
     expect(fetchLog.regions["ap-northeast-1"]).toEqual({ status: "ok", models: 5, profiles: 4 });
     expect(JSON.stringify(models)).not.toContain("us-east-1");
     expect(JSON.stringify(profiles)).not.toContain("us-east-1");
@@ -269,5 +270,105 @@ describe("AC-010 失敗しても止まらない", () => {
       log: (line) => lines.push(line),
     });
     expect(lines).toEqual(["ap-northeast-1: ok\n", "us-east-1: denied\n"]);
+  });
+});
+
+describe("--from-raw 生データからの再正規化 (D-008)", () => {
+  it("--from-raw を渡すと --profile は要らず、日付が --date の代わりになる", () => {
+    const parsed = parseArgs(["--from-raw", "2026-09-14", "--account-kind", "sandbox"], {
+      defaultRegions: ["x"],
+      today: "2026-10-01",
+    });
+    expect(parsed.fromRaw).toBe("2026-09-14");
+    expect(parsed.date).toBe("2026-09-14");
+    expect(parsed.profile).toBeNull();
+    expect(() => parseArgs(["--from-raw", "2026/09/14", "--account-kind", "k"])).toThrow("--from-raw");
+    expect(() => parseArgs(["--from-raw", "2026-09-14"])).toThrow("--account-kind");
+    expect(() =>
+      parseArgs(["--from-raw", "2026-09-14", "--account-kind", "k", "--regions", "us-east-1"]),
+    ).toThrow("同時に指定できません");
+    expect(USAGE).toContain("--from-raw");
+  });
+
+  it("生データを読み直して runSnapshot と同じ生成物を作る (aws は呼ばない)", () => {
+    const { dataDir, rawRoot } = makeDirs();
+    const runner = tokyoOkUsEastDenied();
+    const fetched = runSnapshot({
+      runner,
+      profile: "sandbox",
+      accountKind: "sandbox",
+      regions: ["ap-northeast-1", "us-east-1"],
+      date: "2026-09-14",
+      dataDir,
+      rawRoot,
+      generatedAt: "2026-09-14T08:10:00Z",
+    });
+
+    const callsBefore = runner.calls.length;
+    const reNormalized = runFromRaw({
+      accountKind: "sandbox",
+      date: "2026-09-14",
+      dataDir,
+      rawRoot,
+      generatedAt: "2099-01-01T00:00:00Z",
+    });
+
+    // 偽 runner は runFromRaw に渡していないので、呼び出し回数は増えない
+    expect(runner.calls.length).toBe(callsBefore);
+    expect(reNormalized.models).toEqual(fetched.models);
+    expect(reNormalized.profiles).toEqual(fetched.profiles);
+    expect(reNormalized.fetchLog).toEqual(fetched.fetchLog);
+    // 既存の fetch-log.json の generatedAt を引き継ぐ (取得し直していないため)
+    expect(reNormalized.fetchLog.generatedAt).toBe("2026-09-14T08:10:00Z");
+    expect(JSON.parse(readFileSync(join(dataDir, "fetch-log.json"), "utf8"))).toEqual(reNormalized.fetchLog);
+  });
+
+  it("既存の fetch-log.json が無ければ渡された generatedAt を使う", () => {
+    const { dataDir, rawRoot } = makeDirs();
+    runSnapshot({
+      runner: tokyoOkUsEastDenied(),
+      profile: "sandbox",
+      accountKind: "sandbox",
+      regions: ["ap-northeast-1"],
+      date: "2026-09-14",
+      dataDir,
+      rawRoot,
+      generatedAt: "2026-09-14T08:10:00Z",
+      dryRun: true,
+    });
+    const result = runFromRaw({
+      accountKind: "prod",
+      date: "2026-09-14",
+      dataDir,
+      rawRoot,
+      generatedAt: "2099-01-01T00:00:00Z",
+    });
+    expect(result.fetchLog.generatedAt).toBe("2099-01-01T00:00:00Z");
+    expect(result.fetchLog.accountKind).toBe("prod");
+  });
+
+  it("複数ページの ip も番号順に読み直す", () => {
+    const { rawRoot } = makeDirs();
+    const rawDir = join(rawRoot, "2026-09-14");
+    mkdirSync(rawDir, { recursive: true });
+    writeFileSync(join(rawDir, "fm-ap-northeast-1.json"), FM_TOKYO_RAW);
+    writeFileSync(
+      join(rawDir, "ip-ap-northeast-1.json"),
+      JSON.stringify({ inferenceProfileSummaries: [{ inferenceProfileId: "a" }], nextToken: "t1" }),
+    );
+    writeFileSync(
+      join(rawDir, "ip-ap-northeast-1.2.json"),
+      JSON.stringify({ inferenceProfileSummaries: [{ inferenceProfileId: "b" }] }),
+    );
+    const collected = collectFromRaw({ rawDir });
+    expect(collected["ap-northeast-1"].ip.map((page) => page.inferenceProfileSummaries[0].inferenceProfileId)).toEqual([
+      "a",
+      "b",
+    ]);
+  });
+
+  it("生データのディレクトリが無ければ失敗する", () => {
+    const { rawRoot } = makeDirs();
+    expect(() => collectFromRaw({ rawDir: join(rawRoot, "1999-01-01") })).toThrow("生データのディレクトリ");
   });
 });

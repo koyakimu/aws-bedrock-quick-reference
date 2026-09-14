@@ -128,13 +128,13 @@ Amazon Bedrock の **モデル × リージョン（エンドポイント） × 
   "accountKind": "sandbox",
   "regions": {
     "ap-northeast-1": { "status": "ok", "models": 68, "profiles": 34 },
-    "us-east-1": { "status": "denied", "reason": "<removed>" }
+    "us-east-1": { "status": "denied", "cause": "scp-deny" }
   }
 }
 ```
 
 - アカウント ID は記録しない。`accountKind` は実行時の引数で与える表示用の種別。
-- `reason` は API のエラー文を **要約せず** 入れる。
+- `cause` は API のエラー文から機械的に決まる分類（`scp-deny` / `access-denied` / `not-opted-in` / `timeout` / `other`）。エラー原文は公開データに載せず、`data/raw/<日付>/*.err` にのみ残す（D-008）。
 
 ### 4.4 `region-notes.json`（手書き）
 

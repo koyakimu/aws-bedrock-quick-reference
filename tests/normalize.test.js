@@ -9,8 +9,8 @@ import {
   modelIdFromArn,
   prefixFromProfileId,
   mergeProfilePages,
-  redactAccountIds,
-  ACCOUNT_ID_MASK,
+  classifyFetchError,
+  CAUSES,
 } from "../scripts/lib/normalize.mjs";
 
 // fixture は spike 出力 (data/raw/2026-09-14-spike/) を 5 モデル・4 プロファイルに
@@ -25,6 +25,8 @@ const FM_TOKYO = readJson("fm-ap-northeast-1.json");
 const IP_TOKYO = readJson("ip-ap-northeast-1.json");
 const FM_DENY = readText("fm-us-east-1.err");
 const IP_DENY = readText("ip-us-east-1.err");
+const FM_NOT_OPTED_IN = readText("fm-ap-east-2.err");
+const FM_TIMEOUT = readText("fm-me-central-1.err");
 
 const tokyoOnly = () =>
   normalizeSnapshot({
@@ -192,16 +194,21 @@ describe("AC-010 denied リージョン", () => {
       accountKind: "sandbox",
     });
 
-  it("fetch-log に denied と理由が残り、models/profiles に一切現れない", () => {
+  it("fetch-log に denied と分類が残り、models/profiles に一切現れない", () => {
     const { models, profiles, fetchLog } = denied();
-    expect(fetchLog.regions["us-east-1"].status).toBe("denied");
-    expect(fetchLog.regions["us-east-1"].reason).toContain("AccessDeniedException");
-    expect(fetchLog.regions["us-east-1"].reason).toContain("explicit deny in a service control policy");
-    // 語順も改行も変えない (アカウント ID の伏字だけが原文との差)
-    expect(fetchLog.regions["us-east-1"].reason).toBe(redactAccountIds(FM_DENY));
+    expect(fetchLog.regions["us-east-1"]).toEqual({ status: "denied", cause: "scp-deny" });
     expect(JSON.stringify(models)).not.toContain("us-east-1");
     expect(JSON.stringify(profiles)).not.toContain("us-east-1");
     for (const entry of Object.values(models)) expect(entry.availability["us-east-1"]).toBeUndefined();
+  });
+
+  it("エラー原文は fetch-log に一切残らない (D-008)", () => {
+    const { fetchLog } = denied();
+    const text = JSON.stringify(fetchLog);
+    expect(text).not.toContain("reason");
+    expect(text).not.toContain("AccessDenied");
+    expect(text).not.toContain("service control policy");
+    expect(text).not.toContain("aws: [ERROR]");
   });
 
   it("denied があっても残りのリージョンは正規化される", () => {
@@ -214,9 +221,12 @@ describe("AC-010 denied リージョン", () => {
     const { profiles, models, fetchLog } = normalizeSnapshot({
       regions: { "us-east-1": { ip: [IP_TOKYO], fmError: FM_DENY } },
     });
-    expect(fetchLog.regions["us-east-1"].status).toBe("partial");
-    expect(fetchLog.regions["us-east-1"].reason).toBe(redactAccountIds(FM_DENY));
-    expect(fetchLog.regions["us-east-1"].models).toBe(0);
+    expect(fetchLog.regions["us-east-1"]).toEqual({
+      status: "partial",
+      cause: "scp-deny",
+      models: 0,
+      profiles: 4,
+    });
     expect(Object.keys(models).length).toBe(0);
     expect(profiles["jp.anthropic.claude-sonnet-4-5-20250929-v1:0"].sources["us-east-1"]).toBeDefined();
   });
@@ -225,28 +235,101 @@ describe("AC-010 denied リージョン", () => {
     const { profiles, fetchLog } = normalizeSnapshot({
       regions: { "us-east-1": { fm: FM_TOKYO, ipError: IP_DENY } },
     });
-    expect(fetchLog.regions["us-east-1"]).toMatchObject({ status: "partial", models: 5, profiles: 0 });
+    expect(fetchLog.regions["us-east-1"]).toMatchObject({
+      status: "partial",
+      cause: "scp-deny",
+      models: 5,
+      profiles: 0,
+    });
     expect(Object.keys(profiles).length).toBe(0);
   });
 });
 
-describe("AC-011 アカウント ID を残さない", () => {
-  it("生成した JSON 全体に 12 桁の数字列が現れない", () => {
-    const { models, profiles, fetchLog } = normalizeSnapshot({
+describe("D-008 取得失敗の分類 (cause)", () => {
+  it("fixture の原文がそれぞれの分類になる", () => {
+    expect(classifyFetchError(FM_DENY)).toBe("scp-deny");
+    expect(classifyFetchError(IP_DENY)).toBe("scp-deny");
+    expect(classifyFetchError(FM_NOT_OPTED_IN)).toBe("not-opted-in");
+    expect(classifyFetchError(FM_TIMEOUT)).toBe("timeout");
+  });
+
+  it("SCP の明示 Deny でない AccessDeniedException は access-denied", () => {
+    expect(
+      classifyFetchError(
+        "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: X is not authorized to perform: bedrock:ListFoundationModels\n",
+      ),
+    ).toBe("access-denied");
+  });
+
+  it("読めない原文・空文字・非文字列は other", () => {
+    expect(classifyFetchError("something went wrong")).toBe("other");
+    expect(classifyFetchError("")).toBe("other");
+    expect(classifyFetchError("   ")).toBe("other");
+    expect(classifyFetchError(null)).toBe("other");
+    expect(classifyFetchError(undefined)).toBe("other");
+  });
+
+  it("戻り値は必ず CAUSES のどれか", () => {
+    for (const text of [FM_DENY, IP_DENY, FM_NOT_OPTED_IN, FM_TIMEOUT, "x", ""]) {
+      expect(CAUSES).toContain(classifyFetchError(text));
+    }
+  });
+
+  it("純関数: 入力が同じなら何度呼んでも同じ値", () => {
+    expect(classifyFetchError(FM_DENY)).toBe(classifyFetchError(FM_DENY));
+  });
+});
+
+describe("AC-011 アカウント ID もエラー原文も残さない", () => {
+  const generated = () =>
+    normalizeSnapshot({
       regions: {
         "ap-northeast-1": { fm: FM_TOKYO, ip: [IP_TOKYO] },
         "us-east-1": { error: FM_DENY },
+        "ap-east-2": { error: FM_NOT_OPTED_IN },
+        "me-central-1": { error: FM_TIMEOUT },
       },
       generatedAt: "2026-09-14T08:10:00Z",
       accountKind: "sandbox",
     });
-    // fixture の inferenceProfileArn とエラー文にはアカウント ID が入っている
+
+  it("生成した JSON 全体に識別子もエラー原文も現れない", () => {
+    const { models, profiles, fetchLog } = generated();
+    // 入力側には識別子が入っている
     expect(JSON.stringify(IP_TOKYO)).toMatch(/\d{12}/);
     expect(FM_DENY).toMatch(/\d{12}/);
-    for (const generated of [models, profiles, fetchLog]) {
-      expect(JSON.stringify(generated)).not.toMatch(/\d{12}/);
+    expect(FM_DENY).toMatch(/(?<![a-z])o-[a-z0-9]{10,}/);
+
+    const patterns = [
+      /\d{12}/,
+      /arn:/,
+      /AccessDenied/,
+      /Exception/,
+      // 直前が英字でないときだけ拾う。ap-northeast-1 の "p-northeast" は識別子ではない
+      /(?<![a-z])o-[a-z0-9]{10,}/,
+      /(?<![a-z])p-[a-z0-9]{8,}/,
+      /AWSReservedSSO/,
+      /assumed-role/,
+      /service control policy/,
+    ];
+    for (const generatedJson of [models, profiles, fetchLog]) {
+      const text = JSON.stringify(generatedJson);
+      for (const pattern of patterns) expect(text, String(pattern)).not.toMatch(pattern);
     }
-    expect(fetchLog.regions["us-east-1"].reason).toContain(ACCOUNT_ID_MASK);
+  });
+
+  it("リージョンコードは生成物からも消えない (p-northeast などに誤爆しない)", () => {
+    const { fetchLog } = generated();
+    expect(Object.keys(fetchLog.regions)).toContain("ap-northeast-1");
+    expect(Object.keys(fetchLog.regions)).toContain("ap-east-2");
+    expect(Object.keys(fetchLog.regions)).toContain("me-central-1");
+  });
+
+  it("denied の行は status と cause だけを持つ", () => {
+    const { fetchLog } = generated();
+    expect(Object.keys(fetchLog.regions["us-east-1"]).sort()).toEqual(["cause", "status"]);
+    expect(fetchLog.regions["ap-east-2"].cause).toBe("not-opted-in");
+    expect(fetchLog.regions["me-central-1"].cause).toBe("timeout");
   });
 
   it("inferenceProfileArn を保存せず、accountKind は引数の種別だけ", () => {

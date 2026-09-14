@@ -1,6 +1,7 @@
 // 行の展開と詳細パネル (DETAIL-001)。データの組み立ては detail-model.mjs が持ち、
 // このファイルは DOM とイベントだけを扱う。
 import { buildDetail } from "./detail-model.mjs";
+import { causeLabelKey } from "./bedrock-view-model.mjs";
 import { createCopyable } from "./copy.js";
 import { t, getLang, LANG_CHANGED_EVENT } from "./i18n.js";
 import { regionName } from "./region-names.js";
@@ -54,12 +55,11 @@ function availabilitySection(detail, regionNotes) {
       item.appendChild(badges);
     } else {
       const label = el("span", `detail-region-state state-${row.kind}`, t(KIND_LABEL[row.kind]));
-      if (row.kind === "nodata" && row.reason) {
-        // 原文はツールチップと脚注リンクの両方から参照できる (AC-008)。
-        label.title = row.reason;
-        const link = el("a", "detail-reason-link", t("detail.reasonLink"));
-        link.href = `#detail-reason-${row.region}`;
-        label.append(" ", link);
+      if (row.kind === "nodata") {
+        // 理由は分類から起こした平易な説明文だけを出す (AC-008)。
+        const text = t(causeLabelKey(row.cause));
+        label.title = text;
+        label.append(" ", el("span", "detail-region-cause", text));
       }
       item.appendChild(label);
     }
@@ -138,7 +138,6 @@ export function mountDetailView({
   profiles,
   fetchLog,
   regionNotes,
-  host = document.getElementById("detail-host"),
 } = {}) {
   const open = new Set();
 
@@ -160,36 +159,6 @@ export function mountDetailView({
     td.appendChild(panel);
     tr.appendChild(td);
     return { tr, detail };
-  }
-
-  // denied の reason 原文は脚注として 1 箇所にまとめ、パネルからリンクする (AC-008)。
-  function renderReasonFootnotes(details) {
-    if (!host) return;
-    const reasons = new Map();
-    for (const detail of details) {
-      for (const entry of detail.deniedReasons) reasons.set(entry.region, entry.reason);
-    }
-    if (reasons.size === 0) {
-      host.replaceChildren();
-      host.hidden = true;
-      return;
-    }
-    host.hidden = false;
-    const list = el("ul", "detail-reason-list");
-    for (const [region, reason] of [...reasons].sort(([a], [b]) => a.localeCompare(b))) {
-      const item = el("li", "detail-reason");
-      item.id = `detail-reason-${region}`;
-      // 対象リージョンが多いと原文だけでページが埋まるので、既定は畳んでおく。
-      const box = document.createElement("details");
-      const summary = document.createElement("summary");
-      summary.className = "detail-reason-region mono";
-      summary.textContent = region;
-      // reason は AWS API のエラー原文。翻訳も要約もしない。
-      box.append(summary, el("pre", "detail-reason-text mono", reason));
-      item.appendChild(box);
-      list.appendChild(item);
-    }
-    host.replaceChildren(el("h4", null, t("detail.reasonHeading")), list);
   }
 
   function toggleButton(modelId) {
@@ -219,7 +188,6 @@ export function mountDetailView({
     if (!tbody) return;
     for (const stale of tbody.querySelectorAll("tr.detail-row")) stale.remove();
 
-    const details = [];
     for (const tr of [...tbody.querySelectorAll("tr[data-model-id]")]) {
       const modelId = tr.dataset.modelId;
       const first = tr.firstElementChild;
@@ -231,11 +199,9 @@ export function mountDetailView({
       if (button) button.setAttribute("aria-expanded", String(isOpen));
       tr.classList.toggle("expanded", isOpen);
       if (!isOpen) continue;
-      const { tr: panel, detail } = buildPanelRow(modelId, tr.children.length);
+      const { tr: panel } = buildPanelRow(modelId, tr.children.length);
       tr.insertAdjacentElement("afterend", panel);
-      details.push(detail);
     }
-    renderReasonFootnotes(details);
   }
 
   // 行クリックでも開閉する (AC-001)。コピーボタンやリンクの操作は拾わない。

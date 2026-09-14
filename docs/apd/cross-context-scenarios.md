@@ -15,7 +15,7 @@ version: 1
 - **Action**: `node scripts/fetch-bedrock-snapshot.mjs --profile <名前> --account-kind sandbox` を実行する。`region-notes.json` のキー全件について `ListFoundationModels` と `ListInferenceProfiles`（`SYSTEM_DEFINED`、`nextToken` を追う）を `aws` CLI 経由で呼び、生 JSON とエラー文を `data/raw/<日付>/` に落としてから `normalize.mjs` で正規化する。`us-east-1` は SCP の明示 Deny で失敗するが、例外にせず続行する
 - **Data Out**:
   - To: table
-  - Payload: `models.json`（モデル ID をキーに provider / name / input / output / streaming / lifecycle / availability）、`profiles.json`（プロファイル ID をキーに prefix / modelId / name / sources）、`fetch-log.json`（`generatedAt`、`accountKind`、`ap-northeast-1: {status:"ok", models:68, profiles:34}`、`us-east-1: {status:"denied", reason:"AccessDeniedException: ... explicit deny in a service control policy ..."}`）
+  - Payload: `models.json`（モデル ID をキーに provider / name / input / output / streaming / lifecycle / availability）、`profiles.json`（プロファイル ID をキーに prefix / modelId / name / sources）、`fetch-log.json`（`generatedAt`、`accountKind`、`ap-northeast-1: {status:"ok", models:68, profiles:34}`、`us-east-1: {status:"denied", cause:"scp-deny"}`。エラー原文は載せない → D-008）
 
 #### Step 2
 - **Context**: table
@@ -29,7 +29,7 @@ version: 1
 
 #### Step 3
 - **Context**: i18n
-- **Action**: `navigator.language` と `localStorage` から表示言語を決め、列ヘッダ・状態ラベル・リージョン表示名（`region-notes.json` の `ja` / `en`）を供給する。モデル ID・プロファイル ID・リージョンコード・`reason` 原文は翻訳しない
+- **Action**: `navigator.language` と `localStorage` から表示言語を決め、列ヘッダ・状態ラベル・取得失敗の理由（`cause` の説明文）・リージョン表示名（`region-notes.json` の `ja` / `en`）を供給する。モデル ID・プロファイル ID・リージョンコードは翻訳しない
 - **Data In**:
   - From: data
   - Payload: `region-notes.json` の `ja` / `en`、`overrides.json` の `ja` / `en`
@@ -55,7 +55,7 @@ version: 1
 
 ### Verification Points
 - `us-east-1` は `models.json` / `profiles.json` に一切現れず、`fetch-log.json` にのみ `denied` と API のエラー原文で残る
-- 起点に `us-east-1` を選んだとき、表の上に「データなし」のバナーと `reason` 原文が出る。行が 0 件でも「提供なし」とは別の見た目になる
+- 起点に `us-east-1` を選んだとき、表の上に「データなし」のバナーと `cause` の説明文が出る。行が 0 件でも「提供なし」とは別の見た目になる
 - `inferenceTypesSupported` の 4 ケース（`ON_DEMAND` のみ / `INFERENCE_PROFILE` のみ / 両方 / 空配列）が In-Region 列の表示に正しく落ちる
 - `global.` プロファイルのリージョン空 ARN が Step 1 で `"*"` になり、Step 2 で destination 列挙ではなく注記として表示され、Step 4 でどの限定も満たさない
 - Geo 列の destination チップが昇順・重複なしで、Step 1 のソート結果と一致する

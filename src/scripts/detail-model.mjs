@@ -22,14 +22,14 @@ export function buildAvailabilityRows(modelId, { models, regionNotes, fetchLog }
   return selectableRegions(regionNotes).map((region) => {
     const fetched = regionStatus(fetchLog, region);
     if (fetched.status === "denied") {
-      return { region, kind: "nodata", types: [], reason: fetched.reason ?? null };
+      return { region, kind: "nodata", types: [], cause: fetched.cause ?? null };
     }
     if (!Object.prototype.hasOwnProperty.call(availability, region)) {
-      return { region, kind: "none", types: [], reason: null };
+      return { region, kind: "none", types: [], cause: null };
     }
     const types = availability[region] ?? [];
-    if (types.length === 0) return { region, kind: "empty", types: [], reason: null };
-    return { region, kind: "types", types: [...types], reason: null };
+    if (types.length === 0) return { region, kind: "empty", types: [], cause: null };
+    return { region, kind: "types", types: [...types], cause: null };
   });
 }
 
@@ -72,9 +72,5 @@ export function buildDetail(modelId, { models, profiles, fetchLog, regionNotes, 
     availability,
     profiles: profileRows,
     hasProfiles: profileRows.length > 0,
-    // ツールチップ / 脚注リンクで原文を見せる denied リージョン (AC-008)。
-    deniedReasons: availability
-      .filter((row) => row.kind === "nodata" && row.reason)
-      .map((row) => ({ region: row.region, reason: row.reason })),
   };
 }

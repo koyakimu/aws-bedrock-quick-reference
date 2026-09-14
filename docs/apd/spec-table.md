@@ -1,13 +1,14 @@
 ---
 spec_id: "TABLE-001"
 context: "table"
-version: 1
+version: 2
 issue_ref: null
 title: "起点リージョン選択とメイン比較表"
 decision_refs:
   - D-001
   - D-003
   - D-004
+  - D-008
 ---
 
 ## User Story
@@ -61,7 +62,7 @@ decision_refs:
 ### AC-009 (Error Case: denied リージョンを選んだとき)
 - **Given**: `fetch-log.json.regions["us-east-1"].status` が `"denied"` の状態で、起点リージョンに `us-east-1` を選ぶ
 - **When**: 表を描画する
-- **Then**: 表の上にバナーが出て「このリージョンはデータを取得できなかった（データなし）」ことと `reason` の原文が表示される。表は 0 行になり、「提供なし」とは異なる見た目（バナー付きの空状態）になる。空の表を無言で出してはいけない
+- **Then**: 表の上にバナーが出て「このリージョンはデータを取得できなかった（データなし）」ことと、`cause` に対応する平易な説明文（例: 「組織のポリシーで取得できませんでした」）が表示される。**API のエラー原文は表示しない**（D-008。公開データに原文が無い）。表は 0 行になり、「提供なし」とは異なる見た目（バナー付きの空状態）になる。空の表を無言で出してはいけない
 
 ### AC-010 (Error Case: 取得済みだがモデルが 0 件)
 - **Given**: `fetch-log.json.regions[R].status` が `"ok"` で `models` が 0
@@ -119,7 +120,7 @@ decision_refs:
 | AC-006 | integration (jsdom, vitest) | 描画された `<th>` の並びと 1 行分のセル内容を検証 |
 | AC-007 | integration (jsdom, vitest) | クリップボード API をスタブし、コピーされた文字列が ID と完全一致することを検証 |
 | AC-008 | integration (jsdom, vitest) | 脚注に `generatedAt` / `accountKind` / denied リージョン名 / 出典リンク数が出ることを検証 |
-| AC-009 | integration (jsdom, vitest) | denied の fixture でバナーの有無・`reason` 原文の表示・表 0 行を検証 |
+| AC-009 | integration (jsdom, vitest) | denied の fixture でバナーの有無・`cause` の説明文の表示・表 0 行を検証。併せて画面上にエラー原文（`AccessDenied` / `arn:aws` など）が現れないことを検証 |
 | AC-010 | integration (jsdom, vitest) | `ok` かつ 0 件の fixture で「提供なし」表示になり、バナーが出ないことを検証 |
 | AC-NFR-001 | e2e（Playwright MCP で 375px のスクリーンショットを手動確認） | `document.documentElement.scrollWidth <= clientWidth` を評価し、スクリーンショットでセルの重なりが無いことを目視。結果はリポジトリに入れない |
 | AC-NFR-002 | 計測 (vitest, jsdom) | 68 モデルの fixture で再描画時間を `performance.now()` で 5 回測り中央値 < 200ms |
@@ -140,3 +141,8 @@ decision_refs:
 - `PROVISIONED` は 3 列の判定に使わない（DETAIL-001 の availability 表示には出す）
 - Global の destination を推測して列挙しない（Design FAQ Q6）
 - 料金・クォータ・性能比較は列に持たない（Design「What Not」1・2・4）
+
+## 変更履歴
+
+- **version 2** (2026-09-14): AC-009 のバナーを、API のエラー原文の表示から `cause`（取得失敗の分類）の説明文の表示に改めた（D-008）
+- **version 1** (2026-09-14): 初版
