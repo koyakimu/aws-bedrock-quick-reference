@@ -231,6 +231,7 @@
   line-height: 1.7;
 }
 .geo-place {
+  white-space: nowrap;
   color: var(--fg);
 }
 .geo-place.is-source {
