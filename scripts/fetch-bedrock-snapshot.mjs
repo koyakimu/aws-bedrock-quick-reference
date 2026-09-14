@@ -3,13 +3,16 @@
 //   node scripts/fetch-bedrock-snapshot.mjs --profile sandbox --account-kind sandbox --regions ap-northeast-1,us-east-1
 //   node scripts/fetch-bedrock-snapshot.mjs --profile sandbox --account-kind sandbox --dry-run
 //
+// 取り直さずに正規化だけやり直す (aws を呼ばない):
+//   node scripts/fetch-bedrock-snapshot.mjs --from-raw 2026-09-14 --account-kind sandbox
+//
 // 手元の SSO で手動実行する前提。CI に AWS 認証情報は置かない (D-002)。
 // 取得できなかったリージョンは例外にせず data/fetch-log.json に denied として残す。
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { defaultRunner } from "./lib/aws-cli.mjs";
 import { parseArgs, regionsFromNotes, USAGE } from "./lib/cli-args.mjs";
-import { runSnapshot, summarize } from "./lib/snapshot.mjs";
+import { runFromRaw, runSnapshot, summarize } from "./lib/snapshot.mjs";
 
 const DATA_DIR = fileURLToPath(new URL("../data/", import.meta.url));
 const RAW_ROOT = fileURLToPath(new URL("../data/raw/", import.meta.url));
@@ -26,20 +29,35 @@ try {
   process.exit(2);
 }
 
-process.stderr.write(`fetching ${options.regions.length} regions with profile ${options.profile}\n`);
+if (options.fromRaw) {
+  process.stderr.write(`re-normalizing data/raw/${options.fromRaw}/ without calling aws\n`);
+} else {
+  process.stderr.write(`fetching ${options.regions.length} regions with profile ${options.profile}\n`);
+}
 
-const { fetchLog } = runSnapshot({
-  runner: defaultRunner,
-  profile: options.profile,
-  accountKind: options.accountKind,
-  regions: options.regions,
-  date: options.date,
-  dataDir: DATA_DIR,
-  rawRoot: RAW_ROOT,
-  generatedAt: new Date().toISOString(),
-  dryRun: options.dryRun,
-  log: (line) => process.stderr.write(line),
-});
+const { fetchLog } = options.fromRaw
+  ? runFromRaw({
+      accountKind: options.accountKind,
+      date: options.fromRaw,
+      dataDir: DATA_DIR,
+      rawRoot: RAW_ROOT,
+      // 既存の fetch-log.json に generatedAt があればそちらが優先される。
+      generatedAt: new Date().toISOString(),
+      dryRun: options.dryRun,
+      log: (line) => process.stderr.write(line),
+    })
+  : runSnapshot({
+      runner: defaultRunner,
+      profile: options.profile,
+      accountKind: options.accountKind,
+      regions: options.regions,
+      date: options.date,
+      dataDir: DATA_DIR,
+      rawRoot: RAW_ROOT,
+      generatedAt: new Date().toISOString(),
+      dryRun: options.dryRun,
+      log: (line) => process.stderr.write(line),
+    });
 
 const counts = summarize(fetchLog);
 const summary = Object.entries(counts)

@@ -97,8 +97,14 @@ export const en = {
     allRegions: "all supported Regions (may grow)",
     currentSource: "current source",
     arrow: "→",
-    reasonLink: "raw error",
-    reasonHeading: "Why “no data” (raw AWS API error)",
+  },
+  // Why a Region could not be fetched. A coarse cause, never the raw error text (DATA-001 D-008).
+  cause: {
+    scpDeny: "Blocked by an organization policy",
+    accessDenied: "Not permitted to fetch this Region",
+    notOptedIn: "This Region is not enabled for this account",
+    timeout: "Could not connect",
+    other: "Could not be fetched",
   },
   share: {
     copy: "Copy the URL of this view",

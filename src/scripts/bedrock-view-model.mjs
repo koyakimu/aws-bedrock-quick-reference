@@ -51,13 +51,28 @@ export function judgeGlobal(profiles, modelId, region) {
 // fetch-log.json の 1 リージョン分。記録が無いリージョンは "unknown" にする。
 export function regionStatus(fetchLog, region) {
   const entry = fetchLog?.regions?.[region];
-  if (!entry) return { status: "unknown", reason: null, models: 0, profiles: 0 };
+  if (!entry) return { status: "unknown", cause: null, models: 0, profiles: 0 };
   return {
     status: entry.status,
-    reason: entry.reason ?? null,
+    // 取得失敗の分類 (DATA-001 D-008)。エラー原文は公開データに無い。
+    cause: entry.cause ?? null,
     models: entry.models ?? 0,
     profiles: entry.profiles ?? 0,
   };
+}
+
+// 取得失敗の分類 (fetch-log.json の cause) → 平易な説明文のキー。
+// エラー原文は公開データに無いので、画面に出せるのは分類だけ (DATA-001 D-008)。
+export const CAUSE_LABEL = Object.freeze({
+  "scp-deny": "cause.scpDeny",
+  "access-denied": "cause.accessDenied",
+  "not-opted-in": "cause.notOptedIn",
+  timeout: "cause.timeout",
+  other: "cause.other",
+});
+
+export function causeLabelKey(cause) {
+  return CAUSE_LABEL[cause] ?? CAUSE_LABEL.other;
 }
 
 // 取得できなかったリージョンのコード一覧 (脚注用、昇順)。
@@ -125,7 +140,7 @@ export function buildRow({ modelId, model, profiles, region, overrides }) {
 
 /**
  * 画面 1 枚ぶんのビューモデル。
- * status が "denied" のとき rows は必ず 0 行で、reason に API のエラー原文が入る (AC-009)。
+ * status が "denied" のとき rows は必ず 0 行で、cause に取得失敗の分類が入る (AC-009)。
  * status が "ok" で rows が 0 行なら「提供なし」(AC-010)。
  */
 export function buildViewModel({
@@ -151,7 +166,7 @@ export function buildViewModel({
     region,
     endpoint: endpointOf(regionNotes, region),
     status: fetch.status,
-    reason: fetch.reason,
+    cause: fetch.cause,
     rows,
     generatedAt: fetchLog?.generatedAt ?? null,
     accountKind: fetchLog?.accountKind ?? null,

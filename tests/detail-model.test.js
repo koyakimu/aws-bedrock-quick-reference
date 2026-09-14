@@ -57,7 +57,7 @@ describe("DETAIL-001 AC-003 提供なしの表示", () => {
     const row = rowFor(CLAUDE, "eu-west-1");
     expect(row.kind).toBe("none");
     expect(row.types).toEqual([]);
-    expect(row.reason).toBeNull();
+    expect(row.cause).toBeNull();
   });
 });
 
@@ -121,10 +121,11 @@ describe("DETAIL-001 AC-006 Global の推論先", () => {
 
 // --- AC-008 denied は「データなし」 ---
 describe("DETAIL-001 AC-008 denied リージョンは「データなし」", () => {
-  it("denied のリージョンは nodata 種別で、reason の原文を持つ", () => {
+  it("denied のリージョンは nodata 種別で、分類 (cause) だけを持つ", () => {
     const row = rowFor(CLAUDE, DENIED_REGION);
     expect(row.kind).toBe("nodata");
-    expect(row.reason).toContain("AccessDeniedException");
+    expect(row.cause).toBe("scp-deny");
+    expect(JSON.stringify(row)).not.toContain("AccessDenied");
   });
 
   it("「提供なし」と種別が異なる (取得できていないだけのリージョンを提供なしにしない)", () => {
@@ -132,7 +133,7 @@ describe("DETAIL-001 AC-008 denied リージョンは「データなし」", () 
     expect(rowFor(CLAUDE, "eu-west-1").kind).toBe("none");
   });
 
-  it("buildDetail が denied の原文を脚注用に集める", () => {
+  it("buildDetail の返り値にエラー原文が一切含まれない (D-008)", () => {
     const detail = buildDetail(CLAUDE, {
       models: snapshot.models,
       profiles: snapshot.profiles,
@@ -140,8 +141,11 @@ describe("DETAIL-001 AC-008 denied リージョンは「データなし」", () 
       regionNotes,
       region: TOKYO,
     });
-    expect(detail.deniedReasons.map((entry) => entry.region)).toEqual([DENIED_REGION]);
-    expect(detail.deniedReasons[0].reason).toContain("explicit deny in a service control policy");
+    const text = JSON.stringify(detail);
+    expect(text).not.toContain("AccessDenied");
+    expect(text).not.toContain("service control policy");
+    expect(text).not.toContain("arn:");
+    expect(detail.availability.find((row) => row.region === DENIED_REGION).cause).toBe("scp-deny");
   });
 });
 

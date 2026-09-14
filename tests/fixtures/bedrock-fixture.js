@@ -18,7 +18,7 @@ export function buildSnapshot() {
   return normalizeSnapshot({
     regions: {
       [TOKYO]: { fm: fmTokyo, ip: [ipTokyo] },
-      // 取得に失敗したリージョン。reason は API のエラー原文 (AC-009)
+      // 取得に失敗したリージョン。公開データに残るのは分類 (cause) だけ (AC-009 / D-008)
       [DENIED_REGION]: { error: fmDenied },
       // 取得はできたがモデルが 1 件も無いリージョン (AC-010)
       [EMPTY_REGION]: { fm: { modelSummaries: [] }, ip: [] },
@@ -28,7 +28,9 @@ export function buildSnapshot() {
   });
 }
 
-export const DENIED_REASON_SOURCE = fmDenied;
+// 分類のもとになる原文。公開データには載らないが、テストが分類の前提を確かめるのに使う。
+export const DENIED_ERROR_SOURCE = fmDenied;
+export const DENIED_CAUSE = "scp-deny";
 
 // overrides.json は空のままなので、備考のテストはこの固定値を使う。
 export function buildOverrides(modelId, profileId) {

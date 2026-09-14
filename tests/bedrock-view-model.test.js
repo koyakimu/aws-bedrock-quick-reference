@@ -144,10 +144,11 @@ describe("AC-005 judgeGlobal", () => {
 describe("fetch-log の読み取り", () => {
   const { fetchLog } = buildSnapshot();
 
-  it("denied のリージョンは status と reason を返す", () => {
+  it("denied のリージョンは status と cause を返す (エラー原文は持たない)", () => {
     const status = regionStatus(fetchLog, DENIED_REGION);
     expect(status.status).toBe("denied");
-    expect(status.reason).toContain("AccessDeniedException");
+    expect(status.cause).toBe("scp-deny");
+    expect(status.reason).toBeUndefined();
   });
 
   it("ok のリージョンは件数を返す", () => {
@@ -206,20 +207,21 @@ describe("buildViewModel", () => {
     expect(byId["nvidia.nemotron-nano-12b-v2"].global).toBeNull();
   });
 
-  // AC-009: denied は 0 行 + reason 原文。
-  it("denied のリージョンは 0 行で reason を持つ", () => {
+  // AC-009: denied は 0 行 + 分類 (cause)。エラー原文は持たない (D-008)。
+  it("denied のリージョンは 0 行で cause を持ち、エラー原文は持たない", () => {
     const view = buildViewModel({ ...base, region: DENIED_REGION });
     expect(view.status).toBe("denied");
     expect(view.rows).toEqual([]);
-    expect(view.reason).toContain("AccessDeniedException");
+    expect(view.cause).toBe("scp-deny");
+    expect(JSON.stringify(view)).not.toContain("AccessDenied");
   });
 
-  // AC-010: ok かつ 0 件は「提供なし」。reason は無い。
+  // AC-010: ok かつ 0 件は「提供なし」。cause は無い。
   it("ok かつモデル 0 件のリージョンは 0 行だが status は ok", () => {
     const view = buildViewModel({ ...base, region: EMPTY_REGION });
     expect(view.status).toBe("ok");
     expect(view.rows).toEqual([]);
-    expect(view.reason).toBeNull();
+    expect(view.cause).toBeNull();
   });
 
   it("脚注に使う情報を持つ", () => {

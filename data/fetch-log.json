@@ -4,11 +4,11 @@
   "regions": {
     "af-south-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "ap-east-2": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "ap-northeast-1": {
       "status": "ok",
@@ -17,123 +17,123 @@
     },
     "ap-northeast-2": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "ap-northeast-3": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "ap-south-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "ap-south-2": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "ap-southeast-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "ap-southeast-2": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "ap-southeast-3": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "ap-southeast-4": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "ap-southeast-5": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "ap-southeast-6": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "ap-southeast-7": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "ca-central-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "ca-west-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "eu-central-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "eu-central-2": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "eu-north-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "eu-south-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "eu-south-2": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "eu-west-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "eu-west-2": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "eu-west-3": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "il-central-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "me-central-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: Connect timeout on endpoint URL: \"https://bedrock.me-central-1.amazonaws.com/foundation-models\"\n"
+      "cause": "timeout"
     },
     "me-south-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: Connect timeout on endpoint URL: \"https://bedrock.me-south-1.amazonaws.com/foundation-models\"\n"
+      "cause": "timeout"
     },
     "mx-central-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (UnrecognizedClientException) when calling the ListFoundationModels operation: The security token included in the request is invalid\n"
+      "cause": "not-opted-in"
     },
     "sa-east-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "us-east-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "us-east-2": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "us-west-1": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     },
     "us-west-2": {
       "status": "denied",
-      "reason": "\naws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::<account-id>:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::<account-id>:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug\n"
+      "cause": "scp-deny"
     }
   }
 }

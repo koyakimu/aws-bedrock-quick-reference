@@ -1,7 +1,7 @@
 // Bedrock 固有の画面 (TABLE-001)。列定義とセルの中身はここが持ち、
 // 表の骨組みは汎用の table-engine.js に任せる。
 import { createTable, EMPTY } from "./table-engine.js";
-import { buildViewModel, selectableRegions, regionStatus } from "./bedrock-view-model.mjs";
+import { buildViewModel, causeLabelKey, selectableRegions, regionStatus } from "./bedrock-view-model.mjs";
 import { createCopyable, copyText } from "./copy.js";
 import { t, getLang, applyTranslations } from "./i18n.js";
 import { regionName, regionOptionLabel } from "./region-names.js";
@@ -290,9 +290,10 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
   bannerTitle.setAttribute("data-i18n", "state.noDataTitle");
   const bannerBody = el("p", "banner-body");
   bannerBody.setAttribute("data-i18n", "state.noDataBody");
-  const bannerReason = el("pre", "banner-reason mono");
-  bannerReason.id = "denied-reason";
-  banner.append(bannerTitle, bannerBody, bannerReason);
+  // 取得失敗の理由は分類から起こした平易な説明文だけを出す。エラー原文は載せない (DATA-001 D-008)。
+  const bannerCause = el("p", "banner-cause");
+  bannerCause.id = "denied-cause";
+  banner.append(bannerTitle, bannerBody, bannerCause);
 
   // --- 表と空状態 ---
   const table = createTable({
@@ -318,6 +319,8 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
   const detailHost = el("div", "detail-host");
   detailHost.id = "detail-host";
   detailHost.dataset.hook = "DETAIL-001";
+  // 現在この枠に描くものは無い (エラー原文の脚注を廃止したため)。
+  detailHost.hidden = true;
 
   // --- 脚注 (AC-008) ---
   const footnote = el("footer", "notes");
@@ -397,8 +400,8 @@ export function mountTableView({ host, models, profiles, fetchLog, regionNotes, 
 
     const denied = model.status === "denied";
     banner.hidden = !denied;
-    // reason は AWS API のエラー原文。翻訳も要約もしない (I18N-001 AC-004)。
-    bannerReason.textContent = denied ? (model.reason ?? "") : "";
+    // cause は分類なので翻訳する。エラー原文は公開データに無い (I18N-001 AC-004)。
+    bannerCause.textContent = denied ? t(causeLabelKey(model.cause)) : "";
 
     // 取得できているのに 0 件なら「提供なし」。バナーは出さない (AC-010)。
     // 絞り込みで 0 件になった場合は別の空状態 (FILTER-001 AC-010) なのでここでは出さない。

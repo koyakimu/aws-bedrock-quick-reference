@@ -2,12 +2,13 @@
 // 既定リージョンと「今日」は呼び出し側が渡す (このモジュールは時計を読まない)。
 
 export const USAGE = `usage: node scripts/fetch-bedrock-snapshot.mjs --profile <名前> --account-kind <種別>
-                                         [--regions a,b,...] [--date YYYY-MM-DD] [--dry-run]`;
+                                         [--regions a,b,...] [--date YYYY-MM-DD] [--dry-run]
+       node scripts/fetch-bedrock-snapshot.mjs --from-raw <YYYY-MM-DD> --account-kind <種別>`;
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export function parseArgs(argv, { defaultRegions = [], today = null } = {}) {
-  const options = { profile: null, accountKind: null, regions: null, date: null, dryRun: false };
+  const options = { profile: null, accountKind: null, regions: null, date: null, dryRun: false, fromRaw: null };
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -33,6 +34,9 @@ export function parseArgs(argv, { defaultRegions = [], today = null } = {}) {
       case "--date":
         options.date = take("--date");
         break;
+      case "--from-raw":
+        options.fromRaw = take("--from-raw");
+        break;
       case "--dry-run":
         options.dryRun = true;
         break;
@@ -41,8 +45,12 @@ export function parseArgs(argv, { defaultRegions = [], today = null } = {}) {
     }
   }
 
-  if (!options.profile) throw new Error("--profile は必須です");
+  // --from-raw は data/raw/<日付>/ を読み直すだけで aws を呼ばないので --profile は要らない。
+  if (!options.fromRaw && !options.profile) throw new Error("--profile は必須です");
   if (!options.accountKind) throw new Error("--account-kind は必須です");
+  if (options.fromRaw && !DATE_PATTERN.test(options.fromRaw))
+    throw new Error("--from-raw は YYYY-MM-DD で指定してください");
+  if (options.fromRaw && options.regions) throw new Error("--from-raw と --regions は同時に指定できません");
   if (options.date && !DATE_PATTERN.test(options.date)) throw new Error("--date は YYYY-MM-DD で指定してください");
   if (options.regions && options.regions.length === 0) throw new Error("--regions が空です");
 
@@ -51,8 +59,9 @@ export function parseArgs(argv, { defaultRegions = [], today = null } = {}) {
     profile: options.profile,
     accountKind: options.accountKind,
     regions: options.regions ?? defaultRegions,
-    date: options.date ?? today,
+    date: options.fromRaw ?? options.date ?? today,
     dryRun: options.dryRun,
+    fromRaw: options.fromRaw,
   };
 }
 
