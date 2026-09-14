@@ -99,12 +99,12 @@ describe("AC-002 エンドポイント", () => {
 
 // --- AC-006 表の列構成 ---
 describe("AC-006 列構成と 1 行の中身", () => {
-  it("列が左から プロバイダ / モデル名 / できること / In-Region / Geo / Global / 備考", () => {
+  it("列が左から プロバイダ / モデル名 / モダリティ / In-Region / Geo / Global / 備考", () => {
     mount();
     expect(headerTexts()).toEqual([
       "プロバイダ",
       "モデル名",
-      "できること",
+      "モダリティ",
       "In-Region",
       "Geo",
       "Global",

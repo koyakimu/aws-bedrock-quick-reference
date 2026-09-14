@@ -23,7 +23,7 @@ export const ja = {
     provider: "プロバイダ",
     modelName: "モデル名",
     modelId: "モデル ID",
-    capability: "できること",
+    capability: "モダリティ",
     inRegion: "In-Region",
     geo: "Geo",
     global: "Global",

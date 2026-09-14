@@ -23,7 +23,7 @@ export const en = {
     provider: "Provider",
     modelName: "Model",
     modelId: "Model ID",
-    capability: "What it does",
+    capability: "Modalities",
     inRegion: "In-Region",
     geo: "Geo",
     global: "Global",
