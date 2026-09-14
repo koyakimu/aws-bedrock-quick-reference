@@ -295,8 +295,8 @@ describe("AC-006 列構成と 1 行の中身", () => {
   });
 });
 
-// --- AC-011 「できること」の平易な表記 ---
-describe("AC-011 できること列", () => {
+// --- AC-011 「モダリティ」の平易な表記 ---
+describe("AC-011 モダリティ列", () => {
   it("列挙子ではなく平易な語で 入力 → 出力 が出る", () => {
     mount();
     const cell = cells(rowFor("amazon.nova-lite-v1:0"))[2];
@@ -505,7 +505,7 @@ describe("言語を切り替えても表のデータ値は変わらない", () =
     setLang("en");
     view.rerender();
 
-    expect(headerTexts()[2]).toBe("What it does");
+    expect(headerTexts()[2]).toBe("Modalities");
     expect(cells(rowFor("cohere.embed-v4:0"))[1].textContent).toBe(before.name);
     expect(cells(rowFor("cohere.embed-v4:0"))[0].textContent).toBe(before.provider);
     expect(
