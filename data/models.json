@@ -1,0 +1,1199 @@
+{
+  "amazon.nova-2-lite-v1:0": {
+    "provider": "Amazon",
+    "name": "Nova 2 Lite",
+    "input": [
+      "TEXT",
+      "IMAGE",
+      "VIDEO"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "amazon.nova-2-sonic-v1:0": {
+    "provider": "Amazon",
+    "name": "Nova 2 Sonic",
+    "input": [
+      "SPEECH"
+    ],
+    "output": [
+      "SPEECH",
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "amazon.nova-canvas-v1:0": {
+    "provider": "Amazon",
+    "name": "Nova Canvas",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "IMAGE"
+    ],
+    "streaming": false,
+    "lifecycle": "LEGACY",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "amazon.nova-lite-v1:0": {
+    "provider": "Amazon",
+    "name": "Nova Lite",
+    "input": [
+      "TEXT",
+      "IMAGE",
+      "VIDEO"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE",
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "amazon.nova-micro-v1:0": {
+    "provider": "Amazon",
+    "name": "Nova Micro",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "amazon.nova-pro-v1:0": {
+    "provider": "Amazon",
+    "name": "Nova Pro",
+    "input": [
+      "TEXT",
+      "IMAGE",
+      "VIDEO"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "amazon.nova-reel-v1:0": {
+    "provider": "Amazon",
+    "name": "Nova Reel",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "VIDEO"
+    ],
+    "streaming": false,
+    "lifecycle": "LEGACY",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "amazon.rerank-v1:0": {
+    "provider": "Amazon",
+    "name": "Rerank 1.0",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "amazon.titan-embed-text-v1": {
+    "provider": "Amazon",
+    "name": "Titan Embeddings G1 - Text",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "amazon.titan-embed-text-v1:2:8k": {
+    "provider": "Amazon",
+    "name": "Titan Embeddings G1 - Text",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": []
+    }
+  },
+  "amazon.titan-embed-text-v2:0": {
+    "provider": "Amazon",
+    "name": "Titan Text Embeddings V2",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "anthropic.claude-fable-5": {
+    "provider": "Anthropic",
+    "name": "Claude Fable 5",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-fable-5-1": {
+    "provider": "Anthropic",
+    "name": "Claude Fable 5.1",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-haiku-4-5-20251001-v1:0": {
+    "provider": "Anthropic",
+    "name": "Claude Haiku 4.5",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-opus-4-5-20251101-v1:0": {
+    "provider": "Anthropic",
+    "name": "Claude Opus 4.5",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-opus-4-6-v1": {
+    "provider": "Anthropic",
+    "name": "Claude Opus 4.6",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-opus-4-7": {
+    "provider": "Anthropic",
+    "name": "Claude Opus 4.7",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-opus-4-8": {
+    "provider": "Anthropic",
+    "name": "Claude Opus 4.8",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-opus-5": {
+    "provider": "Anthropic",
+    "name": "Claude Opus 5",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-sonnet-4-20250514-v1:0": {
+    "provider": "Anthropic",
+    "name": "Claude Sonnet 4",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "LEGACY",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-sonnet-4-5-20250929-v1:0": {
+    "provider": "Anthropic",
+    "name": "Claude Sonnet 4.5",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-sonnet-4-6": {
+    "provider": "Anthropic",
+    "name": "Claude Sonnet 4.6",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "anthropic.claude-sonnet-5": {
+    "provider": "Anthropic",
+    "name": "Claude Sonnet 5",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "cohere.embed-english-v3": {
+    "provider": "Cohere",
+    "name": "Embed English",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "cohere.embed-multilingual-v3": {
+    "provider": "Cohere",
+    "name": "Embed Multilingual",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "cohere.embed-v4:0": {
+    "provider": "Cohere",
+    "name": "Embed v4",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "EMBEDDING"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "cohere.rerank-v3-5:0": {
+    "provider": "Cohere",
+    "name": "Rerank 3.5",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": false,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "deepseek.v3-v1:0": {
+    "provider": "DeepSeek",
+    "name": "DeepSeek-V3.1",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "deepseek.v3.2": {
+    "provider": "DeepSeek",
+    "name": "DeepSeek V3.2",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "google.gemma-3-12b-it": {
+    "provider": "Google",
+    "name": "Gemma 3 12B IT",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "google.gemma-3-27b-it": {
+    "provider": "Google",
+    "name": "Gemma 3 27B PT",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "google.gemma-3-4b-it": {
+    "provider": "Google",
+    "name": "Gemma 3 4B IT",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "minimax.minimax-m2": {
+    "provider": "MiniMax",
+    "name": "MiniMax M2",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "minimax.minimax-m2.1": {
+    "provider": "MiniMax",
+    "name": "MiniMax M2.1",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "minimax.minimax-m2.5": {
+    "provider": "MiniMax",
+    "name": "MiniMax M2.5",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.devstral-2-123b": {
+    "provider": "Mistral AI",
+    "name": "Devstral 2 123B",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.magistral-small-2509": {
+    "provider": "Mistral AI",
+    "name": "Magistral Small 2509",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.ministral-3-14b-instruct": {
+    "provider": "Mistral AI",
+    "name": "Ministral 14B 3.0",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.ministral-3-3b-instruct": {
+    "provider": "Mistral AI",
+    "name": "Ministral 3B",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.ministral-3-8b-instruct": {
+    "provider": "Mistral AI",
+    "name": "Ministral 3 8B",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.mistral-large-3-675b-instruct": {
+    "provider": "Mistral AI",
+    "name": "Mistral Large 3",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.voxtral-mini-3b-2507": {
+    "provider": "Mistral AI",
+    "name": "Voxtral Mini 3B 2507",
+    "input": [
+      "SPEECH",
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "mistral.voxtral-small-24b-2507": {
+    "provider": "Mistral AI",
+    "name": "Voxtral Small 24B 2507",
+    "input": [
+      "SPEECH",
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "moonshot.kimi-k2-thinking": {
+    "provider": "Moonshot AI",
+    "name": "Kimi K2 Thinking",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "moonshotai.kimi-k2.5": {
+    "provider": "Moonshot AI",
+    "name": "Kimi K2.5",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "nvidia.nemotron-nano-12b-v2": {
+    "provider": "NVIDIA",
+    "name": "NVIDIA Nemotron Nano 12B v2 VL BF16",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "nvidia.nemotron-nano-3-30b": {
+    "provider": "NVIDIA",
+    "name": "Nemotron Nano 3 30B",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "nvidia.nemotron-nano-9b-v2": {
+    "provider": "NVIDIA",
+    "name": "NVIDIA Nemotron Nano 9B v2",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "nvidia.nemotron-super-3-120b": {
+    "provider": "NVIDIA",
+    "name": "NVIDIA Nemotron 3 Super 120B A12B",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "openai.gpt-5.6-luna": {
+    "provider": "OpenAI",
+    "name": "GPT-5.6 Luna",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "openai.gpt-5.6-sol": {
+    "provider": "OpenAI",
+    "name": "GPT-5.6 Sol",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "openai.gpt-5.6-terra": {
+    "provider": "OpenAI",
+    "name": "GPT-5.6 Terra",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "openai.gpt-6-astra": {
+    "provider": "OpenAI",
+    "name": "GPT-6 Astra",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "openai.gpt-oss-120b-1:0": {
+    "provider": "OpenAI",
+    "name": "gpt-oss-120b",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "openai.gpt-oss-20b-1:0": {
+    "provider": "OpenAI",
+    "name": "gpt-oss-20b",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "openai.gpt-oss-safeguard-120b": {
+    "provider": "OpenAI",
+    "name": "GPT OSS Safeguard 120B",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "openai.gpt-oss-safeguard-20b": {
+    "provider": "OpenAI",
+    "name": "GPT OSS Safeguard 20B",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "qwen.qwen3-235b-a22b-2507-v1:0": {
+    "provider": "Qwen",
+    "name": "Qwen3 235B A22B 2507",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "qwen.qwen3-32b-v1:0": {
+    "provider": "Qwen",
+    "name": "Qwen3 32B (dense)",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "qwen.qwen3-coder-30b-a3b-v1:0": {
+    "provider": "Qwen",
+    "name": "Qwen3-Coder-30B-A3B-Instruct",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "qwen.qwen3-coder-480b-a35b-v1:0": {
+    "provider": "Qwen",
+    "name": "Qwen3 Coder 480B A35B Instruct",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "qwen.qwen3-next-80b-a3b": {
+    "provider": "Qwen",
+    "name": "Qwen3 Next 80B A3B",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "qwen.qwen3-vl-235b-a22b": {
+    "provider": "Qwen",
+    "name": "Qwen3 VL 235B A22B",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "twelvelabs.pegasus-1-2-v1:0": {
+    "provider": "TwelveLabs",
+    "name": "Pegasus v1.2",
+    "input": [
+      "TEXT",
+      "VIDEO"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "xai.grok-4.6": {
+    "provider": "xAI",
+    "name": "Grok 4.6",
+    "input": [
+      "TEXT",
+      "IMAGE"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "INFERENCE_PROFILE"
+      ]
+    }
+  },
+  "zai.glm-4.7": {
+    "provider": "Z.AI",
+    "name": "GLM 4.7",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "zai.glm-4.7-flash": {
+    "provider": "Z.AI",
+    "name": "GLM 4.7 Flash",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  },
+  "zai.glm-5": {
+    "provider": "Z.AI",
+    "name": "GLM 5",
+    "input": [
+      "TEXT"
+    ],
+    "output": [
+      "TEXT"
+    ],
+    "streaming": true,
+    "lifecycle": "ACTIVE",
+    "availability": {
+      "ap-northeast-1": [
+        "ON_DEMAND"
+      ]
+    }
+  }
+}
