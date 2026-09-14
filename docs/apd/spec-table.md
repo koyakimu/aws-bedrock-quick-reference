@@ -1,7 +1,7 @@
 ---
 spec_id: "TABLE-001"
 context: "table"
-version: 2
+version: 3
 issue_ref: null
 title: "起点リージョン選択とメイン比較表"
 decision_refs:
@@ -32,27 +32,27 @@ decision_refs:
 ### AC-003 (In-Region 判定)
 - **Given**: 起点リージョン R、モデル M について `models.json[M].availability[R]` が `ON_DEMAND` を含む
 - **When**: 表を描画する
-- **Then**: In-Region 列が「可」の表示になり、そのセルにコピー可能な **モデル ID** が出る。`ON_DEMAND` を含まない場合（`INFERENCE_PROFILE` のみ、`PROVISIONED` のみ、空配列）は「不可」の表示になりモデル ID は出ない
+- **Then**: In-Region 列が ✓ と「可」だけの表示になる。`ON_DEMAND` を含まない場合（`INFERENCE_PROFILE` のみ、`PROVISIONED` のみ、空配列）は ✕ と「不可」になる。**モデル ID はセルに出さない**（指定する ID は DETAIL-001 の詳細パネルで見る）
 
 ### AC-004 (Geo 判定と destination チップ)
 - **Given**: 起点リージョン R について、`profiles.json` に接頭辞が `us.` / `eu.` / `apac.` / `au.` / `jp.` のいずれかで `modelId` が M、かつ `sources` に R を持つプロファイル P がある
 - **When**: 表を描画する
-- **Then**: Geo 列に P の **プロファイル ID**（コピー可能）と、`sources[R]` の destination リージョンがチップとして昇順で並ぶ。同じ M に対し複数の Geo プロファイルがあれば全て並べる。該当が無ければ「不可」
+- **Then**: Geo 列に P の接頭辞から導いた**地理圏の平易な名前**（`jp` = 日本国内 / `apac` = アジア太平洋 / `us` = 米国 / `eu` = EU / `au` = オーストラリア）と、`sources[R]` の destination リージョンがチップとして昇順で並ぶ。同じ M に対し複数の Geo プロファイルがあれば全て並べる。該当が無ければ「不可」。**プロファイル ID はセルに出さない**（DETAIL-001 の詳細パネルで見る）
 
 ### AC-005 (Global 判定と注記)
 - **Given**: 起点リージョン R について、接頭辞 `global.` で `modelId` が M、`sources` に R を持つプロファイル P がある
 - **When**: 表を描画する
-- **Then**: Global 列に ✓ と P のプロファイル ID（コピー可能）が出て、destination は列挙せず「全対応リージョン（今後増えうる）」の注記と公式 docs へのリンクが付く。`sources[R]` が `["*"]` であることを destination 列挙の代わりに使う
+- **Then**: Global 列に ✓ が出て、destination は列挙せず「全世界の対応リージョン（今後増えうる）」の注記と公式 docs へのリンクが付く。`sources[R]` が `["*"]` であることを destination 列挙の代わりに使う。**プロファイル ID はセルに出さない**（DETAIL-001 の詳細パネルで見る）
 
 ### AC-006 (表の列構成)
 - **Given**: 起点リージョンが選択されている
 - **When**: 表を描画する
-- **Then**: 列が左から Provider / Model ID / モダリティ（入力→出力）/ In-Region / Geo / Global / lifecycle / 備考 の順で並ぶ。1 行 = 1 モデル。モダリティは `inputModalities` と `outputModalities`（`TEXT` / `IMAGE` / `SPEECH` / `VIDEO` / `EMBEDDING`）、lifecycle は `ACTIVE` / `LEGACY`、備考は `overrides.json` の該当エントリ（無ければ空）
+- **Then**: 列が左から **プロバイダ / モデル名 / できること / In-Region / Geo / Global / 備考** の順で並ぶ。1 行 = 1 モデル。モデル名は API の `modelName`（例: `Claude Sonnet 4.5`）、備考は `overrides.json` の該当エントリ（無ければ空）。行は プロバイダ → モデル名 の昇順で並ぶ。**Model ID 列と lifecycle 列は表に持たない**（AWS を知らない人が最初に読む情報から並べるため。技術的な識別子は DETAIL-001 の詳細パネルへ移す）
 
-### AC-007 (ID のコピー)
-- **Given**: 表にモデル ID またはプロファイル ID が表示されている
-- **When**: その ID のコピー操作（クリックまたは付随のコピーボタン）を行う
-- **Then**: クリップボードに ID の文字列だけがコピーされ、コピーできたことが視覚的に示される
+### AC-007 (表にコピーボタンを置かない)
+- **Given**: 起点リージョンが選択され、表が描画されている
+- **When**: 表の本体（`thead` / `tbody`）を見る
+- **Then**: モデル ID もプロファイル ID もコピーボタンも表の中には無い。ID のコピーは DETAIL-001 の詳細パネルで行う（DETAIL-001 AC-010 / AC-011）。起点リージョンのエンドポイントのコピー（AC-002）は表の外なのでそのまま残る
 
 ### AC-008 (脚注)
 - **Given**: ページを開く
@@ -69,10 +69,20 @@ decision_refs:
 - **When**: そのリージョンを選ぶ
 - **Then**: 「このリージョンでは提供なし」と表示される。AC-009 の「データなし」バナーは出ない
 
+### AC-011 (「できること」の平易な表記)
+- **Given**: モデル M の `input` / `output` に `TEXT` / `IMAGE` / `VIDEO` / `SPEECH` / `EMBEDDING` が入っている
+- **When**: 表を描画する
+- **Then**: 「できること」列に、列挙子ではなく**その言語の平易な語**で「入力 → 出力」が出る（ja: `テキスト・画像 → テキスト` / `テキスト → 埋め込み` / `音声 → 音声・テキスト`、en: `Text, Image → Text`）。対応表は I18N-001 の辞書に置き、両言語で同じキー集合を持つ
+
+### AC-012 (旧版タグ)
+- **Given**: モデル M の `lifecycle` が `LEGACY`
+- **When**: 表を描画する
+- **Then**: モデル名の右に小さなタグ「旧版」（en: `Legacy`）が付く。`ACTIVE` のモデルにはタグを付けない（既定が現行なので印は要らない）
+
 ### AC-NFR-001 (スマートフォン幅)
 - **Given**: ビューポート幅 375px
 - **When**: 表を描画する
-- **Then**: 表は横スクロールで全列を読め、ページ全体の横スクロールやセルの重なり・はみ出しといったレイアウト崩れが 0 件。モデル ID 列は横スクロール時も固定表示にする（左端に配置する）
+- **Then**: 表は横スクロールで全列を読め、ページ全体の横スクロールやセルの重なり・はみ出しといったレイアウト崩れが 0 件。**モデル名列**は横スクロール時も固定表示にする（プロバイダ列とともに左端に配置する）
 
 ### AC-NFR-002 (描画性能)
 - **Given**: spike 相当の 68 モデル × 34 プロファイル
@@ -82,11 +92,14 @@ decision_refs:
 ## UI Description
 
 - **上部**: 起点リージョンセレクタ（既定 `ap-northeast-1`）。右隣に選択中リージョンの `bedrock-runtime` エンドポイントと取得状況（取得日時 / ok・denied）。denied のときは表の直上に警告バナー
-- **本体**: 1 つの表。行 = モデル、列 = Provider / Model ID / モダリティ / In-Region / Geo / Global / lifecycle / 備考
-  - In-Region セル: ✓ + モデル ID（コピー可能な等幅表示）
-  - Geo セル: プロファイル ID（コピー可能）+ destination リージョンのチップ列
-  - Global セル: ✓ + プロファイル ID + 「全対応リージョン」注記（docs リンク付き）
+- **本体**: 1 つの表。行 = モデル、列 = プロバイダ / モデル名 / できること / In-Region / Geo / Global / 備考
+  - モデル名セル: `modelName`（+ `LEGACY` なら「旧版」タグ）。プロバイダ列とともに左端に固定する
+  - できることセル: 入力 → 出力 を平易な語で（例: テキスト・画像 → テキスト）
+  - In-Region セル: ✓ / ✕ のみ
+  - Geo セル: 地理圏の平易な名前 + destination リージョンのチップ列
+  - Global セル: ✓ + 「全世界の対応リージョン」注記（docs リンク付き）
   - 不可のセルは ✕ または「—」で、データなしとは別の見た目
+  - 表の中に ID とコピーボタンは置かない。行を開くと DETAIL-001 が技術的な識別子を出す
 - **下部**: 脚注（取得日時、accountKind、denied リージョン一覧、出典リンク）
 - 表の描画は先例の `table-engine.js` 相当の汎用モジュールで行い、Bedrock 固有の知識を持たせない（列定義とセルレンダラを外から渡す）
 
@@ -99,7 +112,7 @@ decision_refs:
 
 ### Outputs
 - **To**: FILTER-001 — 起点リージョン R と、R から見た全行のデータ（絞り込みの母集団）
-- **To**: DETAIL-001 — 行に対応するモデル ID（詳細展開の対象）
+- **To**: DETAIL-001 — 行に対応するモデル ID（詳細展開の対象。表には出さないが `data-model-id` として行に持つ）
 - **To**: SHARE-001 — 起点リージョンの変更イベント
 
 ### Dependencies
@@ -114,14 +127,16 @@ decision_refs:
 |-------|-----------|-------------|
 | AC-001 | integration (jsdom, vitest) | 初期描画後のセレクタの `value` と選択肢件数を検証 |
 | AC-002 | integration (jsdom, vitest) | 起点切り替え前後のエンドポイント文字列を検証 |
-| AC-003 | unit (vitest) | 判定関数 `judgeInRegion(models, M, R)` を 4 ケース（ON_DEMAND のみ / INFERENCE_PROFILE のみ / 両方 / 空配列）で検証 |
-| AC-004 | unit (vitest) | `judgeGeo(profiles, M, R)` が接頭辞 5 種を拾い、destination が昇順であることを検証。複数プロファイルのケースも含む |
+| AC-003 | unit + integration (vitest, jsdom) | 判定関数 `judgeInRegion(models, M, R)` を 4 ケース（ON_DEMAND のみ / INFERENCE_PROFILE のみ / 両方 / 空配列）で検証し、描画側でセルに ID が出ないことを検証 |
+| AC-004 | unit + integration (vitest, jsdom) | `judgeGeo(profiles, M, R)` が接頭辞 5 種を拾い、destination が昇順であることを検証。複数プロファイルのケースも含む。描画側で地理圏の平易な名前が出てプロファイル ID が出ないことを検証 |
 | AC-005 | unit (vitest) | `judgeGlobal` が `global.` のみを拾い、`["*"]` を destination 列挙に展開しないことを検証 |
-| AC-006 | integration (jsdom, vitest) | 描画された `<th>` の並びと 1 行分のセル内容を検証 |
-| AC-007 | integration (jsdom, vitest) | クリップボード API をスタブし、コピーされた文字列が ID と完全一致することを検証 |
+| AC-006 | integration (jsdom, vitest) | 描画された `<th>` の並び（7 列）と 1 行分のセル内容、行の並び順（プロバイダ → モデル名）を検証 |
+| AC-007 | integration (jsdom, vitest) | 表の中に `.copy-btn` と `.copyable` が 0 個であること、エンドポイントのコピーボタンは残っていることを検証 |
 | AC-008 | integration (jsdom, vitest) | 脚注に `generatedAt` / `accountKind` / denied リージョン名 / 出典リンク数が出ることを検証 |
 | AC-009 | integration (jsdom, vitest) | denied の fixture でバナーの有無・`cause` の説明文の表示・表 0 行を検証。併せて画面上にエラー原文（`AccessDenied` / `arn:aws` など）が現れないことを検証 |
 | AC-010 | integration (jsdom, vitest) | `ok` かつ 0 件の fixture で「提供なし」表示になり、バナーが出ないことを検証 |
+| AC-011 | integration (jsdom, vitest) | ja / en の両方で「できること」セルの文字列を検証（列挙子が出ないこと） |
+| AC-012 | integration (jsdom, vitest) | `LEGACY` の行にだけタグが付くことを検証 |
 | AC-NFR-001 | e2e（Playwright MCP で 375px のスクリーンショットを手動確認） | `document.documentElement.scrollWidth <= clientWidth` を評価し、スクリーンショットでセルの重なりが無いことを目視。結果はリポジトリに入れない |
 | AC-NFR-002 | 計測 (vitest, jsdom) | 68 モデルの fixture で再描画時間を `performance.now()` で 5 回測り中央値 < 200ms |
 
@@ -144,5 +159,6 @@ decision_refs:
 
 ## 変更履歴
 
+- **version 3** (2026-09-14): 非技術者向けの情報順に列を並べ替えた。プロバイダ → モデル名 → できること → In-Region / Geo / Global → 備考 とし、Model ID 列・lifecycle 列・表中のコピーボタンを外して技術的な識別子を DETAIL-001 の詳細パネルへ移した（AC-003 / AC-004 / AC-005 / AC-006 / AC-007 / AC-NFR-001 を改訂、AC-011「できること」の平易な表記と AC-012 旧版タグを追加）。理由: AWS を知らない読み手が最初に読む情報（誰が作ったどのモデルで、何ができるか）から並べるため。判定ルール（D-003）・絞り込み・URL 共有・脚注・denied バナー（version 2 の `cause` 表示）は変更しない
 - **version 2** (2026-09-14): AC-009 のバナーを、API のエラー原文の表示から `cause`（取得失敗の分類）の説明文の表示に改めた（D-008）
 - **version 1** (2026-09-14): 初版

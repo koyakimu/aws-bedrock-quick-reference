@@ -1,7 +1,7 @@
 ---
 spec_id: "DETAIL-001"
 context: "detail"
-version: 2
+version: 3
 issue_ref: null
 title: "行の展開によるリージョン横断の詳細表示"
 decision_refs:
@@ -22,6 +22,26 @@ decision_refs:
 - **Given**: 表が描画されている
 - **When**: 行の展開操作（行クリックまたは展開トグル）を行う
 - **Then**: その行の直下に詳細パネルが開く。他の行は閉じたままでも複数同時に開けてもよいが、展開状態は起点リージョンを切り替えても対象モデルが表に残っている限り保持する
+
+### AC-010 (モデル ID と使い方ごとの ID を詳細パネルで出す)
+- **Given**: モデル M の行を開く
+- **When**: 詳細パネルを描画する
+- **Then**: パネルの先頭に M の **モデル ID** がコピーボタン付きで出る。TABLE-001 が表から外した識別子は、必ずここから辿れる
+
+### AC-011 (使い方ごとに「指定する ID」を出す)
+- **Given**: 起点リージョン R でモデル M の行を開く
+- **When**: 詳細パネルを描画する
+- **Then**: モデル ID の下に小さな表が出る。列は **種別 / 指定する ID / 推論先リージョン** で、行は R から使える使い方ごとに 1 行
+  - In-Region（TABLE-001 AC-003 が「可」のときだけ）: 指定する ID = モデル ID、推論先 = R
+  - Geo（TABLE-001 AC-004 の各プロファイル）: 指定する ID = プロファイル ID、推論先 = `sources[R]` の destination 昇順
+  - Global（TABLE-001 AC-005）: 指定する ID = プロファイル ID、推論先 = 「全対応リージョン（今後増えうる）」の注記（`*` は出さない）
+  - どの ID にもコピーボタンが付く。クリップボードには ID の文字列だけが入る
+  - R からどの使い方もできないときは、空欄にせずその旨を表示する
+
+### AC-012 (起点のエンドポイント)
+- **Given**: 起点リージョン R でモデル M の行を開く
+- **When**: 詳細パネルを描画する
+- **Then**: パネルの最後に R の `bedrock-runtime` エンドポイント（例: `bedrock-runtime.ap-northeast-1.amazonaws.com`）が出る。起点を切り替えると値も切り替わる
 
 ### AC-002 (全リージョン横断の availability)
 - **Given**: モデル M の行を開く
@@ -66,17 +86,20 @@ decision_refs:
 ## UI Description
 
 - 表の行の展開トグル（`aria-expanded` を持つボタン）。開くと行直下に全幅の詳細パネルが挿入される
-- 詳細パネルは 2 節
-  1. **提供状況**: リージョンごとに 1 行。リージョン表示名（コード併記）+ 推論タイプのバッジ、または「提供なし」/「提供あり・推論タイプの指定なし」/「データなし」
-  2. **推論プロファイル**: プロファイルごとに、接頭辞バッジ + プロファイル ID（コピー可能）+ 起点 → 推論先の対応行
+- 詳細パネルは 5 節で、上から技術的な識別子 → 横断の事実 → 接続先の順に並べる
+  1. **モデル ID**: コピーボタン付き（AC-010）
+  2. **この起点からの使い方**: 種別 / 指定する ID / 推論先リージョン の小さな表（AC-011）
+  3. **提供状況**: リージョンごとに 1 行。リージョン表示名（コード併記）+ 推論タイプのバッジ、または「提供なし」/「提供あり・推論タイプの指定なし」/「データなし」
+  4. **推論プロファイル**: プロファイルごとに、接頭辞バッジ + プロファイル ID（コピー可能）+ 起点 → 推論先の対応行
+  5. **エンドポイント**: 起点リージョンの `bedrock-runtime` FQDN（AC-012）
 - 現在の起点リージョンの行にマーカーを付ける
 - 375px 幅では 2 節を縦積みにし、推論先チップは折り返す
 
 ## Context Boundary
 
 ### Inputs
-- **From**: TABLE-001 — 展開対象のモデル ID、現在の起点リージョン
-- **From**: DATA-001 — `data/models.json`（`availability`）、`data/profiles.json`（`sources`）、`data/fetch-log.json`（denied 判定）、`data/region-notes.json`（表示名・列挙順）
+- **From**: TABLE-001 — 展開対象のモデル ID、現在の起点リージョン。表から外した識別子（モデル ID / プロファイル ID）の表示はこの Spec が引き受ける
+- **From**: DATA-001 — `data/models.json`（`availability`）、`data/profiles.json`（`sources`）、`data/fetch-log.json`（denied 判定）、`data/region-notes.json`（表示名・列挙順・`endpoint`）
 - **From**: I18N-001 — 「提供なし」「データなし」等のラベルとリージョン表示名
 
 ### Outputs
@@ -92,6 +115,9 @@ decision_refs:
 
 | AC ID | Test Type | Description |
 |-------|-----------|-------------|
+| AC-010 | integration (jsdom, vitest) | パネル先頭にモデル ID とコピーボタンが出て、コピーされた文字列がモデル ID と完全一致することを検証 |
+| AC-011 | unit + integration (vitest, jsdom) | `buildUsageRows(M, { models, profiles, region })` が In-Region / Geo / Global の行を種別・ID・推論先付きで返すことを検証（Global は `*` を返さない / 0 件のケースも）。描画側で 3 列の小表とコピーボタンを検証 |
+| AC-012 | integration (jsdom, vitest) | パネル末尾のエンドポイントが起点に追随することを検証 |
 | AC-001 | integration (jsdom, vitest) | 展開トグルのクリックでパネルが DOM に挿入され、`aria-expanded` が切り替わることを検証 |
 | AC-002 | unit (vitest) | `buildAvailabilityRows(M, regionNotes, fetchLog)` が全リージョン分の行を返し、`PROVISIONED` を落とさないことを検証 |
 | AC-003 | unit (vitest) | `status: ok` かつキー無しのリージョンが「提供なし」種別になることを検証 |
@@ -120,5 +146,6 @@ decision_refs:
 
 ## 変更履歴
 
+- **version 3** (2026-09-14): TABLE-001 v3 が一覧から外した技術的な識別子の置き場所として、パネル先頭にモデル ID（AC-010）、その下に「種別 / 指定する ID / 推論先リージョン」の表（AC-011）、末尾に起点のエンドポイント（AC-012）を追加した。既存の提供状況・推論プロファイルの 2 節と AC-001〜AC-009（version 2 の `cause` 表示を含む）は変更しない。理由: 非技術者向けの情報順に一覧を並べ替えたことで、一覧から消えた ID を必ず詳細から辿れるようにするため
 - **version 2** (2026-09-14): AC-008 の「reason の原文をツールチップ / 脚注リンクから参照できる」を取りやめ、`cause`（取得失敗の分類）の説明文だけを出すようにした（D-008）
 - **version 1** (2026-09-14): 初版
