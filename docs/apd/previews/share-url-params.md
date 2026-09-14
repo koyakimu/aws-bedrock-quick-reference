@@ -1,0 +1,40 @@
+# URL パラメータの一覧表
+
+- Spec: SHARE-001（AC-001 〜 AC-009）、関連: FILTER-001 / TABLE-001
+- 実装: `src/scripts/url-state.mjs`（`parseState` / `serializeState` / `shareUrl`）と
+  `src/scripts/share.js`（`history.replaceState` / クリップボード / 通知）
+
+## パラメータ
+
+| 名前 | 値の形 | 既定値 | 省略条件 | 不正値のときの扱い |
+|---|---|---|---|---|
+| `region` | リージョンコード 1 件（`region-notes.json` のキー） | `ap-northeast-1` | 既定値と同じとき | 既定値にフォールバックし、通知を出し、URL を書き換える（AC-007） |
+| `provider` | `providerName` のカンマ区切り（例: `Anthropic,Cohere`） | 空（絞らない） | 1 件も選んでいないとき | 表示中データに無い値だけを落として通知（AC-008） |
+| `modality` | `TEXT` / `IMAGE` / `SPEECH` / `VIDEO` / `EMBEDDING` のカンマ区切り。小文字も受ける | 空（絞らない） | 1 件も選んでいないとき | 5 種に無い値だけを落として通知 |
+| `q` | 任意の文字列（`modelId` / `modelName` の部分一致、大文字小文字を区別しない） | 空文字列 | 空、または空白だけのとき | 不正値なし。DOM にはテキストとして入れる |
+| `callable` | `1`（ON）または `0`（OFF） | `0`（OFF） | OFF のとき | `1` / `0` 以外は落として通知 |
+| `limit` | `none` / `country:<jp\|au\|us>` / `geo:<jp\|apac\|eu\|us\|au>` | `none` | `none` のとき | 一覧に無い値は落として通知（選択肢は `filter-limit-options.md`） |
+
+- 並び順は `region` → `provider` → `modality` → `q` → `callable` → `limit`
+- **既定状態の URL はクエリなしになる**（全パラメータが既定値なら `?` ごと付かない）
+- 言語は URL に載せない。開いた人の `localStorage` / `navigator.language` で決まる（AC-006）
+- 展開中の行（DETAIL-001）も URL に載せない（共有の主目的がぼやけるため）
+
+## 更新と復元の動き
+
+| 場面 | 動き |
+|---|---|
+| 起点リージョンや絞り込みを変える | `history.replaceState` で現在のエントリを書き換える。`pushState` は使わない（戻る履歴を絞り込み操作で埋めない）。リロードは起きない |
+| ページを開く | `location.search` を解析し、TABLE-001 の既定値より優先して適用する。不正値は落として通知し、URL を解釈できた状態に揃える |
+| 「この表示の URL をコピー」 | 現在のクエリを含む絶対 URL をクリップボードへ。`location.href` のパスをそのまま使うので、GitHub Pages のサブパス（`/aws-bedrock-quick-reference/`）配下でも壊れない |
+| 復元後に 0 件 | FILTER-001 AC-010 の空状態（条件一覧とリセット操作）を出す。denied の「データなし」バナーとは別の見た目 |
+
+## 例
+
+| URL | 意味 |
+|---|---|
+| `/aws-bedrock-quick-reference/` | 既定（東京起点、絞り込みなし） |
+| `?region=eu-central-1` | フランクフルト起点 |
+| `?provider=Anthropic&limit=country:jp` | 東京起点で Anthropic、推論先を日本国内に限定 |
+| `?region=ap-northeast-1&modality=TEXT&q=claude&callable=1&limit=geo:apac` | 全 5 条件を設定した状態 |
+| `?region=xx-nowhere-9` | 対象外のリージョン。東京にフォールバックし通知を出し、URL は `/aws-bedrock-quick-reference/` に書き換わる |
