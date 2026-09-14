@@ -9,6 +9,7 @@ import {
   activeConditions,
   applyFilters,
   buildLimitOptions,
+  canonicalLimitValue,
   customLimitCodes,
   customLimitValue,
   customRegionGroups,
@@ -44,6 +45,19 @@ function field(...children) {
   return wrap;
 }
 
+/**
+ * 推論先の限定 1 件の表示名 (AC-018)。固定リストの選択肢はリージョン数を添える。
+ * セレクタの選択肢と条件チップは同じこの文字列を使う。
+ */
+export function limitLabel(option) {
+  if (!option) return null;
+  if (option.kind === "none" || option.kind === "custom") return t(option.labelKey);
+  return t("filter.limitOptionLabel", {
+    label: t(option.labelKey),
+    count: option.regions.length,
+  });
+}
+
 /** 条件チップに出す 1 件ぶんの表示名。 */
 export function conditionLabel(condition, limitOptions) {
   if (condition.param === "provider") return `${t("filter.provider")}: ${condition.value}`;
@@ -57,7 +71,7 @@ export function conditionLabel(condition, limitOptions) {
       return `${t("filter.limit")}: ${t("filter.customChip", { count })}`;
     }
     const option = limitOption(limitOptions, condition.value);
-    return `${t("filter.limit")}: ${option ? t(option.labelKey) : condition.value}`;
+    return `${t("filter.limit")}: ${limitLabel(option) ?? condition.value}`;
   }
   return String(condition.value);
 }
@@ -207,43 +221,34 @@ export function mountFilterBar({
 
   function renderLimitOptions() {
     const lang = getLang();
-    const none = document.createElement("option");
-    none.value = NO_LIMIT;
-    none.textContent = t("filter.limitNone");
-    const groups = [
-      { key: "filter.groupCountry", kind: "country" },
-      { key: "filter.groupGeo", kind: "geo" },
-    ].map(({ key, kind }) => {
-      const group = document.createElement("optgroup");
-      group.label = t(key);
-      group.dataset.kind = kind;
-      for (const option of limitOptions.filter((entry) => entry.kind === kind)) {
-        const node = document.createElement("option");
-        node.value = option.value;
-        node.textContent = t(option.labelKey);
-        // 限定集合の中身は title で見せる。region-notes.json に無いコードは
-        // コードのまま出す (AC-011)。
+    // グループ見出しを持たない平坦な 1 リスト (AC-018)。並びと重複の畳み込みは
+    // filter-model.mjs の buildLimitOptions() が決めている。
+    const nodes = limitOptions.map((option) => {
+      const node = document.createElement("option");
+      node.value = option.value;
+      node.textContent = limitLabel(option);
+      // 限定集合の中身は title で見せる。region-notes.json に無いコードは
+      // コードのまま出す (AC-011)。
+      if (option.kind === "country" || option.kind === "geo") {
         node.title = t("filter.limitRegions", {
           regions: option.regions
             .map((code) => `${code} (${regionName(code, lang, regionNotes)})`)
             .join(", "),
         });
-        group.appendChild(node);
       }
-      return group;
+      return node;
     });
-    // 末尾が「カスタム…」。グループには入れない (AC-012)。
-    const custom = document.createElement("option");
-    const customOption = limitOption(limitOptions, CUSTOM_LIMIT);
-    custom.value = CUSTOM_LIMIT;
-    custom.textContent = t(customOption?.labelKey ?? "filter.limitCustom");
-    limitSelect.replaceChildren(none, ...groups, custom);
+    limitSelect.replaceChildren(...nodes);
     limitSelect.value = selectValue();
   }
 
-  /** セレクタに表示する値。カスタムは集合が何であれ "custom" を選んだ状態にする。 */
+  /**
+   * セレクタに表示する値。カスタムは集合が何であれ "custom" を選んだ状態にする。
+   * 畳まれた値 (`geo:jp` など) は残った選択肢を選んだ状態にする (AC-019)。
+   */
   function selectValue() {
-    return isCustomLimit(state.limit) ? CUSTOM_LIMIT : state.limit;
+    if (isCustomLimit(state.limit)) return CUSTOM_LIMIT;
+    return canonicalLimitValue(limitOptions, state.limit) ?? state.limit;
   }
 
   function customGroupLabel(geo) {

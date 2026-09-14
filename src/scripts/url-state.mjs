@@ -5,6 +5,7 @@ import {
   DEFAULT_FILTERS,
   MODALITIES,
   NO_LIMIT,
+  canonicalLimitValue,
   isCustomLimit,
   normalizeCustomLimit,
 } from "./filter-model.mjs";
@@ -42,8 +43,10 @@ function splitList(value) {
  * location.search を状態に変換する (AC-002 / AC-004 / AC-007 / AC-008)。
  * 例外は投げない。解釈できない値だけを落として ignored に積み、残りは適用する。
  * region が未知のときは既定にフォールバックし、ignored に fallback: true で載せる。
+ * limit は FILTER-001 の選択肢 (buildLimitOptions の返り値) で検査する。集合が同じで
+ * 畳まれた値 (`geo:jp` など) は残った選択肢の値に直して適用する (FILTER-001 AC-019)。
  */
-export function parseState(search, { regions = [], providers = [], limits = [] } = {}) {
+export function parseState(search, { regions = [], providers = [], limitOptions = [] } = {}) {
   const params = new URLSearchParams(String(search ?? "").replace(/^\?/, ""));
   const state = { ...DEFAULT_STATE, provider: [], modality: [] };
   const ignored = [];
@@ -95,10 +98,10 @@ export function parseState(search, { regions = [], providers = [], limits = [] }
       const { value, dropped } = normalizeCustomLimit(limit, regions);
       state.limit = value;
       for (const code of dropped) ignored.push({ param: "limit", value: code });
-    } else if (limits.includes(limit)) {
-      state.limit = limit;
     } else {
-      ignored.push({ param: "limit", value: limit });
+      const canonical = canonicalLimitValue(limitOptions, limit);
+      if (canonical != null) state.limit = canonical;
+      else ignored.push({ param: "limit", value: limit });
     }
   }
 

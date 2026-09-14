@@ -13,6 +13,12 @@ export const NO_LIMIT = "none";
 export const COUNTRY_CODES = Object.freeze(["jp", "au", "us"]);
 export const GEO_CODES = Object.freeze(["jp", "apac", "eu", "us", "au"]);
 
+// 推論先の限定セレクタに並べる順 (v4)。中身は COUNTRY_CODES / GEO_CODES と同じで、
+// 並びだけが違う。GEO_CODES の並びはカスタムのピッカー (CUSTOM_GROUP_ORDER) が使うので、
+// セレクタの都合で並べ替えない。
+export const LIMIT_COUNTRY_ORDER = Object.freeze(["jp", "us", "au"]);
+export const LIMIT_GEO_ORDER = Object.freeze(["jp", "au", "eu", "apac", "us"]);
+
 // カスタムのリージョン複数選択 (D-007 の B の経路、Issue #1)。
 // セレクタの値は集合が空のとき "custom"、選択があるとき "custom:<code>+<code>..." (昇順)。
 export const CUSTOM_LIMIT = "custom";
@@ -130,27 +136,60 @@ export function geoGroupRegions(regionNotes, profiles, geo) {
   return [...set].sort();
 }
 
+/** 2 つの限定集合が同じリージョンの集合か (順序は問わない)。 */
+function sameRegions(a, b) {
+  const left = [...new Set(a ?? [])].sort();
+  const right = [...new Set(b ?? [])].sort();
+  return left.length === right.length && left.every((code, index) => code === right[index]);
+}
+
 /**
- * セレクタの選択肢 (先頭が「制限なし」、次に国 3 件、次に地理圏 5 件)。
+ * セレクタの選択肢 (AC-005 / AC-006 / AC-018)。1 つの平坦なリストで、
+ * 「制限なし」→ 国 (jp / us / au) → 国と集合が重ならない地理圏 → 「カスタム…」の順。
+ *
+ * 国と地理圏は同じリージョンの集合になることがある (日本・米国など)。集合が同じ選択肢は
+ * 閲覧者から区別できないので、後から来た地理圏を落として国の選択肢に畳む。落とした値は
+ * 残った選択肢の `aliases` に持ち、URL の `limit=geo:jp` のような既存のリンクが
+ * 同じ集合で開けるようにする (AC-019)。
+ *
  * value は SHARE-001 の `limit` パラメータの値そのもの。
  */
 export function buildLimitOptions({ regionNotes, profiles } = {}) {
-  return [
-    { value: NO_LIMIT, kind: "none", code: null, labelKey: "filter.limitNone", regions: null },
-    ...COUNTRY_CODES.map((code) => ({
+  const candidates = [
+    ...LIMIT_COUNTRY_ORDER.map((code) => ({
       value: `country:${code}`,
       kind: "country",
       code,
       labelKey: `filter.country.${code}`,
       regions: regionsByCountry(regionNotes, code),
     })),
-    ...GEO_CODES.map((code) => ({
+    ...LIMIT_GEO_ORDER.map((code) => ({
       value: `geo:${code}`,
       kind: "geo",
       code,
       labelKey: `filter.geo.${code}`,
       regions: geoGroupRegions(regionNotes, profiles, code),
     })),
+  ];
+
+  const kept = [];
+  for (const candidate of candidates) {
+    const twin = kept.find((option) => sameRegions(option.regions, candidate.regions));
+    // 同じ集合なら先に入った方 (= 国) のラベルを残し、値だけ別名として引き継ぐ。
+    if (twin) twin.aliases.push(candidate.value);
+    else kept.push({ ...candidate, aliases: [] });
+  }
+
+  return [
+    {
+      value: NO_LIMIT,
+      kind: "none",
+      code: null,
+      labelKey: "filter.limitNone",
+      regions: null,
+      aliases: [],
+    },
+    ...kept,
     // 末尾がカスタム (AC-012)。集合は選択のたびに値そのものへ書き込むので、
     // ここでは空にしておく。
     {
@@ -159,12 +198,24 @@ export function buildLimitOptions({ regionNotes, profiles } = {}) {
       code: null,
       labelKey: "filter.limitCustom",
       regions: [],
+      aliases: [],
     },
   ];
 }
 
+/** 値から選択肢を引く。畳まれた値 (`geo:jp` など) は残った選択肢に解決する (AC-019)。 */
 export function limitOption(options, value) {
-  return (options ?? []).find((option) => option.value === value) ?? null;
+  return (
+    (options ?? []).find(
+      (option) => option.value === value || (option.aliases ?? []).includes(value),
+    ) ?? null
+  );
+}
+
+/** 畳まれた値を残った選択肢の値に直す。選択肢に無い値は null (AC-019)。 */
+export function canonicalLimitValue(options, value) {
+  if (isCustomLimit(value)) return String(value);
+  return limitOption(options, value)?.value ?? null;
 }
 
 export function isValidLimit(options, value) {

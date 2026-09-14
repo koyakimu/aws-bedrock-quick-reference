@@ -89,28 +89,58 @@ describe("FILTER-001 AC-005 推論先の限定 (国) の画面表示", () => {
     expect(claudeGeo.querySelector(".geo-entry").classList.contains("out-of-limit")).toBe(false);
   });
 
-  it("セレクタは 制限なし + 国 3 件 + 地理圏 5 件の 2 グループ + 末尾のカスタム", () => {
-    mountFixtureApp();
+  it("セレクタは見出しの無い 1 リストで、末尾がカスタム (AC-018)", () => {
+    const app = mountFixtureApp();
     const select = document.getElementById("filter-limit");
     expect(select.value).toBe("none");
-    const groups = [...select.querySelectorAll("optgroup")];
-    expect(groups.map((group) => group.label)).toEqual(["国", "地理圏"]);
-    expect(groups[0].children).toHaveLength(3);
-    expect(groups[1].children).toHaveLength(5);
-    expect([...select.options].map((o) => o.value)).toEqual([
-      "none",
-      "country:jp",
-      "country:au",
-      "country:us",
-      "geo:jp",
-      "geo:apac",
-      "geo:eu",
-      "geo:us",
-      "geo:au",
-      "custom",
-    ]);
-    // 「カスタム…」は国にも地理圏にも属さず、最後の選択肢として並ぶ (AC-012)
+    // 国 / 地理圏の見出し (optgroup) は持たない
+    expect(select.querySelectorAll("optgroup")).toHaveLength(0);
+    expect([...select.options].map((o) => o.value)).toEqual(
+      app.filter.getLimitOptions().map((option) => option.value),
+    );
+    expect([...select.options][0].textContent).toBe("制限なし");
     expect([...select.options].at(-1).textContent).toBe("カスタム…");
+  });
+
+  it("同じ集合の選択肢は 1 つに畳まれる (AC-018)", () => {
+    const app = mountFixtureApp();
+    const values = [...document.getElementById("filter-limit").options].map((o) => o.value);
+    // 国と同じ集合になる地理圏は並ばない
+    const options = app.filter.getLimitOptions();
+    const jp = options.find((option) => option.value === "country:jp");
+    expect(jp.aliases).toContain("geo:jp");
+    expect(values).not.toContain("geo:jp");
+    // 残った選択肢の限定集合はどれも互いに違う
+    const sets = options
+      .filter((option) => option.kind === "country" || option.kind === "geo")
+      .map((option) => option.regions.join(","));
+    expect(new Set(sets).size).toBe(sets.length);
+  });
+
+  it("選択肢のラベルにリージョン数が付く (件数はデータ由来、AC-018)", () => {
+    const app = mountFixtureApp();
+    const nodes = [...document.getElementById("filter-limit").options];
+    for (const option of app.filter.getLimitOptions()) {
+      if (option.kind !== "country" && option.kind !== "geo") continue;
+      const node = nodes.find((entry) => entry.value === option.value);
+      expect(node.textContent).toContain(`（${option.regions.length}）`);
+    }
+    const countOf = (value) =>
+      app.filter.getLimitOptions().find((option) => option.value === value).regions.length;
+    expect(nodes.find((node) => node.value === "country:jp").textContent).toBe(
+      `日本国内（${countOf("country:jp")}）`,
+    );
+    expect(nodes.find((node) => node.value === "geo:au").textContent).toBe(
+      `オーストラリア＋ニュージーランド（${countOf("geo:au")}）`,
+    );
+  });
+
+  it("畳まれた値の URL でも同じ集合が当たり、残った選択肢が選ばれる (AC-019)", () => {
+    const app = mountFixtureApp({ search: "?limit=geo:jp" });
+    expect(document.getElementById("filter-limit").value).toBe("country:jp");
+    expect(app.filter.getState().limit).toBe("country:jp");
+    const chip = document.querySelector("#filter-chips .filter-chip-label");
+    expect(chip.textContent).toBe("推論先の限定: 日本国内（2）");
   });
 });
 
@@ -176,7 +206,11 @@ describe("FILTER-001 AC-009 絞り込みの組み合わせ", () => {
     const chips = [...document.querySelectorAll("#filter-chips .filter-chip")];
     expect(chips).toHaveLength(2);
     expect(chips[0].textContent).toContain("Anthropic");
-    expect(chips[1].textContent).toContain("日本国内のみ");
+    // チップの表示名は選択肢と同じ文字列 (AC-018)
+    const option = [...document.getElementById("filter-limit").options].find(
+      (node) => node.value === "country:jp",
+    );
+    expect(chips[1].textContent).toContain(option.textContent);
 
     chips[0].querySelector(".filter-chip-remove").click();
     expect(document.querySelectorAll("#filter-chips .filter-chip")).toHaveLength(1);
@@ -196,7 +230,10 @@ describe("FILTER-001 AC-010 結果が 0 件", () => {
     expect(empty.textContent).toContain("条件に一致するモデルがありません");
     const conditions = [...document.querySelectorAll("#filter-empty-conditions li")];
     expect(conditions).toHaveLength(1);
-    expect(conditions[0].textContent).toContain("EU 内のみ");
+    const euOption = [...document.getElementById("filter-limit").options].find(
+      (node) => node.value === "geo:eu",
+    );
+    expect(conditions[0].textContent).toContain(euOption.textContent);
     expect(document.getElementById("filter-empty-reset")).not.toBeNull();
   });
 
@@ -358,8 +395,11 @@ describe("FILTER-001 AC-014 クリアと固定リストへの復帰", () => {
     checkCustomRegion("ap-northeast-1");
     setSelect("filter-limit", ["geo:apac"]);
     expect(document.getElementById("filter-custom").hidden).toBe(true);
+    const apacOption = [...document.getElementById("filter-limit").options].find(
+      (node) => node.value === "geo:apac",
+    );
     expect(document.querySelector("#filter-chips .filter-chip").textContent).toContain(
-      "APAC 内のみ",
+      apacOption.textContent,
     );
 
     setSelect("filter-limit", ["custom"]);

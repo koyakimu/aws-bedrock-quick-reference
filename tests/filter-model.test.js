@@ -7,7 +7,10 @@ import {
   COUNTRY_CODES,
   CUSTOM_LIMIT,
   GEO_CODES,
+  LIMIT_COUNTRY_ORDER,
+  LIMIT_GEO_ORDER,
   allRegionCodes,
+  canonicalLimitValue,
   customLimitCodes,
   customLimitValue,
   customRegionGroups,
@@ -22,6 +25,7 @@ import {
   geoGroupRegions,
   isCallable,
   isValidLimit,
+  limitOption,
   limitRegionSet,
   providerOptions,
   regionsByCountry,
@@ -362,21 +366,77 @@ describe("FILTER-001 条件チップ", () => {
     expect(removeCondition(next, { param: "limit", value: "country:jp" }).limit).toBe(NO_LIMIT);
   });
 
-  it("limit の正当値は 制限なし + 国 3 + 地理圏 5 + カスタム の 10 件", () => {
-    expect(options.map((option) => option.value)).toEqual([
-      "none",
-      "country:jp",
-      "country:au",
-      "country:us",
-      "geo:jp",
-      "geo:apac",
-      "geo:eu",
-      "geo:us",
-      "geo:au",
-      "custom",
-    ]);
+  it("limit の正当値は選択肢の値と、畳まれた値の別名", () => {
+    expect(options[0].value).toBe(NO_LIMIT);
+    expect(options.at(-1).value).toBe(CUSTOM_LIMIT);
     expect(isValidLimit(options, "country:atlantis")).toBe(false);
+    expect(isValidLimit(options, "country:jp")).toBe(true);
     expect(isValidLimit(options, "geo:apac")).toBe(true);
+  });
+});
+
+// --- AC-018 / AC-019 選択肢の重複を畳む (v4) ---
+describe("FILTER-001 AC-018 推論先の限定の選択肢は 1 つの平坦なリスト", () => {
+  it("並びは 制限なし → 国 (jp / us / au) → 残った地理圏 → カスタム", () => {
+    const values = options.map((option) => option.value);
+    expect(values[0]).toBe(NO_LIMIT);
+    expect(values.at(-1)).toBe(CUSTOM_LIMIT);
+    const middle = values.slice(1, -1);
+    const countries = middle.filter((value) => value.startsWith("country:"));
+    const geos = middle.filter((value) => value.startsWith("geo:"));
+    // 国が先、地理圏が後。国と地理圏が交互に混ざらない
+    expect(middle).toEqual([...countries, ...geos]);
+    expect(countries).toEqual(["country:jp", "country:us", "country:au"]);
+    // 残った地理圏は LIMIT_GEO_ORDER の並びのまま
+    const geoOrder = LIMIT_GEO_ORDER.map((code) => `geo:${code}`);
+    expect(geos).toEqual(geoOrder.filter((value) => geos.includes(value)));
+  });
+
+  it("並びの定義は COUNTRY_CODES / GEO_CODES と同じ集合", () => {
+    expect([...LIMIT_COUNTRY_ORDER].sort()).toEqual([...COUNTRY_CODES].sort());
+    expect([...LIMIT_GEO_ORDER].sort()).toEqual([...GEO_CODES].sort());
+  });
+
+  it("国と集合が同じ地理圏は落ち、国のラベルだけが残る", () => {
+    const jp = limitOption(options, "country:jp");
+    expect(jp.labelKey).toBe("filter.country.jp");
+    expect(jp.aliases).toContain("geo:jp");
+    expect(options.map((option) => option.value)).not.toContain("geo:jp");
+    // 集合が違う地理圏は残る (au は country:au に無い ap-southeast-6 を含む)
+    const geoAu = limitOption(options, "geo:au");
+    expect(geoAu.value).toBe("geo:au");
+    expect(geoAu.labelKey).toBe("filter.geo.au");
+    expect(geoAu.regions).not.toEqual(limitOption(options, "country:au").regions);
+  });
+
+  it("残った選択肢の集合はどれも互いに違う (重複が残らない)", () => {
+    const sets = options
+      .filter((option) => option.kind === "country" || option.kind === "geo")
+      .map((option) => option.regions.join(","));
+    expect(new Set(sets).size).toBe(sets.length);
+  });
+
+  it("選択肢はリージョン数を持つ (ラベルの件数はデータ由来)", () => {
+    for (const option of options) {
+      if (option.kind === "country" || option.kind === "geo") {
+        expect(option.regions.length).toBe(new Set(option.regions).size);
+        expect(option.regions.length).toBeGreaterThan(0);
+      }
+    }
+  });
+});
+
+describe("FILTER-001 AC-019 畳まれた値の URL は同じ集合を当てる", () => {
+  it("geo:jp は country:jp に解決し、限定集合も同じ", () => {
+    expect(canonicalLimitValue(options, "geo:jp")).toBe("country:jp");
+    expect([...setFor("geo:jp")].sort()).toEqual([...setFor("country:jp")].sort());
+    expect(isValidLimit(options, "geo:jp")).toBe(true);
+  });
+
+  it("選択肢にも別名にも無い値は null", () => {
+    expect(canonicalLimitValue(options, "geo:atlantis")).toBeNull();
+    expect(canonicalLimitValue(options, NO_LIMIT)).toBe(NO_LIMIT);
+    expect(canonicalLimitValue(options, "custom:ap-northeast-1")).toBe("custom:ap-northeast-1");
   });
 });
 

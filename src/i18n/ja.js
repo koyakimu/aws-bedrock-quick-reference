@@ -130,8 +130,8 @@ export const ja = {
     limit: "推論先の限定",
     limitNone: "制限なし",
     limitCustom: "カスタム…",
-    groupCountry: "国",
-    groupGeo: "地理圏",
+    // 選択肢と条件チップの表示名。リージョン数を添える (AC-018)。
+    limitOptionLabel: "{label}（{count}）",
     customHeading: "推論先に許すリージョンを選ぶ",
     customGroupOther: "その他",
     customSelectAll: "このグループをすべて選ぶ",
@@ -148,16 +148,18 @@ export const ja = {
     emptyTitle: "条件に一致するモデルがありません",
     emptyBody: "設定中の条件は次のとおりです。条件を外すか、リセットしてください。",
     country: {
-      jp: "日本国内のみ",
-      au: "オーストラリア国内のみ",
-      us: "米国内のみ",
+      jp: "日本国内",
+      au: "オーストラリア国内",
+      us: "米国内",
     },
+    // 地理圏の表示名は辞書に持つ (コードから組み立てない)。国と集合が違う地理圏だけが
+    // 選択肢に残るので、どこが違うかが読めるラベルにする (AC-018)。
     geo: {
-      jp: "日本 (jp) 内のみ",
-      apac: "APAC 内のみ",
-      eu: "EU 内のみ",
-      us: "米国 (us) 内のみ",
-      au: "オーストラリア (au) 内のみ",
+      jp: "日本国内",
+      apac: "アジア太平洋内",
+      eu: "EU 内",
+      us: "米国＋カナダ",
+      au: "オーストラリア＋ニュージーランド",
     },
   },
   detail: {
