@@ -4,9 +4,22 @@
 
 D-001〜D-005 は brainstorming の対話で内容が固まり、技術設計
 （`docs/superpowers/specs/2026-09-14-bedrock-quick-reference-design.md`）から転記したものを
-2026-09-14 にユーザーが確定した。D-006・D-007 は Spec フェーズで決定した。
+2026-09-14 にユーザーが確定した。D-006・D-007 は Spec フェーズで決定した。D-008 は Build 中に発生した矛盾の解消で、AI が暫定決定し人間の確認待ち。
 
 ---
+
+## D-008: fetch-log.json の理由文に含まれるアカウント ID の扱い
+
+- **Date**: 2026-09-14
+- **Context**: DATA-001 AC-010 は denied リージョンの理由を「要約せず原文で」残すことを求め、AC-011 は生成 JSON に 12 桁のアカウント ID が含まれないことを求める。SCP 拒否の AccessDeniedException の原文には呼び出し元ロール ARN（アカウント ID 入り）と Organizations の ID が埋め込まれており、両立しない。生成 JSON は public リポジトリにコミットされる。
+- **Options**:
+  - A: 原文をそのまま残す（AC-010 優先）。アカウント ID が公開リポジトリに載る
+  - B: 理由文中の 12 桁の数字列だけを `<account-id>` に置換し、それ以外は一字も変えない（AC-011 優先）。原文は gitignore 済みの `data/raw/<日付>/*.err` に残る
+  - C: 理由文を例外クラス名だけに要約する
+- **AI Recommendation**: **B**。公開リポジトリにアカウント ID を載せない方が優先で、置換は機械的で可逆に説明できる。C は「データなし」の根拠が読めなくなる
+- **Decision**: **B**（Build 中に AI が採用。人間の実機確認で覆してよい）
+- **Reason**: AC-011 の Test Strategy が生成 JSON 全体を対象に 12 桁列の不在を検査しており、公開リポジトリの前提と整合する。実装は `scripts/lib/normalize.mjs` の 1 箇所
+- **Refs**: `spec-data.md`（DATA-001 AC-010 / AC-011）
 
 ## D-007: 推論先の限定フィルタの指定方法
 
