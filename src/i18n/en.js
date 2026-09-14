@@ -65,7 +65,7 @@ export const en = {
   state: {
     noDataTitle: "This Region could not be fetched (no data)",
     noDataBody:
-      "This is not the same as “not offered”. The account used for the snapshot lacked permission, or the Region was not opted in. The raw AWS API error follows.",
+      "This is not the same as “not offered”. The account used for the snapshot lacked permission, or the Region was not opted in.",
     notOffered: "Not offered in this Region",
   },
   filter: {
