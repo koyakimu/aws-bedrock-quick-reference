@@ -270,3 +270,28 @@ tr.expanded > td {
 .detail-mantle-source {
   margin: var(--sp-1) 0 0;
 }
+
+/* --- 価格 (PRICE-001 AC-010) --- */
+.detail-price-table {
+  border-collapse: collapse;
+  margin-top: 6px;
+}
+
+.detail-price-table th,
+.detail-price-table td {
+  padding: 3px 10px 3px 0;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.detail-price-table td.detail-price-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.detail-price-unit,
+.detail-no-price {
+  margin: 6px 0 0;
+  font-size: 0.85em;
+  color: var(--fg-muted, #8a8f98);
+}

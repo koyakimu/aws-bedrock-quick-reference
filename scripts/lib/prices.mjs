@@ -1,0 +1,359 @@
+// AWS Price List Bulk API の生 JSON を data/prices.json の形に直す純関数群 (PRICE-001 / D-009)。
+// I/O・時刻・ネットワークを持たない。ファイルの取得と書き出しは
+// scripts/fetch-bedrock-prices.mjs が行う。
+
+// 価格表の入口。認証不要で誰でも読める (D-009)。
+export const PRICE_INDEX_URL = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/index.json";
+
+// Bedrock の価格が載る offer code。AmazonBedrockService (予約 TPM) と
+// AmazonBedrockAgentCore はトークン単価を持たないので対象外 (PRICE-001 AC-001)。
+export const PRICE_OFFERS = Object.freeze(["AmazonBedrock", "AmazonBedrockFoundationModels"]);
+
+export function priceFileUrl(offer, region) {
+  return `https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/${offer}/current/${region}/index.json`;
+}
+
+export function regionIndexUrl(offer) {
+  return `https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/${offer}/current/region_index.json`;
+}
+
+// prices.json の source に残す出典。<region> は取得したリージョンコードで置き換わる。
+export function sourceUrls() {
+  return {
+    index: PRICE_INDEX_URL,
+    offers: Object.fromEntries(PRICE_OFFERS.map((offer) => [offer, priceFileUrl(offer, "<region>")])),
+  };
+}
+
+// prices.json が持つ価格の種別 (PRICE-001 AC-004)。
+// cacheRead / cacheWrite は入力側にしか単価が無いので output は持たない。
+export const PRICE_KINDS = Object.freeze([
+  "standard",
+  "global",
+  "batch",
+  "cacheRead",
+  "cacheWrite",
+  "priority",
+  "flex",
+]);
+
+// servicename から外す接尾辞。Anthropic / Cohere / TwelveLabs が付けている。
+const EDITION_SUFFIX = /\s*\(Amazon Bedrock Edition\)\s*$/;
+
+export function stripEdition(name) {
+  return String(name ?? "").replace(EDITION_SUFFIX, "").trim();
+}
+
+// --- 単位の正規化 ---------------------------------------------------------
+
+// すべて USD / 100 万トークンに揃える。1K tokens の単価は 1000 倍する (AC-004)。
+export function toPerMillion(usd, unit) {
+  const value = Number(usd);
+  if (!Number.isFinite(value)) return null;
+  if (unit === "1M tokens") return roundPrice(value);
+  if (unit === "1K tokens") return roundPrice(value * 1000);
+  return null; // トークン以外の単位 (image / video / hour / Search Units …) は扱わない
+}
+
+// 小数 6 桁までで丸める。末尾の 0 は Number 化で落ちる。
+export function roundPrice(value) {
+  return Number(Number(value).toFixed(6));
+}
+
+// terms.OnDemand[sku][offerTermCode].priceDimensions[*] の最初の 1 件を読む。
+export function priceOf(offerFile, sku) {
+  const terms = offerFile?.terms?.OnDemand?.[sku];
+  if (!terms) return null;
+  for (const term of Object.values(terms)) {
+    for (const dimension of Object.values(term?.priceDimensions ?? {})) {
+      const usd = dimension?.pricePerUnit?.USD;
+      if (usd == null) continue;
+      return { usd, unit: dimension.unit };
+    }
+  }
+  return null;
+}
+
+// --- 価格の軸と種別の判定 -------------------------------------------------
+
+// 比較用に記号を落とした小文字。"Prompt cache read input tokens" → "promptcachereadinputtokens"
+function flatten(text) {
+  return String(text ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+/**
+ * 単価がどの軸のものかを決める。
+ * input / output / cacheRead / cacheWrite のいずれでもないもの (1h キャッシュ、
+ * 音声・画像・動画のトークン、Speech Understanding) は null を返して範囲外にする。
+ */
+export function axisOf(signal) {
+  const flat = flatten(signal);
+  if (!flat) return null;
+  // cache 系は "input" を含むので先に判定する。
+  // 1h TTL のキャッシュ書き込みは既定 (5 分) と別単価なので v1 では扱わない。
+  if (flat.includes("cachewrite")) return flat.includes("1h") ? null : "cacheWrite";
+  if (flat.includes("cacheread")) return "cacheRead";
+  if (flat.includes("speechunderstanding")) return null;
+  if (/(audio|image|video)token/.test(flat)) return null;
+  if (flat.includes("input")) return "input";
+  if (flat.includes("output")) return "output";
+  return null;
+}
+
+// 種別を決める旗。global は「世界中で推論する使い方」の単価、
+// batch / priority / flex はサービス階層。
+function tierFlags({ global, batch, priority, flex }) {
+  return { global: global === true, batch: batch === true, priority: priority === true, flex: flex === true };
+}
+
+/**
+ * 軸と旗から prices.json の種別を決める (AC-004)。
+ * Global と batch / priority / flex の組み合わせは v1 の範囲外 (null を返す)。
+ */
+export function kindOf(axis, flags) {
+  if (axis == null) return null;
+  const { global, batch, priority, flex } = tierFlags(flags);
+  if (axis === "cacheRead" || axis === "cacheWrite") {
+    // キャッシュは標準階層の単価だけを載せる。
+    return global || batch || priority || flex ? null : axis;
+  }
+  if (global) return batch || priority || flex ? null : "global";
+  if (batch) return "batch";
+  if (priority) return "priority";
+  if (flex) return "flex";
+  return "standard";
+}
+
+const WORD = (word) => new RegExp(`(^|[^a-z])${word}([^a-z]|$)`);
+
+// v1 の範囲外の SKU。latency optimized とカスタムモデルは標準の単価と別建てで、
+// 表にも詳細パネルにも出さない (AC-004 Notes)。
+const OUT_OF_SCOPE_USAGETYPE = /latency-?optimized|custom-model/i;
+
+/**
+ * AmazonBedrock の product 1 件を読む。
+ * 軸は inferenceType (空なら usagetype) から、旗は usagetype / service_tier / feature から取る。
+ */
+export function readBedrockProduct(product) {
+  const attributes = product?.attributes ?? {};
+  const usagetype = String(attributes.usagetype ?? "");
+  const lower = usagetype.toLowerCase();
+  const tier = String(attributes.service_tier ?? "").toLowerCase();
+  const feature = String(attributes.feature ?? "").toLowerCase();
+
+  const axis = axisOf(attributes.inferenceType || usagetypeTail(usagetype));
+  const flags = {
+    global: lower.includes("cross-region-global") || tier.startsWith("global"),
+    batch: WORD("batch").test(lower) || tier === "batch" || feature.includes("batch"),
+    priority: WORD("priority").test(lower) || tier.endsWith("priority"),
+    flex: WORD("flex").test(lower) || tier.endsWith("flex"),
+  };
+
+  return {
+    // Mantle の接続先は同じ単価の別 SKU なので載せない (Design FAQ Q14)。
+    mantle: lower.includes("-mantle-"),
+    sourceName: attributes.model ? String(attributes.model) : null,
+    // model 属性を持たない SKU (Titan 系) は usagetype から引ける鍵を作る。
+    fallbackKey: attributes.model ? null : `usagetype:${usagetypeKey(usagetype)}`,
+    axis,
+    kind: OUT_OF_SCOPE_USAGETYPE.test(usagetype) ? null : kindOf(axis, flags),
+  };
+}
+
+// model 属性を持たない SKU の鍵。"APN1-TitanEmbeddingV2-Text-input-tokens" → "TitanEmbeddingV2-Text"
+export function usagetypeKey(usagetype) {
+  return usagetypeBody(usagetype)
+    .replace(/-(input|output|cache|speech)[a-z0-9.-]*$/i, "")
+    .trim();
+}
+
+// リージョン接頭辞 (APN1- / USE1- …) を落とした残り。
+function usagetypeBody(usagetype) {
+  return String(usagetype ?? "").replace(/^[A-Z0-9]+-/, "");
+}
+
+// 軸の判定に使う、usagetype の末尾 (寸法) 部分。
+function usagetypeTail(usagetype) {
+  const body = usagetypeBody(usagetype);
+  const match = /-((?:input|output|cache|text|speech)[a-z0-9.-]*)$/i.exec(body);
+  return match ? match[1] : body;
+}
+
+// BFM の usagetype は "<LOC>-MP:<LOC>_<dimension>-Units" の形。
+export function bfmDimension(usagetype) {
+  const match = /^[^-]+-MP:[^_]+_(.+)-Units$/.exec(String(usagetype ?? ""));
+  return match ? match[1] : null;
+}
+
+/**
+ * AmazonBedrockFoundationModels の product 1 件を読む。
+ * model 属性が無く、モデル名は servicename、軸と階層は usagetype に入っている。
+ */
+export function readFoundationProduct(product) {
+  const attributes = product?.attributes ?? {};
+  const dimension = bfmDimension(attributes.usagetype);
+  const lower = String(dimension ?? "").toLowerCase();
+  const axis = axisOf(dimension);
+  const flags = {
+    global: lower.includes("global"),
+    batch: lower.includes("batch"),
+    priority: lower.includes("priority"),
+    flex: lower.includes("flex"),
+  };
+  return {
+    mantle: false,
+    sourceName: attributes.servicename ? stripEdition(attributes.servicename) : null,
+    fallbackKey: null,
+    axis,
+    kind: OUT_OF_SCOPE_USAGETYPE.test(attributes.usagetype ?? "") ? null : kindOf(axis, flags),
+  };
+}
+
+export function readProduct(offer, product) {
+  return offer === "AmazonBedrockFoundationModels"
+    ? readFoundationProduct(product)
+    : readBedrockProduct(product);
+}
+
+// --- モデル名 → モデル ID の対応 -----------------------------------------
+
+/**
+ * models.json の name から引ける索引 (AC-005 の自動一致)。
+ * 同じ name のモデル ID が複数あるとき (Nova Pro の文脈長違いなど) は全件返す。
+ */
+export function buildNameIndex(models) {
+  const index = new Map();
+  for (const [modelId, model] of Object.entries(models ?? {})) {
+    const key = flatten(model?.name);
+    if (!key) continue;
+    if (!index.has(key)) index.set(key, []);
+    index.get(key).push(modelId);
+  }
+  for (const list of index.values()) list.sort();
+  return index;
+}
+
+/**
+ * 価格表のモデル名から models.json のモデル ID を引く (AC-005)。
+ * 1. 手書きの data/price-model-map.json を先に見る
+ * 2. 無ければ name の大文字小文字と記号を無視した一致
+ *
+ * 返り値は モデル ID の配列 / `[]` (地図に null と書いた = models.json に該当が無いと
+ * 確認済み) / `null` (未マッピング。メンテナが地図に足す対象)。
+ */
+export function resolveModelIds(sourceKey, { nameIndex, map = {} } = {}) {
+  if (!sourceKey) return null;
+  if (Object.prototype.hasOwnProperty.call(map, sourceKey)) {
+    const mapped = map[sourceKey];
+    if (mapped == null) return []; // 該当モデルが models.json に無いと確認済み
+    const list = Array.isArray(mapped) ? mapped : [mapped];
+    return [...list.filter((id) => typeof id === "string" && id.length > 0)].sort();
+  }
+  const hit = nameIndex?.get(flatten(sourceKey));
+  return hit && hit.length > 0 ? [...hit] : null;
+}
+
+// --- 正規化 ---------------------------------------------------------------
+
+function setPrice(bucket, kind, axis, value) {
+  const slot = (bucket[kind] ??= {});
+  // 同じ種別・同じ軸に 2 つ目の単価が来たら安い方を採らず、先に読んだ方を残す。
+  // (価格表の重複は SKU の入れ替え時にだけ起きるため、静かに上書きしない)
+  if (slot[axis] == null) slot[axis] = value;
+}
+
+function sortObject(value) {
+  return Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)));
+}
+
+/**
+ * 取得した offer ファイル群から data/prices.json を作る (AC-004)。
+ *
+ * @param {object} args
+ * @param {object} args.files  { "<offer>": { "<region>": <生 JSON> } }
+ * @param {object} args.models data/models.json
+ * @param {object} args.map    data/price-model-map.json
+ * @param {string} args.generatedAt 取得日時 (呼び出し側が渡す。ここは時計を読まない)
+ */
+export function normalizePrices({ files, models, map = {}, generatedAt }) {
+  const nameIndex = buildNameIndex(models);
+  const byModel = {};
+  const unmapped = new Map();
+  let outOfScope = 0;
+  let ignored = 0;
+  let publicationDate = null;
+
+  for (const offer of PRICE_OFFERS) {
+    for (const [region, file] of Object.entries(files?.[offer] ?? {})) {
+      if (file?.publicationDate && (publicationDate == null || file.publicationDate > publicationDate)) {
+        publicationDate = file.publicationDate;
+      }
+      for (const product of Object.values(file?.products ?? {})) {
+        const read = readProduct(offer, product);
+        const price = priceOf(file, product.sku);
+        const perMillion = price ? toPerMillion(price.usd, price.unit) : null;
+        // トークン単位でない SKU はそもそも価格列の対象外。数えない。
+        if (perMillion == null) continue;
+        if (read.mantle || read.kind == null) {
+          outOfScope += 1;
+          continue;
+        }
+
+        const sourceKey = read.sourceName ?? read.fallbackKey;
+        const modelIds = resolveModelIds(sourceKey, { nameIndex, map });
+        if (Array.isArray(modelIds) && modelIds.length === 0) {
+          // 地図に null と書いてある = models.json に該当モデルが無いと確認済み。
+          ignored += 1;
+          continue;
+        }
+        if (!modelIds) {
+          const key = sourceKey ?? `sku:${product.sku}`;
+          if (!unmapped.has(key)) {
+            unmapped.set(key, { name: key, offer, count: 0, example: product.attributes?.usagetype ?? null });
+          }
+          unmapped.get(key).count += 1;
+          continue;
+        }
+
+        const axis = read.axis === "cacheRead" || read.axis === "cacheWrite" ? "input" : read.axis;
+        for (const modelId of modelIds) {
+          const regions = (byModel[modelId] ??= {});
+          const bucket = (regions[region] ??= {});
+          setPrice(bucket, read.kind, axis, perMillion);
+        }
+      }
+    }
+  }
+
+  // キー順を揃えて差分を読みやすくする。
+  const sorted = {};
+  for (const modelId of Object.keys(byModel).sort()) {
+    const regions = {};
+    for (const region of Object.keys(byModel[modelId]).sort()) {
+      const bucket = byModel[modelId][region];
+      const kinds = {};
+      for (const kind of PRICE_KINDS) {
+        if (bucket[kind]) kinds[kind] = sortObject(bucket[kind]);
+      }
+      regions[region] = kinds;
+    }
+    sorted[modelId] = regions;
+  }
+
+  const unmappedList = [...unmapped.values()].sort(
+    (a, b) => b.count - a.count || a.name.localeCompare(b.name),
+  );
+
+  return {
+    prices: {
+      generatedAt,
+      publicationDate,
+      source: sourceUrls(),
+      unmapped: unmappedList.length,
+      outOfScope,
+      ignored,
+      byModel: sorted,
+    },
+    unmappedList,
+  };
+}

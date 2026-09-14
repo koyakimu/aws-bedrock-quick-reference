@@ -346,6 +346,7 @@ describe("DETAIL-001 詳細パネルの節の並び", () => {
     expect(sections).toEqual([
       "detail-model-id",
       "detail-usage",
+      "detail-price",
       "detail-availability",
       "detail-profiles",
       "detail-endpoint",

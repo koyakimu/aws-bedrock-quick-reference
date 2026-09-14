@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 ---
 
 ## Scenario XC-001: スナップショット取得 → 表の描画 → 絞り込み
@@ -133,3 +133,68 @@ version: 1
 - 復元後に 0 件になる URL で、FILTER-001 の空状態が出る（denied の「データなし」バナーとは別の見た目）
 - 言語は URL に載らず、開いた人の `localStorage` / `navigator.language` で決まる
 - GitHub Pages のサブパス配下でも URL の組み立てと復元が動く（先頭スラッシュの絶対パスを使っていない）
+
+---
+
+## Scenario XC-003: 価格表の取り込み → 表の価格列 → 詳細パネル
+
+**Description**: メンテナが AWS Price List Bulk API から価格を取り込み、その単価が起点リージョンごとに表の価格列と Global セルに出て、行を開くとバッチ・キャッシュまで見られるまでの流れ。価格が判定（In-Region / Geo / Global）を一切変えないこと、単価が無いモデルが「未取得」とも「提供なし」とも別の「—」で出ることを確認する。
+
+**Contexts**: price, data, table, detail, i18n
+
+### Flow
+
+#### Step 1
+- **Context**: price
+- **Action**: `node scripts/fetch-bedrock-prices.mjs` を実行する。`data/fetch-log.json` の `status: "ok"` の 17 リージョンについて `AmazonBedrock` と `AmazonBedrockFoundationModels` のリージョン別ファイルを認証なしで取得し、`data/raw/<日付>/prices-<offer>-<region>.json` に落としてから `scripts/lib/prices.mjs` で正規化する。単位 `1K tokens` は 1000 倍して USD / 100 万トークンに揃える。`-mantle-` の SKU と Global × batch の組み合わせは載せない
+- **Data In**:
+  - From: data
+  - Payload: `models.json`（モデル ID と `name`）、`fetch-log.json`（対象リージョン）、手書きの `price-model-map.json`
+- **Data Out**:
+  - To: table, detail
+  - Payload: `prices.json`（`generatedAt` / `publicationDate` / `source` / `unmapped` / `byModel[<modelId>][<region>][<種別>]`）
+  - To: メンテナ
+  - Payload: `data/raw/<日付>/prices-unmapped.json`（地図に足すべき名前の一覧）
+
+#### Step 2
+- **Context**: table
+- **Action**: 起点リージョン `ap-northeast-1` で表を描画する。Global 列の右の「入力 $/1M」「出力 $/1M」に `byModel[M]["ap-northeast-1"].standard` を出し、`global` があれば Global セルに `$入力 / $出力` を添える。脚注に価格の取得日・価格表の発行日・出典リンクを足す
+- **Data In**:
+  - From: price
+  - Payload: `prices.json`
+  - From: data
+  - Payload: `models.json` / `profiles.json` / `fetch-log.json` / `region-notes.json`
+- **Data Out**:
+  - To: detail
+  - Payload: 行に対応するモデル ID と現在の起点リージョン（価格の引き先は detail 側が `prices.json` から引き直す）
+
+#### Step 3
+- **Context**: detail
+- **Action**: 閲覧者が `anthropic.claude-opus-5` の行を開く。価格の節に 標準 / Global / バッチ / キャッシュ読み / キャッシュ書き の 5 行が 入力 / 出力 の 2 列で出る
+- **Data In**:
+  - From: price
+  - Payload: `byModel["anthropic.claude-opus-5"]["ap-northeast-1"]`
+
+#### Step 4
+- **Context**: i18n
+- **Action**: 列ヘッダ（入力 $/1M / Input $/1M）、種別名（標準 / Standard）、単位の注記を `price.*` の辞書から供給する。単価の数値そのものは翻訳しない
+- **Data Out**:
+  - To: table, detail
+  - Payload: 現在の言語と翻訳済み文言
+
+### Related Specs
+- PRICE-001
+- DATA-001
+- TABLE-001
+- DETAIL-001
+- I18N-001
+
+### Verification Points
+- `$0.00384 /1K`（Nova Pro 東京の出力）が `3.84`、`$5.50 /1M`（Claude Opus 5 東京の入力）が `5.5` になり、どちらも USD / 100 万トークンで並ぶ
+- Claude Opus 5 の東京の標準が `$5.50 / $27.50`、Global が `$5.00 / $25.00` で、Global セルに `$5.00 / $25.00` が出る
+- 価格の無いモデルの価格列が「—」になり、未取得バナー（TABLE-001 AC-009）とも「提供なし」（AC-010）とも別の見た目になる
+- `prices.json` を空にしても行数・In-Region / Geo / Global の判定・絞り込みの結果が変わらない
+- `unmapped` が 0 で、`prices-unmapped.json` が空配列（地図が揃っている）
+- `byModel` の JSON に `mantle` も SKU も `usagetype` も現れない
+- 価格の取得日（`generatedAt`）と価格表の発行日（`publicationDate`）が別々に脚注へ出る
+- `--from-raw <日付>` でネットワークを使わずに同じ `prices.json` を作り直せる

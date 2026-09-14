@@ -17,15 +17,19 @@ data/
 ├── region-notes.json   # 手書き。対象リージョンの正 (ja/en/optIn/endpoint/country/geo)
 ├── overrides.json      # 手書き。モデル ID / プロファイル ID ごとの備考 (ja/en)
 ├── mantle.json         # 手書き。bedrock-mantle の提供リージョンと対応モデル (D-010)
+├── price-model-map.json # 手書き。価格表のモデル名 → モデル ID (D-009)
 ├── models.json         # 生成物。手編集禁止
 ├── profiles.json       # 生成物。手編集禁止
 ├── fetch-log.json      # 生成物。手編集禁止
+├── prices.json         # 生成物。手編集禁止
 └── raw/<日付>/         # 取得した生 JSON と stderr。gitignore 対象
 scripts/
 ├── fetch-bedrock-snapshot.mjs  # 薄い CLI。引数を読んで lib/ を呼ぶだけ
+├── fetch-bedrock-prices.mjs    # 価格の CLI。引数・fetch・書き出しだけを持つ
 └── lib/
     ├── cli-args.mjs    # 引数解析 (純関数)
     ├── normalize.mjs   # 正規化 (純関数。I/O・時刻・ネットワークを持たない)
+    ├── prices.mjs      # 価格の正規化 (純関数。同上)
     ├── aws-cli.mjs     # aws を子プロセスで起動する唯一のモジュール
     └── snapshot.mjs    # 取得の段取りとファイル書き出し (唯一の I/O 層)
 src/
@@ -34,8 +38,11 @@ src/
 tests/
 ├── normalize.test.js
 ├── fetch-bedrock-snapshot.test.js
+├── prices.test.js          # 価格の正規化 (node 環境)
+├── price-render.test.js    # 価格列・Global の単価・詳細の価格 (jsdom)
 ├── no-runtime-deps.test.js
-└── fixtures/bedrock/   # spike 出力を 5 モデル・4 プロファイルに間引いた固定入力
+├── fixtures/bedrock/   # spike 出力を 5 モデル・4 プロファイルに間引いた固定入力
+└── fixtures/prices/    # 東京の価格表を 20 SKU に間引いた固定入力
 ```
 
 ### 開発コマンド
@@ -50,7 +57,8 @@ tests/
 ### 生成物は手で書かない
 
 `data/models.json` / `data/profiles.json` / `data/fetch-log.json` は
-`scripts/fetch-bedrock-snapshot.mjs` の出力。**手編集は禁止**。値が間違っていると思ったら、
+`scripts/fetch-bedrock-snapshot.mjs` の、`data/prices.json` は
+`scripts/fetch-bedrock-prices.mjs` の出力。**手編集は禁止**。値が間違っていると思ったら、
 生成物ではなく取得スクリプトか `data/region-notes.json` を直してから取り直す。
 表示上の補足を足したいときは `data/overrides.json` に書く。
 
@@ -81,6 +89,48 @@ node scripts/fetch-bedrock-snapshot.mjs --profile <名前> --account-kind sandbo
 
 `aws` CLI は SSO のトークンキャッシュを書くので、エージェントから実行するときは
 Bash のサンドボックスを外す必要がある。
+
+### 価格の取り直し方 (PRICE-001 / D-009)
+
+価格は AWS Price List Bulk API から取る。**認証は要らない**ので `aws sso login` も
+`--profile` も不要。判定データ (`models.json` 等) を取り直した後に走らせる。
+
+```
+node scripts/fetch-bedrock-prices.mjs
+```
+
+- 対象リージョンは `data/fetch-log.json` の `status: "ok"` 全件 (現在 17)。
+  `--regions a,b` で絞れる
+- `--date YYYY-MM-DD` で `data/raw/<日付>/` の日付を上書きできる。既定は JST の今日
+- `--dry-run` は取得と生データの保存だけ行い `data/prices.json` を書かない
+- 生 JSON は `data/raw/<日付>/prices-<offer>-<region>.json` (gitignore 対象)。
+  正規化の規則や対応表を変えたときは、取り直さずに作り直せる:
+
+  ```
+  node scripts/fetch-bedrock-prices.mjs --from-raw 2026-09-14
+  ```
+
+- **Node の組み込み `fetch` を使うので、エージェントから実行するときは Bash の
+  サンドボックスを外す必要がある** (サンドボックス下では `fetch failed` になる)。
+  `curl` は通るが、スクリプトは `fetch` で取る
+- 単価はすべて **USD / 100 万トークン**に揃う。`AmazonBedrock` の `1K tokens` は 1000 倍、
+  `AmazonBedrockFoundationModels` の `1M tokens` はそのまま
+- 取り込むのは 2 offer (`AmazonBedrock` / `AmazonBedrockFoundationModels`)。
+  `AmazonBedrockService` と `AmazonBedrockAgentCore` はトークン単価を持たないので対象外
+
+#### price-model-map.json を直すとき
+
+価格表のモデル名と `models.json` の `name` は一致しないことがある
+(`Claude Opus 5 (Amazon Bedrock Edition)` / `NVIDIA Nemotron Nano 2 VL` / `Gemma 3 12B` など)。
+自動一致 (接尾辞 `(Amazon Bedrock Edition)` を外して大文字小文字・記号を無視した比較) で
+当たらない名前だけをこの手書きファイルに書く。
+
+- 実行後に `data/prices.json` の `unmapped` が 0 でなければ、
+  `data/raw/<日付>/prices-unmapped.json` を開いて名前を確認し、地図に足す。
+  **推測で結び付けない。** `models.json` に該当が無いと確認できたものは値を `null` にする
+  (`unmapped` ではなく `ignored` に数えられる)
+- 地図を直したら `--from-raw <日付>` で作り直す。取り直しは要らない
+- `model` 属性を持たない SKU (Titan 系) の鍵は `usagetype:<token>` の形
 
 ### denied リージョンは消さない
 
@@ -134,6 +184,7 @@ source region R、モデル M について:
 | Geo | `profiles.json` に接頭辞 `us` / `eu` / `apac` / `au` / `jp` で M を対象とし `sources[R]` を持つものがある |
 | Global | 同じく接頭辞 `global`。destination は API から取れないので `["*"]` で、画面では注記にする |
 | データなし | `fetch-log.json.regions[R].status` が `denied` |
+| 入力 / 出力 $/1M | `prices.json.byModel[M][R].standard` の `input` / `output`。無ければ「—」 |
 
 `PROVISIONED` は `availability` に保持するが、3 列の判定には使わない。
 `inferenceTypesSupported` には API Reference の enum に無い `INFERENCE_PROFILE` が返るので、

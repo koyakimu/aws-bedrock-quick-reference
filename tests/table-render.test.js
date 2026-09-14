@@ -99,7 +99,7 @@ describe("AC-002 エンドポイント", () => {
 
 // --- AC-006 表の列構成 ---
 describe("AC-006 列構成と 1 行の中身", () => {
-  it("列が左から プロバイダ / モデル名 / モダリティ / In-Region / Geo / Global / Mantle / 備考", () => {
+  it("列が左から プロバイダ / モデル名 / モダリティ / In-Region / Geo / Global / 入力 / 出力 / Mantle / 備考", () => {
     mount();
     expect(headerTexts()).toEqual([
       "プロバイダ",
@@ -108,6 +108,8 @@ describe("AC-006 列構成と 1 行の中身", () => {
       "In-Region",
       "Geo",
       "Global",
+      "入力 $/1M",
+      "出力 $/1M",
       "Mantle",
       "備考",
     ]);
@@ -126,6 +128,8 @@ describe("AC-006 列構成と 1 行の中身", () => {
       "inRegion",
       "geo",
       "global",
+      "priceInput",
+      "priceOutput",
       "mantle",
       "notes",
     ]);
@@ -300,8 +304,8 @@ describe("AC-006 列構成と 1 行の中身", () => {
 
   it("備考は overrides.json のエントリ、無ければ空", () => {
     mount(buildOverrides("cohere.embed-v4:0"));
-    expect(cells(rowFor("cohere.embed-v4:0"))[7].textContent).toBe("モデルの備考");
-    expect(cells(rowFor("amazon.nova-lite-v1:0"))[7].textContent).toBe("—");
+    expect(cells(rowFor("cohere.embed-v4:0"))[9].textContent).toBe("モデルの備考");
+    expect(cells(rowFor("amazon.nova-lite-v1:0"))[9].textContent).toBe("—");
   });
 });
 

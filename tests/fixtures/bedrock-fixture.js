@@ -7,6 +7,10 @@ import ipTokyo from "./bedrock/ip-ap-northeast-1.json";
 import fmDenied from "./bedrock/fm-us-east-1.err?raw";
 import { normalizeSnapshot } from "../../scripts/lib/normalize.mjs";
 import regionNotes from "../../data/region-notes.json";
+import priceBedrockTokyo from "./prices/AmazonBedrock-ap-northeast-1.json";
+import priceFoundationTokyo from "./prices/AmazonBedrockFoundationModels-ap-northeast-1.json";
+import priceModelMap from "../../data/price-model-map.json";
+import { normalizePrices } from "../../scripts/lib/prices.mjs";
 
 export const TOKYO = "ap-northeast-1";
 // MANTLE-001: bedrock-mantle が提供されていない起点リージョン (大阪)。
@@ -44,3 +48,20 @@ export function buildOverrides(modelId, profileId) {
     ...(profileId ? { [profileId]: { ja: "プロファイルの備考", en: "profile note" } } : {}),
   };
 }
+
+// --- 価格 (PRICE-001) -----------------------------------------------------
+// 実データ (2026-09-11 発行) から数 SKU だけ間引いた東京の 2 offer を
+// prices.mjs に通し、data/prices.json と同じ形にする。
+export function buildPrices(models = buildSnapshot().models) {
+  return normalizePrices({
+    files: {
+      AmazonBedrock: { [TOKYO]: priceBedrockTokyo },
+      AmazonBedrockFoundationModels: { [TOKYO]: priceFoundationTokyo },
+    },
+    models,
+    map: priceModelMap,
+    generatedAt: "2026-09-14T09:00:00Z",
+  }).prices;
+}
+
+export { priceBedrockTokyo, priceFoundationTokyo, priceModelMap };

@@ -5,6 +5,7 @@ import fetchLog from "../../data/fetch-log.json";
 import regionNotes from "../../data/region-notes.json";
 import overrides from "../../data/overrides.json";
 import mantle from "../../data/mantle.json";
+import prices from "../../data/prices.json";
 
 import { initI18n, setupLangToggle } from "./i18n.js";
 import { initTheme, setupThemeToggle } from "./theme.js";
@@ -26,7 +27,7 @@ function boot() {
   const host = document.getElementById("main");
   if (!host) return;
 
-  mountApp({ host, models, profiles, fetchLog, regionNotes, overrides, mantle });
+  mountApp({ host, models, profiles, fetchLog, regionNotes, overrides, mantle, prices });
 }
 
 if (document.readyState === "loading") {

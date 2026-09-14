@@ -2,6 +2,7 @@
 
 技術選択の記録。**新しい判断ほど上に積む。** 最終決定はユーザーが行い、AI の推奨は参考情報。
 
+D-009 は Design v2 で価格が範囲に入ったことを受けて 2026-09-14 に決定した。
 D-001〜D-005 は brainstorming の対話で内容が固まり、技術設計
 （`docs/superpowers/specs/2026-09-14-bedrock-quick-reference-design.md`）から転記したものを
 2026-09-14 にユーザーが確定した。D-006・D-007 は Spec フェーズで決定した。D-008 は Build 中に発生した矛盾の解消で、暫定決定 B をオーナーの指示で D に差し替えた。
@@ -21,6 +22,21 @@ D-001〜D-005 は brainstorming の対話で内容が固まり、技術設計
 - **Reason**: 公開されている唯一の出典だから。オーナー承認 2026-09-14
 - **転記の規約**: `data/region-notes.json` と同じ（D-004）。**記憶で足さず、必ず doc を読んでから転記する。** `_source` に転記元の URL 3 本と日付を書く。docs のモデル名は `models.json` の `name` と**大文字小文字を無視した完全一致**で引き、突き合わなかった名前は推測で結び付けず `_unmatched` にそのまま残す。`models.json` に無い mantle 専用モデルは `mantleOnly` に残し、転記の欠落と区別できるようにする
 - **Refs**: `spec-mantle.md`（MANTLE-001）、`spec-table.md`（v7 AC-002 / AC-006）、`spec-detail.md`（v6 AC-012）、データは `data/mantle.json`、判定は `src/scripts/mantle-model.mjs`
+
+## D-009: 価格データの取得元
+
+- **Date**: 2026-09-14
+- **Context**: Design version 2 で「価格の目安が同じ行で分かる」が範囲に入り、モデル × 起点リージョンの入力・出力の単価をどこから取るかを決める必要が出た。判定データ（D-002）は `aws` CLI + SSO の手動実行だが、価格は認証の要らない配信がある。Bedrock の価格は 1 つの offer に収まっておらず、`AmazonBedrock`（Nova / Titan / OpenAI / Google / Mistral / Qwen / xAI / Z.AI / DeepSeek / NVIDIA / Moonshot / MiniMax ほか）と `AmazonBedrockFoundationModels`（Anthropic Claude / Cohere Embed / TwelveLabs）に分かれ、単位も `1K tokens` と `1M tokens` で違う。
+- **Options**:
+  - A: **AWS Price List Bulk API のリージョン別ファイルを取り込む**。`https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/<offerCode>/current/<region>/index.json` を認証なしで取得し、正規化して `data/prices.json` にコミットする
+  - B: **料金ページ（HTML）を scrape する**。表示どおりの値が取れるが、HTML 構造の変更に弱く、D-002 / D-003 で B を退けたのと同じ理由が当てはまる
+  - C: **価格を載せない**。Design v2 の「What」に反する
+- **AI Recommendation**: **A**。AWS 自身が機械可読な形で配信しており、認証が要らないので CI からでも取れる。人の解釈を挟まない点で Success Criteria（人の解釈による差分ゼロ）とも合う
+- **Decision**: **A**
+- **Reason**: 公開・機械可読で、オーナーが 2026-09-14 に承認した。認証情報が要らないので取得の再現性が高い（D-002 の `aws` CLI 経路と違い、誰でも同じ結果を得られる）
+- **取り込みの範囲**: offer は `AmazonBedrock` と `AmazonBedrockFoundationModels` の 2 つ。`AmazonBedrockService`（Mantle / cross-region / 予約 TPM）と `AmazonBedrockAgentCore` はトークン単価を持たないため対象外。単価はすべて **USD / 100 万トークン**に揃える（`1K tokens` は 1000 倍）。`-mantle-` の SKU は通常の接続先と同じ単価の別 SKU なので載せない（Design FAQ Q14）
+- **モデル名の対応**: `AmazonBedrockFoundationModels` には `model` 属性が無く、モデル名は `servicename`（`Claude Opus 5 (Amazon Bedrock Edition)`）に入る。自動一致（接尾辞を外して `models.json` の `name` と大文字小文字・記号を無視して比較）で当たらないものは、手書きの `data/price-model-map.json` で対応させる。どちらでも引けない SKU は `data/raw/<日付>/prices-unmapped.json` に書き出して `prices.json` の `unmapped` に数え、メンテナが地図を足せるようにする（推測で結び付けない）
+- **Refs**: `spec-price.md`（PRICE-001）、`spec-table.md`（TABLE-001 v8 AC-005 / AC-008 / AC-013）、`spec-detail.md`（DETAIL-001 v7 AC-013）、実装は `scripts/lib/prices.mjs` と `scripts/fetch-bedrock-prices.mjs`
 
 ## D-008: fetch-log.json に残す「取得できなかった理由」の形
 

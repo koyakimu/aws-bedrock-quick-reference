@@ -1,7 +1,7 @@
 ---
 spec_id: "TABLE-001"
 context: "table"
-version: 7
+version: 8
 issue_ref: null
 title: "起点リージョン選択とメイン比較表"
 decision_refs:
@@ -9,6 +9,7 @@ decision_refs:
   - D-003
   - D-004
   - D-008
+  - D-009
   - D-010
 ---
 
@@ -59,11 +60,12 @@ decision_refs:
 - **Given**: 起点リージョン R について、接頭辞 `global.` で `modelId` が M、`sources` に R を持つプロファイル P がある
 - **When**: 表を描画する
 - **Then**: Global 列に ✓ が出て、destination は列挙せず「全世界の対応リージョン（今後増えうる）」の注記と公式 docs へのリンクが付く。`sources[R]` が `["*"]` であることを destination 列挙の代わりに使う。**プロファイル ID はセルに出さない**（DETAIL-001 の詳細パネルで見る）
+  - **Global の単価があれば同じセルに「$入力 / $出力」を添える**（PRICE-001 AC-008）。例: `$3.00 / $15.00`。価格の有無で ✓ / ✕ の判定は変わらない
 
 ### AC-006 (表の列構成)
 - **Given**: 起点リージョンが選択されている
 - **When**: 表を描画する
-- **Then**: 列が左から **プロバイダ / モデル名 / モダリティ / In-Region / Geo / Global / Mantle / 備考** の順で並ぶ。**Mantle 列は備考の 1 つ手前**で、判定と表示は MANTLE-001 AC-003 が定める。1 行 = 1 モデル。モデル名は API の `modelName`（例: `Claude Sonnet 4.5`）、備考は `overrides.json` の該当エントリ（無ければ空）。行は プロバイダ → モデル名 の昇順で並ぶ。**Model ID 列と lifecycle 列は表に持たない**（AWS を知らない人が最初に読む情報から並べるため。技術的な識別子は DETAIL-001 の詳細パネルへ移す）
+- **Then**: 列が左から **プロバイダ / モデル名 / モダリティ / In-Region / Geo / Global / 入力 $/1M / 出力 $/1M / Mantle / 備考** の順で並ぶ。**価格 2 列は Global の右**、**Mantle 列は備考の 1 つ手前**で、判定と表示は MANTLE-001 AC-003 が定める。1 行 = 1 モデル。モデル名は API の `modelName`（例: `Claude Sonnet 4.5`）、備考は `overrides.json` の該当エントリ（無ければ空）。行は プロバイダ → モデル名 の昇順で並ぶ。**Model ID 列と lifecycle 列は表に持たない**（AWS を知らない人が最初に読む情報から並べるため。技術的な識別子は DETAIL-001 の詳細パネルへ移す）
 
 ### AC-007 (表にコピーボタンを置かない)
 - **Given**: 起点リージョンが選択され、表が描画されている
@@ -74,6 +76,7 @@ decision_refs:
 - **Given**: ページを開く
 - **When**: 表の下を見る
 - **Then**: `fetch-log.json` の `generatedAt`（取得日時）、`accountKind`、「未取得のリージョン」の見出しの下に `status` が `denied` のリージョンの一覧（取得できなかった理由は書かない）、および出典 docs（ListFoundationModels / ListInferenceProfiles / geographic cross-region inference / global cross-region inference / Bedrock エンドポイント）へのリンクが表示される
+- **And**: 価格データがあるときは、**価格の取得日**（`prices.json` の `generatedAt`）と**価格表の発行日**（`publicationDate`）、および AWS Price List Bulk API へのリンクが同じ脚注に出る（PRICE-001 AC-009）
 
 ### AC-009 (Error Case: 未取得のリージョンを選んだとき)
 - **Given**: `fetch-log.json.regions["us-east-1"].status` が `"denied"` の状態で、起点リージョンに `us-east-1` を選ぶ
@@ -96,6 +99,16 @@ decision_refs:
 - **When**: 表を描画する
 - **Then**: モデル名の右に小さなタグ「旧版」（en: `Legacy`）が付く。`ACTIVE` のモデルにはタグを付けない（既定が現行なので印は要らない）
 
+### AC-013 (価格列)
+- **Given**: 起点リージョン R でモデル M に `prices.json.byModel[M][R].standard` がある
+- **When**: 表を描画する
+- **Then**: Global 列の右の「入力 $/1M」「出力 $/1M」に、**起点リージョンの標準価格**が USD / 100 万トークンで出る
+  - 数値は**右寄せ**で、`$1` 以上は**小数 2 桁**（`$16.50`）、`$1` 未満は**有効数字 3 桁・末尾の 0 は落とす**（`$0.288` / `$0.072` / `$0.2`）
+  - 単価が無いモデルは **「—」**（未取得とも提供なしとも別の、値なしの見た目）
+  - 数値として並べ替えられる
+  - 出るのは単価だけで、SKU・`usagetype`・offer code といった価格表の識別子はセルに出さない（PRICE-001 AC-012）
+- **And**: 価格は判定（In-Region / Geo / Global）にも絞り込みにも影響しない。`prices.json` が無くても表は同じ行数で描画される
+
 ### AC-NFR-001 (スマートフォン幅)
 - **Given**: ビューポート幅 375px
 - **When**: 表を描画する
@@ -109,12 +122,13 @@ decision_refs:
 ## UI Description
 
 - **上部**: 起点リージョンセレクタ（既定 `ap-northeast-1`）。右隣に選択中リージョンの `bedrock-runtime` エンドポイントと取得状況（取得日時 / ok・denied）。denied のときは表の直上に警告バナー
-- **本体**: 1 つの表。行 = モデル、列 = プロバイダ / モデル名 / モダリティ / In-Region / Geo / Global / 備考
+- **本体**: 1 つの表。行 = モデル、列 = プロバイダ / モデル名 / モダリティ / In-Region / Geo / Global / 入力 $/1M / 出力 $/1M / Mantle / 備考
   - モデル名セル: `modelName`（+ `LEGACY` なら「旧版」タグ）。プロバイダ列とともに左端に固定する
   - モダリティセル: 入力 → 出力 を平易な語で（例: テキスト・画像 → テキスト）
   - In-Region セル: ✓ / ✕ のみ
   - Geo セル: プロファイルごとのブロック。見出しが地理圏の平易な名前、本文が推論先の地名の並び（「 ・ 」区切り）。起点の国の外の地名は注意色にし、末尾に「（国外 N）」を添える。リージョンコードは出さない
-  - Global セル: ✓ + 「全世界の対応リージョン」注記（docs リンク付き）
+  - Global セル: ✓ + 「全世界の対応リージョン」注記（docs リンク付き）。Global の単価があれば「$入力 / $出力」を淡色で添える
+  - 価格セル: 右寄せ・等幅で `$` 付き。値なしは「—」
   - Mantle セル: ✓ / 「—」のみ（MANTLE-001 AC-003）。ID はツールチップと詳細パネルで見る
   - 不可のセルは ✕ または「—」で、未取得とは別の見た目
   - 表の中に ID とコピーボタンは置かない。行を開くと DETAIL-001 が技術的な識別子を出す
@@ -148,13 +162,14 @@ decision_refs:
 | AC-003 | unit + integration (vitest, jsdom) | 判定関数 `judgeInRegion(models, M, R)` を 4 ケース（ON_DEMAND のみ / INFERENCE_PROFILE のみ / 両方 / 空配列）で検証し、描画側でセルに ID が出ないことを検証 |
 | AC-004 | unit + integration (vitest, jsdom) | `judgeGeo(profiles, M, R)` が接頭辞 5 種を拾い、destination が昇順であることを検証。複数プロファイルのケースも含む。`geoPlaces(destinations, { region, regionNotes, lang })` が 起点 → 同じ国 → それ以外 の順に地名を並べ、`outsideCount` が国外の件数を返すことを検証（ja / en、国外 0 件、起点の国が不明のケースを含む）。描画側で地理圏の平易な名前と地名が出て、プロファイル ID もリージョンコードもセルに現れないこと、国外の地名に印と「（国外 N）」が付くことを検証 |
 | AC-005 | unit (vitest) | `judgeGlobal` が `global.` のみを拾い、`["*"]` を destination 列挙に展開しないことを検証 |
-| AC-006 | integration (jsdom, vitest) | 描画された `<th>` の並び（8 列）と 1 行分のセル内容、行の並び順（プロバイダ → モデル名）を検証 |
+| AC-006 | integration (jsdom, vitest) | 描画された `<th>` の並び（10 列）と 1 行分のセル内容、行の並び順（プロバイダ → モデル名）を検証 |
 | AC-007 | integration (jsdom, vitest) | 表の中に `.copy-btn` と `.copyable` が 0 個であること、エンドポイントのコピーボタンは残っていることを検証 |
 | AC-008 | integration (jsdom, vitest) | 脚注に `generatedAt` / `accountKind` / 「未取得のリージョン」の見出しと該当リージョン名 / 出典リンク数が出ることと、理由の文が出ないことを検証 |
 | AC-009 | integration (jsdom, vitest) | denied の fixture でバナーの有無・2 文の文言・選択肢の「（未取得）」接尾辞・表 0 行を検証。併せて画面上に `cause` の説明文もエラー原文（`AccessDenied` / `arn:aws` など）も現れないことを検証 |
 | AC-010 | integration (jsdom, vitest) | `ok` かつ 0 件の fixture で「提供なし」表示になり、バナーが出ないことを検証 |
 | AC-011 | integration (jsdom, vitest) | ja / en の両方で「モダリティ」セルの文字列を検証（列挙子が出ないこと） |
 | AC-012 | integration (jsdom, vitest) | `LEGACY` の行にだけタグが付くことを検証 |
+| AC-013 | integration (jsdom, vitest) | 価格 2 列のヘッダ・キー・`num` クラス・並べ替えと、`$16.50` / `$0.288` の桁、単価が無い行の「—」を検証。`prices` を空にしても行数と判定が変わらないことを検証 |
 | AC-NFR-001 | e2e（Playwright MCP で 375px のスクリーンショットを手動確認） | `document.documentElement.scrollWidth <= clientWidth` を評価し、スクリーンショットでセルの重なりが無いことを目視。結果はリポジトリに入れない |
 | AC-NFR-002 | 計測 (vitest, jsdom) | 68 モデルの fixture で再描画時間を `performance.now()` で 5 回測り中央値 < 200ms |
 
@@ -173,12 +188,12 @@ decision_refs:
 - 判定ルールは技術設計 §3 をそのまま実装する。docs の HTML を scrape して補正することはしない
 - `PROVISIONED` は 3 列の判定に使わない（DETAIL-001 の availability 表示には出す）
 - Global の destination を推測して列挙しない（Design FAQ Q6）
-- 料金・クォータ・性能比較は列に持たない（Design「What Not」1・2・4）
+- クォータ・性能比較は列に持たない（Design「What Not」2・4）。価格は公開価格表の単価だけを持ち、試算・請求額の計算はしない（Design v2「What Not」1、PRICE-001）
 
 ## 変更履歴
 
+- **version 8** (2026-09-14): Global 列の右に「入力 $/1M」「出力 $/1M」の 2 列を足し（AC-013 を追加、AC-006 の列構成を 10 列に改訂）、Global セルに Global の単価「$入力 / $出力」を添え、脚注に価格の取得日・価格表の発行日・出典リンクを足した（AC-005 / AC-008 に追記）。価格 2 列は Global と Mantle の間に入り、version 7 の Mantle 列は備考の 1 つ手前のまま。値は PRICE-001 が作る `data/prices.json` から取り、判定・絞り込み・URL 共有・denied バナーは変更しない。理由: Design v2 の「価格の目安が同じ行で分かる」に対応し、「どこで推論するか」と「いくらか」を同じ行で比べられるようにするため（D-009）
 - **version 7** (2026-09-14): 備考の 1 つ手前に「Mantle」列を追加し、エンドポイント行の下に `bedrock-mantle` の行と cross-region inference の注記を追加した（AC-002 に And を追記、AC-006 の列構成を 8 列に改訂）。判定と表示の内容は MANTLE-001 AC-001 〜 AC-004 が定める。In-Region / Geo / Global の判定ルール（D-003）・絞り込み・URL 共有・脚注・denied バナーは変更しない
-
 - **version 5** (2026-09-14): 未取得のリージョンについて、取得できなかった理由（`cause` の説明文）を画面から全て外した（AC-009 を改訂、AC-008 の脚注の文言を調整）。バナーは「このリージョンのデータはまだ取得できていません」と「提供がないという意味ではありません。取得済みのリージョンを選ぶと表を表示できます。」の 2 文だけにし、起点リージョンのセレクタでは選択肢に「（未取得）」の接尾辞を付ける。脚注は「未取得のリージョン」の見出しで一覧だけを残す。理由: 組織のポリシー・権限・オプトインといった分類は取得作業をするメンテナ向けの情報で、閲覧者には意味が無く、かえって「使えないリージョン」と誤読されるため。`cause` は `fetch-log.json` に残す（D-008 は変更しない）
 - **version 4** (2026-09-14): Geo 列の推論先を、リージョンコードのチップから `region-notes.json` の地名の並びに変えた（AC-004 を改訂、AC-NFR-001 に折り返しの条件を追記）。プロファイルごとに「地理圏の見出し + 地名の並び」のブロックにし、起点リージョンの国（`country`）の外にある推論先を注意色で区別して「（国外 N）」の件数を添える。並びは 起点 → 同じ国 → それ以外（表示名の昇順）。コードと表示名の併記は DETAIL-001 v4 の詳細パネルが引き受ける。理由: AWS のリージョンコードを読まない読み手に「実際にどこで推論されるか」を地名で伝え、国外に出る推論先を見落とさないようにするため。判定ルール（D-003）・列構成・絞り込み・URL 共有・脚注・denied バナーは変更しない
 - **version 3** (2026-09-14): 非技術者向けの情報順に列を並べ替えた。プロバイダ → モデル名 → できること → In-Region / Geo / Global → 備考 とし、Model ID 列・lifecycle 列・表中のコピーボタンを外して技術的な識別子を DETAIL-001 の詳細パネルへ移した（AC-003 / AC-004 / AC-005 / AC-006 / AC-007 / AC-NFR-001 を改訂、AC-011「できること」の平易な表記と AC-012 旧版タグを追加）。理由: AWS を知らない読み手が最初に読む情報（誰が作ったどのモデルで、何ができるか）から並べるため。判定ルール（D-003）・絞り込み・URL 共有・脚注・denied バナー（version 2 の `cause` 表示）は変更しない

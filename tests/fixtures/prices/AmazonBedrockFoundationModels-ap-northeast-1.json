@@ -1,0 +1,301 @@
+{
+  "formatVersion": "v1.0",
+  "disclaimer": "テスト用。AWS Price List Bulk API の実データ (2026-09-11 発行) から数 SKU だけ間引いたもの。",
+  "offerCode": "AmazonBedrockFoundationModels",
+  "version": "20260911124410",
+  "publicationDate": "2026-09-11T12:44:10Z",
+  "products": {
+    "69F9RA3DQHAPSPM3": {
+      "sku": "69F9RA3DQHAPSPM3",
+      "attributes": {
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-MP:APN1_CacheWrite1hInputTokenCount-Units",
+        "operation": "",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Claude Sonnet 4.5 (Amazon Bedrock Edition)"
+      }
+    },
+    "PE8QZD4N4PAHR393": {
+      "sku": "PE8QZD4N4PAHR393",
+      "attributes": {
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-MP:APN1_Reserved_1Month_InputTPM_Geo-Units",
+        "operation": "",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Claude Sonnet 4.5 (Amazon Bedrock Edition)"
+      }
+    },
+    "X3FN4UHKVMAHEH3M": {
+      "sku": "X3FN4UHKVMAHEH3M",
+      "attributes": {
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-MP:APN1_OutputTokenCount-Units",
+        "operation": "",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Claude Sonnet 4.5 (Amazon Bedrock Edition)"
+      }
+    },
+    "GS47B45Q3FPFR3BH": {
+      "sku": "GS47B45Q3FPFR3BH",
+      "attributes": {
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-MP:APN1_InputTokenCount_Batch-Units",
+        "operation": "",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Claude Sonnet 4.5 (Amazon Bedrock Edition)"
+      }
+    },
+    "7F4N2FMFSKA4BXSP": {
+      "sku": "7F4N2FMFSKA4BXSP",
+      "attributes": {
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-MP:APN1_InputTokenCount-Units",
+        "operation": "",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Cohere Embed 4 Model (Amazon Bedrock Edition)"
+      }
+    },
+    "5BGAWQRTFUTUUTVS": {
+      "sku": "5BGAWQRTFUTUUTVS",
+      "attributes": {
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-MP:APN1_InputTokenCount-Units",
+        "operation": "",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Claude Sonnet 4.5 (Amazon Bedrock Edition)"
+      }
+    },
+    "EJTAHDQVD97PR672": {
+      "sku": "EJTAHDQVD97PR672",
+      "attributes": {
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-MP:APN1_OutputTokenCount_Global-Units",
+        "operation": "",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Claude Sonnet 4.5 (Amazon Bedrock Edition)"
+      }
+    },
+    "GTQ49XFUUCJ2KNJZ": {
+      "sku": "GTQ49XFUUCJ2KNJZ",
+      "attributes": {
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-MP:APN1_CacheReadInputTokenCount-Units",
+        "operation": "",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Claude Sonnet 4.5 (Amazon Bedrock Edition)"
+      }
+    },
+    "S689YZKPAQ6MVZ24": {
+      "sku": "S689YZKPAQ6MVZ24",
+      "attributes": {
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-MP:APN1_InputTokenCount_Global-Units",
+        "operation": "",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Claude Sonnet 4.5 (Amazon Bedrock Edition)"
+      }
+    }
+  },
+  "terms": {
+    "OnDemand": {
+      "69F9RA3DQHAPSPM3": {
+        "69F9RA3DQHAPSPM3.4799GE89SK": {
+          "offerTermCode": "4799GE89SK",
+          "sku": "69F9RA3DQHAPSPM3",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "69F9RA3DQHAPSPM3.4799GE89SK.6YS6EN2CT7": {
+              "rateCode": "69F9RA3DQHAPSPM3.4799GE89SK.6YS6EN2CT7",
+              "description": "AWS Marketplace software usage|ap-northeast-1|Million 1 hour Cache Write Input Tokens Regional",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1M tokens",
+              "pricePerUnit": {
+                "USD": "6.6000000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "PE8QZD4N4PAHR393": {
+        "PE8QZD4N4PAHR393.4799GE89SK": {
+          "offerTermCode": "4799GE89SK",
+          "sku": "PE8QZD4N4PAHR393",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "PE8QZD4N4PAHR393.4799GE89SK.6YS6EN2CT7": {
+              "rateCode": "PE8QZD4N4PAHR393.4799GE89SK.6YS6EN2CT7",
+              "description": "AWS Marketplace software usage|ap-northeast-1|Per Hour per 1K Input TPM Reserved 1 Month Regional",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1M TPM Hour",
+              "pricePerUnit": {
+                "USD": "0.1980000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "X3FN4UHKVMAHEH3M": {
+        "X3FN4UHKVMAHEH3M.4799GE89SK": {
+          "offerTermCode": "4799GE89SK",
+          "sku": "X3FN4UHKVMAHEH3M",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "X3FN4UHKVMAHEH3M.4799GE89SK.6YS6EN2CT7": {
+              "rateCode": "X3FN4UHKVMAHEH3M.4799GE89SK.6YS6EN2CT7",
+              "description": "AWS Marketplace software usage|ap-northeast-1|Million Response Tokens Regional",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1M tokens",
+              "pricePerUnit": {
+                "USD": "16.5000000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "GS47B45Q3FPFR3BH": {
+        "GS47B45Q3FPFR3BH.4799GE89SK": {
+          "offerTermCode": "4799GE89SK",
+          "sku": "GS47B45Q3FPFR3BH",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "GS47B45Q3FPFR3BH.4799GE89SK.6YS6EN2CT7": {
+              "rateCode": "GS47B45Q3FPFR3BH.4799GE89SK.6YS6EN2CT7",
+              "description": "AWS Marketplace software usage|ap-northeast-1|Million Batch Input Tokens Regional",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1M tokens",
+              "pricePerUnit": {
+                "USD": "1.6500000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "7F4N2FMFSKA4BXSP": {
+        "7F4N2FMFSKA4BXSP.4799GE89SK": {
+          "offerTermCode": "4799GE89SK",
+          "sku": "7F4N2FMFSKA4BXSP",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "7F4N2FMFSKA4BXSP.4799GE89SK.6YS6EN2CT7": {
+              "rateCode": "7F4N2FMFSKA4BXSP.4799GE89SK.6YS6EN2CT7",
+              "description": "AWS Marketplace software usage|ap-northeast-1|Price per 1 million input tokens",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1M tokens",
+              "pricePerUnit": {
+                "USD": "0.1200000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "5BGAWQRTFUTUUTVS": {
+        "5BGAWQRTFUTUUTVS.4799GE89SK": {
+          "offerTermCode": "4799GE89SK",
+          "sku": "5BGAWQRTFUTUUTVS",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "5BGAWQRTFUTUUTVS.4799GE89SK.6YS6EN2CT7": {
+              "rateCode": "5BGAWQRTFUTUUTVS.4799GE89SK.6YS6EN2CT7",
+              "description": "AWS Marketplace software usage|ap-northeast-1|Million Input Tokens Regional",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1M tokens",
+              "pricePerUnit": {
+                "USD": "3.3000000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "EJTAHDQVD97PR672": {
+        "EJTAHDQVD97PR672.4799GE89SK": {
+          "offerTermCode": "4799GE89SK",
+          "sku": "EJTAHDQVD97PR672",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "EJTAHDQVD97PR672.4799GE89SK.6YS6EN2CT7": {
+              "rateCode": "EJTAHDQVD97PR672.4799GE89SK.6YS6EN2CT7",
+              "description": "AWS Marketplace software usage|ap-northeast-1|Million Response Tokens Global",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1M tokens",
+              "pricePerUnit": {
+                "USD": "15.0000000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "GTQ49XFUUCJ2KNJZ": {
+        "GTQ49XFUUCJ2KNJZ.4799GE89SK": {
+          "offerTermCode": "4799GE89SK",
+          "sku": "GTQ49XFUUCJ2KNJZ",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "GTQ49XFUUCJ2KNJZ.4799GE89SK.6YS6EN2CT7": {
+              "rateCode": "GTQ49XFUUCJ2KNJZ.4799GE89SK.6YS6EN2CT7",
+              "description": "AWS Marketplace software usage|ap-northeast-1|Million Cache Read Input Tokens Regional",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1M tokens",
+              "pricePerUnit": {
+                "USD": "0.3300000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "S689YZKPAQ6MVZ24": {
+        "S689YZKPAQ6MVZ24.4799GE89SK": {
+          "offerTermCode": "4799GE89SK",
+          "sku": "S689YZKPAQ6MVZ24",
+          "effectiveDate": "2026-07-01T00:00:00Z",
+          "priceDimensions": {
+            "S689YZKPAQ6MVZ24.4799GE89SK.6YS6EN2CT7": {
+              "rateCode": "S689YZKPAQ6MVZ24.4799GE89SK.6YS6EN2CT7",
+              "description": "AWS Marketplace software usage|ap-northeast-1|Million Input Tokens Global",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1M tokens",
+              "pricePerUnit": {
+                "USD": "3.0000000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      }
+    }
+  }
+}

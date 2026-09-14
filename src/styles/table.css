@@ -301,3 +301,18 @@
 .cell-mantle .mantle-dash {
   color: var(--no-fg);
 }
+
+/* --- 価格列と Global セルの単価 (PRICE-001 AC-007 / AC-008) --- */
+.price-value {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.global-price {
+  display: block;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85em;
+  color: var(--fg-muted, #8a8f98);
+  white-space: nowrap;
+}
