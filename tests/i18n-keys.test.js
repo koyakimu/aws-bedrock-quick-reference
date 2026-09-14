@@ -94,6 +94,9 @@ describe("画面が実際に読むキー", () => {
     "geoArea.us",
     "geoArea.eu",
     "geoArea.au",
+    "geo.separator",
+    "geo.outsideCount",
+    "geo.outsideMark",
     "value.yes",
     "value.no",
     "value.globalNote",
@@ -136,6 +139,7 @@ describe("画面が実際に読むキー", () => {
       "footnote.accountKind": ["{kind}"],
       "footnote.deniedRegions": ["{count}", "{regions}"],
       "table.rowCount": ["{shown}", "{total}"],
+      "geo.outsideCount": ["{count}"],
     };
     for (const lang of SUPPORTED_LANGS) {
       for (const [path, markers] of Object.entries(withParams)) {

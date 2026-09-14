@@ -124,9 +124,10 @@ describe("DETAIL-001 AC-005 プロファイルの起点 → 推論先", () => {
       "jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
     );
     const source = jp.querySelector('.detail-source[data-source="ap-northeast-1"]');
+    // 推論先は地名とコードを併記する (DETAIL-001 v4 AC-005)
     expect([...source.querySelectorAll(".chip-dest")].map((c) => c.textContent)).toEqual([
-      "ap-northeast-1",
-      "ap-northeast-3",
+      "東京 (ap-northeast-1)",
+      "大阪 (ap-northeast-3)",
     ]);
   });
 });
@@ -250,6 +251,10 @@ describe("DETAIL-001 AC-011 種別 / 指定する ID / 推論先リージョン"
       "jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
     );
     expect([...geo.querySelectorAll(".chip-dest")].map((chip) => chip.textContent)).toEqual([
+      "東京 (ap-northeast-1)",
+      "大阪 (ap-northeast-3)",
+    ]);
+    expect([...geo.querySelectorAll(".chip-dest")].map((chip) => chip.dataset.region)).toEqual([
       "ap-northeast-1",
       "ap-northeast-3",
     ]);
@@ -275,7 +280,7 @@ describe("DETAIL-001 AC-011 種別 / 指定する ID / 推論先リージョン"
     expect(row.querySelector(".usage-badge").textContent).toBe("In-Region");
     expect(row.querySelector(".copyable .id").textContent).toBe(NVIDIA);
     expect([...row.querySelectorAll(".chip-dest")].map((chip) => chip.textContent)).toEqual([
-      TOKYO,
+      `東京 (${TOKYO})`,
     ]);
   });
 

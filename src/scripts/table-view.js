@@ -1,7 +1,14 @@
 // Bedrock 固有の画面 (TABLE-001)。列定義とセルの中身はここが持ち、
 // 表の骨組みは汎用の table-engine.js に任せる。
 import { createTable, EMPTY } from "./table-engine.js";
-import { buildViewModel, causeLabelKey, selectableRegions, regionStatus } from "./bedrock-view-model.mjs";
+import {
+  buildViewModel,
+  causeLabelKey,
+  geoPlaces,
+  outsideCount,
+  selectableRegions,
+  regionStatus,
+} from "./bedrock-view-model.mjs";
 import { copyText } from "./copy.js";
 import { t, getLang, applyTranslations } from "./i18n.js";
 import { regionName, regionOptionLabel } from "./region-names.js";
@@ -67,11 +74,18 @@ function limitActive(row) {
   return row.limit?.active === true;
 }
 
-// destination リージョンのチップ。コードは翻訳しないが、表示名を title に出す。
-function destinationChip(code, notes) {
-  const chip = el("span", "chip chip-dest mono", code);
-  chip.title = regionName(code, getLang(), notes);
-  return chip;
+// 推論先は地名で出す。リージョンコードは表に出さない (AC-004)。
+// 判定の根拠として data-region だけ残す (FILTER-001 / DETAIL-001 が行を辿るため)。
+function destinationPlace(place) {
+  const node = el("span", "geo-place", place.name);
+  node.dataset.region = place.code;
+  if (place.isSource) node.classList.add("is-source");
+  if (place.outside) {
+    // 起点リージョンの国の外にある推論先を淡色 + 注意色で区別する (AC-004)。
+    node.classList.add("is-outside");
+    node.title = t("geo.outsideMark");
+  }
+  return node;
 }
 
 // AC-011: TEXT / IMAGE / VIDEO / SPEECH / EMBEDDING を辞書で平易な語に置き換える。
@@ -131,6 +145,8 @@ export function geoAreaLabel(prefix) {
 
 function geoCell(row, notes) {
   if (row.geo.length === 0) return markNo();
+  const lang = getLang();
+  const separator = t("geo.separator");
   const wrap = el("span", "cell-geo");
   for (const entry of row.geo) {
     const line = el("span", "geo-entry");
@@ -142,11 +158,22 @@ function geoCell(row, notes) {
       line.classList.add("out-of-limit");
       line.appendChild(limitBadge());
     }
-    const chips = el("span", "chips");
-    for (const destination of entry.destinations) {
-      chips.appendChild(destinationChip(destination, notes));
+    // AC-004: 推論先はリージョンコードではなく地名を「 ・ 」で連ねる。
+    const places = geoPlaces(entry.destinations, {
+      region: row.sourceRegion,
+      regionNotes: notes,
+      lang,
+    });
+    const list = el("span", "geo-places");
+    places.forEach((place, index) => {
+      if (index > 0) list.appendChild(el("span", "geo-sep", separator));
+      list.appendChild(destinationPlace(place));
+    });
+    const outside = outsideCount(places);
+    if (outside > 0) {
+      list.appendChild(el("span", "geo-outside-count", t("geo.outsideCount", { count: outside })));
     }
-    line.appendChild(chips);
+    line.appendChild(list);
     wrap.appendChild(line);
   }
   return wrap;
