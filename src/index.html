@@ -8,14 +8,28 @@
       name="description"
       content="Amazon Bedrock のモデル × リージョン × 推論が実際に行われる場所を 1 つの表で確認できるリファレンス。"
     />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23161719'/><text x='50' y='68' font-size='54' font-family='monospace' font-weight='700' fill='%23f5b95a' text-anchor='middle'>B</text></svg>"
+    />
   </head>
   <body>
     <div class="app">
       <header class="top">
-        <h1>Amazon Bedrock Quick Reference</h1>
-        <small class="mono" id="build-meta">ビルド %BUILD_DATE% / データ取得 %GENERATED_AT%</small>
+        <div class="brand">
+          <h1 data-i18n="app.title">Amazon Bedrock Quick Reference</h1>
+          <small class="tagline" data-i18n="app.tagline">
+            モデル × 起点リージョン × 推論が実際に行われる場所
+          </small>
+          <small class="mono" id="build-meta">ビルド %BUILD_DATE% / データ取得 %GENERATED_AT%</small>
+        </div>
+        <div class="top-controls">
+          <!-- 言語ボタンは i18n.js が対応言語の配列から生成する (D-006) -->
+          <div id="lang-toggle" class="lang-toggle"></div>
+          <button type="button" id="theme-toggle" class="ctl">テーマ</button>
+        </div>
       </header>
-      <main id="main"><!-- 表とフィルタは TABLE-001 以降の spec で実装する --></main>
+      <main id="main"></main>
     </div>
     <script type="module" src="./scripts/main.js"></script>
   </body>

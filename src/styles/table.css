@@ -1,0 +1,257 @@
+/* 表エンジンの共通スタイルと、Bedrock 固有のセルの見た目 */
+.table-frame {
+  /* 横スクロールを持つのはこの枠だけ。ページ本体は横に伸びない (AC-NFR-001) */
+  overflow-x: auto;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--bg-panel);
+}
+
+.table-frame table {
+  width: 100%;
+  border-collapse: separate; /* sticky セルでは collapse だと罫線が消える */
+  border-spacing: 0;
+  font-size: var(--fs-md);
+}
+
+.table-frame th,
+.table-frame td {
+  padding: var(--cell-pad-y) var(--cell-pad-x);
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+/* ヘッダ固定 */
+.table-frame thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg-raised);
+  color: var(--fg-muted);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  border-bottom: 1px solid var(--line-head);
+  vertical-align: middle;
+}
+
+.table-frame th .sort-btn {
+  display: inline-flex;
+  align-items: center;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.table-frame th .sort-btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.table-frame thead th.sortable {
+  user-select: none;
+}
+.table-frame thead th.sortable:hover {
+  color: var(--fg);
+}
+.table-frame thead th.sorted {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.table-frame th .sortarrow {
+  font-size: 9px;
+  margin-left: 3px;
+}
+
+/* 左端の固定列。Provider が 0、Model ID がその右に貼り付く。
+   下地が透けるとスクロールしたセルが見えるので必ず不透明にする */
+.table-frame th.sticky,
+.table-frame td.sticky {
+  position: sticky;
+  z-index: 1;
+  background: var(--bg-panel);
+}
+.table-frame th.sticky-provider,
+.table-frame td.sticky-provider {
+  left: 0;
+  width: var(--col-provider-w);
+  min-width: var(--col-provider-w);
+}
+.table-frame th.sticky-modelId,
+.table-frame td.sticky-modelId {
+  left: var(--col-provider-w);
+  box-shadow: 1px 0 0 var(--line); /* 影ではなく縦の細罫 */
+}
+.table-frame thead th.sticky {
+  z-index: 3;
+  background: var(--bg-raised);
+}
+
+/* 本体 */
+.table-frame td {
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--fg);
+}
+.table-frame tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table-frame td.sorted,
+.table-frame td.sticky.sorted {
+  background: var(--sorted-cell-bg);
+}
+.table-frame td.dim {
+  color: var(--fg-dim);
+}
+
+.table-frame tbody tr:hover td,
+.table-frame tbody tr:hover td.sticky,
+.table-frame tbody tr:hover td.sorted {
+  background: var(--bg-hover);
+}
+
+.table-frame td.mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+}
+
+.table-frame td.sticky-modelId {
+  color: var(--fg-strong);
+}
+
+/* --- ID とコピーボタン --- */
+.copyable {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  max-width: 100%;
+}
+.copyable .id {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+}
+
+/* --- 可否の印 --- */
+.flag-yes,
+.flag-no {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-1);
+  font-size: var(--fs-sm);
+}
+.flag-yes {
+  color: var(--yes-fg);
+}
+.flag-no {
+  color: var(--no-fg);
+}
+.flag-yes .mark,
+.flag-no .mark {
+  font-weight: 600;
+}
+
+/* --- モダリティ --- */
+.modalities {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-1);
+  font-size: var(--fs-xs);
+}
+.modality-arrow {
+  color: var(--fg-dim);
+}
+.modality-out {
+  color: var(--fg-muted);
+}
+
+/* --- In-Region / Geo / Global のセル --- */
+.cell-inregion,
+.cell-global {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cell-geo {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.geo-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.geo-entry + .geo-entry {
+  padding-top: var(--sp-1);
+  border-top: 1px dotted var(--line);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.chip {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: var(--radius);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--chip-fg);
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-line);
+}
+.chip-dest {
+  font-family: var(--font-mono);
+}
+
+.global-note {
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+  white-space: normal;
+  max-width: 22em;
+}
+.global-note-link {
+  color: var(--accent);
+}
+
+/* --- lifecycle --- */
+.lifecycle {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: var(--radius);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--fg-muted);
+  border: 1px solid transparent;
+}
+.lifecycle-active {
+  color: var(--yes-fg);
+  background: var(--yes-bg);
+  border-color: var(--yes-line);
+}
+.lifecycle-legacy {
+  color: var(--legacy-fg);
+  background: var(--legacy-bg);
+  border-color: var(--legacy-line);
+}
+
+/* --- 備考 --- */
+.cell-notes {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: normal;
+  max-width: 24em;
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
