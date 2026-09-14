@@ -1,0 +1,114 @@
+{
+  "modelSummaries": [
+    {
+      "modelArn": "arn:aws:bedrock:ap-northeast-1::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0",
+      "modelId": "anthropic.claude-sonnet-4-5-20250929-v1:0",
+      "modelName": "Claude Sonnet 4.5",
+      "providerName": "Anthropic",
+      "inputModalities": [
+        "TEXT",
+        "IMAGE"
+      ],
+      "outputModalities": [
+        "TEXT"
+      ],
+      "responseStreamingSupported": true,
+      "customizationsSupported": [],
+      "inferenceTypesSupported": [
+        "INFERENCE_PROFILE"
+      ],
+      "modelLifecycle": {
+        "status": "ACTIVE",
+        "startOfLifeTime": "2025-09-29T00:00:00+00:00"
+      }
+    },
+    {
+      "modelArn": "arn:aws:bedrock:ap-northeast-1::foundation-model/nvidia.nemotron-nano-12b-v2",
+      "modelId": "nvidia.nemotron-nano-12b-v2",
+      "modelName": "NVIDIA Nemotron Nano 12B v2 VL BF16",
+      "providerName": "NVIDIA",
+      "inputModalities": [
+        "TEXT",
+        "IMAGE"
+      ],
+      "outputModalities": [
+        "TEXT"
+      ],
+      "responseStreamingSupported": true,
+      "customizationsSupported": [],
+      "inferenceTypesSupported": [
+        "ON_DEMAND"
+      ],
+      "modelLifecycle": {
+        "status": "ACTIVE",
+        "startOfLifeTime": "2025-12-02T00:00:00+00:00"
+      }
+    },
+    {
+      "modelArn": "arn:aws:bedrock:ap-northeast-1::foundation-model/cohere.embed-v4:0",
+      "modelId": "cohere.embed-v4:0",
+      "modelName": "Embed v4",
+      "providerName": "Cohere",
+      "inputModalities": [
+        "TEXT",
+        "IMAGE"
+      ],
+      "outputModalities": [
+        "EMBEDDING"
+      ],
+      "responseStreamingSupported": false,
+      "customizationsSupported": [],
+      "inferenceTypesSupported": [
+        "ON_DEMAND",
+        "INFERENCE_PROFILE"
+      ],
+      "modelLifecycle": {
+        "status": "ACTIVE",
+        "startOfLifeTime": "2025-10-02T00:00:00+00:00"
+      }
+    },
+    {
+      "modelArn": "arn:aws:bedrock:ap-northeast-1::foundation-model/amazon.nova-lite-v1:0",
+      "modelId": "amazon.nova-lite-v1:0",
+      "modelName": "Nova Lite",
+      "providerName": "Amazon",
+      "inputModalities": [
+        "TEXT",
+        "IMAGE",
+        "VIDEO"
+      ],
+      "outputModalities": [
+        "TEXT"
+      ],
+      "responseStreamingSupported": true,
+      "customizationsSupported": [],
+      "inferenceTypesSupported": [
+        "INFERENCE_PROFILE",
+        "ON_DEMAND"
+      ],
+      "modelLifecycle": {
+        "status": "ACTIVE",
+        "startOfLifeTime": "2024-12-03T08:00:00+00:00"
+      }
+    },
+    {
+      "modelArn": "arn:aws:bedrock:ap-northeast-1::foundation-model/amazon.titan-embed-text-v1:2:8k",
+      "modelId": "amazon.titan-embed-text-v1:2:8k",
+      "modelName": "Titan Embeddings G1 - Text",
+      "providerName": "Amazon",
+      "inputModalities": [
+        "TEXT"
+      ],
+      "outputModalities": [
+        "EMBEDDING"
+      ],
+      "responseStreamingSupported": false,
+      "customizationsSupported": [],
+      "inferenceTypesSupported": [],
+      "modelLifecycle": {
+        "status": "ACTIVE",
+        "startOfLifeTime": "2025-04-03T08:00:00+00:00"
+      }
+    }
+  ]
+}

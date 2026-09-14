@@ -1,0 +1,2 @@
+
+aws: [ERROR]: An error occurred (AccessDeniedException) when calling the ListFoundationModels operation: User: arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_AWSAdministratorAccess_fdb2f9a82fd6bbba/koyakimu is not authorized to perform: bedrock:ListFoundationModels with an explicit deny in a service control policy: arn:aws:organizations::111122223333:policy/o-2f4lwyy4fx/service_control_policy/p-5zubdsug
