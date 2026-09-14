@@ -4,6 +4,7 @@ import { vi } from "vitest";
 import { mountApp } from "../src/scripts/app.js";
 import { initI18n } from "../src/scripts/i18n.js";
 import { buildSnapshot, buildOverrides, regionNotes } from "./fixtures/bedrock-fixture.js";
+import mantle from "../data/mantle.json";
 
 export const BASE_URL = "https://koyakimu.github.io/aws-bedrock-quick-reference/";
 
@@ -43,13 +44,14 @@ export function mountFixtureApp({ search = "", overrides, lang = "ja-JP" } = {})
     fetchLog: snapshot.fetchLog,
     regionNotes,
     overrides: overrides ?? {},
+    mantle,
     location: loc,
     history: hist,
   });
   return { ...app, location: loc, history: hist, snapshot };
 }
 
-export { buildOverrides, regionNotes };
+export { buildOverrides, regionNotes, mantle };
 
 // --- DOM の取り回し ---
 export const bodyRows = () =>

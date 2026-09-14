@@ -330,7 +330,8 @@ describe("DETAIL-001 AC-012 起点のエンドポイント", () => {
     expect(panel.querySelector(".detail-endpoint-value").textContent).toBe(
       document.getElementById("endpoint-value").textContent,
     );
-    expect(panel.textContent).toContain("エンドポイント");
+    // 節の見出しは「接続先」(spec-detail v6 / MANTLE-001 AC-005)。
+    expect(panel.querySelector(".detail-endpoint h4").textContent).toBe("接続先");
   });
 });
 

@@ -10,6 +10,7 @@ import {
   regionStatus,
   selectableRegions,
 } from "./bedrock-view-model.mjs";
+import { isMantleRegion, judgeMantle, mantleEndpointOf } from "./mantle-model.mjs";
 
 // availability 1 行の種別。
 // types    … 推論タイプが 1 つ以上ある
@@ -111,15 +112,23 @@ export function buildUsageRows(modelId, { models, profiles, region } = {}) {
 /**
  * 詳細パネル 1 枚ぶん。プロファイルが 1 件も無いことは hasProfiles: false で示す (AC-009)。
  */
-export function buildDetail(modelId, { models, profiles, fetchLog, regionNotes, region } = {}) {
+export function buildDetail(
+  modelId,
+  { models, profiles, fetchLog, regionNotes, region, mantle = null } = {},
+) {
   const availability = buildAvailabilityRows(modelId, { models, regionNotes, fetchLog });
   const profileRows = buildProfileRows(modelId, profiles);
   const usage = buildUsageRows(modelId, { models, profiles, region });
+  const mantleJudged = judgeMantle(mantle, modelId, region);
   return {
     modelId,
     region,
     // 起点のエンドポイント (AC-012)。
     endpoint: endpointOf(regionNotes, region),
+    // MANTLE-001 AC-005: もう一つの接続先。提供が無いリージョンでは FQDN を出さない。
+    mantleRegion: isMantleRegion(mantle, region),
+    mantleEndpoint: isMantleRegion(mantle, region) ? mantleEndpointOf(region) : null,
+    mantle: mantleJudged,
     usage,
     hasUsage: usage.length > 0,
     availability,

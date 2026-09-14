@@ -8,6 +8,20 @@ D-001〜D-005 は brainstorming の対話で内容が固まり、技術設計
 
 ---
 
+## D-010: bedrock-mantle の対応モデルをどこから取るか
+
+- **Date**: 2026-09-14
+- **Context**: MANTLE-001 は「モデル M を起点リージョン R の `bedrock-mantle` から呼べるか」を表の 1 列で出す。ところが `data/models.json` の元になる `ListFoundationModels` は `bedrock-runtime` 側の提供状況しか返さず、エンドポイント別の対応は API から取れない。同じ事実は公式 docs の Endpoint availability に**プロバイダ別の表**として載っており、そこには mantle だけにあるモデルと runtime だけにあるモデルの両方がある。
+- **Options**:
+  - A: **公式 docs の対応表を転記した手書きファイル** `data/mantle.json` を置く。`data/region-notes.json` と同じ扱い（手書き・出典 URL と日付を `_source` に持つ・記憶で足さない）
+  - B: **OpenAI 互換の `GET /v1/models` をリージョンごとに叩く**。機械可読で取り漏らしが無いが、実行に Bedrock の認証情報が要り、しかも必要な IAM アクションは D-005 で用意する読み取り専用ロール（`bedrock:ListFoundationModels` と `bedrock:ListInferenceProfiles` だけ）に含まれていない
+  - C: **Mantle 列を出さない。** 接続先の違いは脚注で触れるだけにする
+- **AI Recommendation**: **A**。公開されていて認証の要らない唯一の出典であり、更新頻度（新モデルが出たとき）に対して転記のコストが見合う。B はロールの権限を広げる判断（D-005 の再検討）を伴い、機能 1 つのために認証の必要な取得経路をもう 1 本増やすことになる。C は Design v2 の「もう一つの接続先（Mantle）が分かる」を満たさない
+- **Decision**: **A**
+- **Reason**: 公開されている唯一の出典だから。オーナー承認 2026-09-14
+- **転記の規約**: `data/region-notes.json` と同じ（D-004）。**記憶で足さず、必ず doc を読んでから転記する。** `_source` に転記元の URL 3 本と日付を書く。docs のモデル名は `models.json` の `name` と**大文字小文字を無視した完全一致**で引き、突き合わなかった名前は推測で結び付けず `_unmatched` にそのまま残す。`models.json` に無い mantle 専用モデルは `mantleOnly` に残し、転記の欠落と区別できるようにする
+- **Refs**: `spec-mantle.md`（MANTLE-001）、`spec-table.md`（v7 AC-002 / AC-006）、`spec-detail.md`（v6 AC-012）、データは `data/mantle.json`、判定は `src/scripts/mantle-model.mjs`
+
 ## D-008: fetch-log.json に残す「取得できなかった理由」の形
 
 - **Date**: 2026-09-14（Decision を D に差し替え）

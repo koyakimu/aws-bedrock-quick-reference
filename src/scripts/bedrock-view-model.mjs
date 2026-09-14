@@ -1,6 +1,8 @@
 // 起点リージョンから見た表の行を組み立てる純関数群 (TABLE-001 / D-003)。
 // DOM も i18n も知らない。入力は data/*.json をそのまま渡す形にしてある。
 
+import { isMantleRegion, judgeMantle, mantleEndpointOf } from "./mantle-model.mjs";
+
 // Geo の接頭辞 (D-003)。global は別扱いなのでここには入れない。
 export const GEO_PREFIXES = Object.freeze(["us", "eu", "apac", "au", "jp"]);
 export const GLOBAL_PREFIX = "global";
@@ -142,10 +144,12 @@ function modelsVisibleFrom(models, region) {
 }
 
 // 1 行分。table-engine に渡すプレーンオブジェクト。
-export function buildRow({ modelId, model, profiles, region, overrides }) {
+export function buildRow({ modelId, model, profiles, region, overrides, mantle = null }) {
   const geo = judgeGeo(profiles, modelId, region);
   const globalProfile = judgeGlobal(profiles, modelId, region);
   return {
+    // MANTLE-001 AC-003。判定材料が無ければ null (画面では「—」)。
+    mantle: judgeMantle(mantle, modelId, region),
     modelId,
     // 起点リージョン。Geo セルが「起点の国の外か」を判断するのに使う (AC-004)。
     sourceRegion: region,
@@ -182,13 +186,16 @@ export function buildViewModel({
   fetchLog,
   regionNotes,
   overrides = {},
+  mantle = null,
   region,
 }) {
   const fetch = regionStatus(fetchLog, region);
   const rows =
     fetch.status === "ok"
       ? modelsVisibleFrom(models, region)
-          .map(([modelId, model]) => buildRow({ modelId, model, profiles, region, overrides }))
+          .map(([modelId, model]) =>
+            buildRow({ modelId, model, profiles, region, overrides, mantle }),
+          )
           // 一覧は プロバイダ → モデル名 の昇順 (TABLE-001 v2 AC-006)。
           // 同名のモデルが複数あるときだけモデル ID で決着させる。
           .sort(
@@ -202,6 +209,10 @@ export function buildViewModel({
   return {
     region,
     endpoint: endpointOf(regionNotes, region),
+    // MANTLE-001 AC-001 / AC-002: 起点リージョンの bedrock-mantle。
+    // 提供が無いリージョンでは FQDN を出さない (呼べない宛先を見せないため)。
+    mantleRegion: isMantleRegion(mantle, region),
+    mantleEndpoint: isMantleRegion(mantle, region) ? mantleEndpointOf(region) : null,
     status: fetch.status,
     cause: fetch.cause,
     rows,

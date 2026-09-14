@@ -113,11 +113,87 @@ function usageSection(detail, regionNotes) {
   return section;
 }
 
-// AC-012: 起点リージョンの接続先。
+// 出典: bedrock-mantle の対応モデル表 (MANTLE-001 AC-006)。
+const MANTLE_AVAILABILITY_DOC =
+  "https://docs.aws.amazon.com/bedrock/latest/userguide/models-endpoint-availability.html";
+
+// 接続先 1 つぶん。FQDN と、そこで呼べる API を並べる (MANTLE-001 AC-005)。
+// hostClass は DETAIL-001 AC-012 が探す .detail-endpoint-value を runtime 行に付けるため。
+function endpointRow({ name, host, apisKey, className, hostClass = "" }) {
+  const row = el("div", `detail-endpoint-row ${className}`);
+  row.dataset.endpoint = name;
+  row.appendChild(el("span", "detail-endpoint-name mono", name));
+  if (host) {
+    const copyable = createCopyable(host, {
+      labelKey: "copy.endpoint",
+      className: "endpoint-host",
+    });
+    if (hostClass) copyable.querySelector("code").classList.add(hostClass);
+    row.appendChild(copyable);
+  }
+  row.appendChild(el("span", "detail-endpoint-apis", t(apisKey)));
+  return row;
+}
+
+// DETAIL-001 AC-012 + MANTLE-001 AC-005: 起点リージョンの 2 つの接続先。
 function endpointSection(detail) {
   const section = el("section", "detail-endpoint");
-  section.appendChild(el("span", "detail-endpoint-label", t("detail.endpoint")));
-  section.appendChild(el("code", "detail-endpoint-value mono", detail.endpoint));
+  section.appendChild(el("h4", null, t("mantle.endpoints")));
+
+  // DETAIL-001 AC-012 の「起点の bedrock-runtime エンドポイント」はこの行の値。
+  section.appendChild(
+    endpointRow({
+      name: t("mantle.runtimeName"),
+      host: detail.endpoint,
+      apisKey: "mantle.runtimeApis",
+      className: "is-runtime",
+      hostClass: "detail-endpoint-value",
+    }),
+  );
+
+  if (detail.mantleEndpoint) {
+    section.appendChild(
+      endpointRow({
+        name: t("mantle.mantleName"),
+        host: detail.mantleEndpoint,
+        apisKey: "mantle.mantleApis",
+        className: "is-mantle",
+      }),
+    );
+  } else {
+    const none = el("div", "detail-endpoint-row is-mantle mantle-none", t("mantle.notAvailable"));
+    none.dataset.endpoint = t("mantle.mantleName");
+    section.appendChild(none);
+  }
+
+  // AC-005: Mantle で指定するモデル ID。✓ が出る組み合わせのときだけ ID を出す。
+  const idLine = el("div", "detail-mantle-model-id");
+  if (detail.mantle?.available === true) {
+    idLine.appendChild(el("span", "detail-mantle-model-id-label", t("mantle.mantleModelId")));
+    idLine.appendChild(
+      createCopyable(detail.mantle.mantleModelId, { labelKey: "copy.mantleModelId" }),
+    );
+  } else if (detail.mantle && !detail.mantle.modelSupported) {
+    idLine.appendChild(el("span", "detail-mantle-none", t("mantle.mantleUnsupportedModel")));
+  } else if (!detail.mantle) {
+    idLine.appendChild(el("span", "detail-mantle-none", t("mantle.mantleUnknownModel")));
+  } else {
+    idLine.appendChild(el("span", "detail-mantle-none", t("mantle.notAvailable")));
+  }
+  section.appendChild(idLine);
+
+  // AC-004: Mantle では cross-region inference が使えない。
+  section.appendChild(el("p", "detail-mantle-no-cris", t("mantle.noCris")));
+
+  // AC-006: 転記元への脚注リンク。
+  const footnote = el("p", "detail-mantle-source");
+  const link = el("a", "doc-link", t("mantle.docs"));
+  link.href = MANTLE_AVAILABILITY_DOC;
+  link.target = "_blank";
+  link.rel = "noreferrer";
+  footnote.appendChild(link);
+  section.appendChild(footnote);
+
   return section;
 }
 
@@ -221,6 +297,7 @@ export function mountDetailView({
   profiles,
   fetchLog,
   regionNotes,
+  mantle = null,
 } = {}) {
   const open = new Set();
 
@@ -230,6 +307,7 @@ export function mountDetailView({
       profiles,
       fetchLog,
       regionNotes,
+      mantle,
       region: view.getRegion(),
     });
     const tr = el("tr", "detail-row");

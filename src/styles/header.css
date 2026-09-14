@@ -92,6 +92,8 @@ select.ctl {
 /* 起点リージョンのバー */
 .source-bar {
   display: flex;
+  /* 接続先が 2 つに増えたので、収まらない行は折り返す (MANTLE-001) */
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--sp-2);
   margin-bottom: var(--sp-3);
@@ -130,6 +132,8 @@ select.ctl {
   font-family: var(--font-mono);
   font-size: var(--fs-sm);
   color: var(--fg-strong);
+  /* FQDN を途中で折らない。入らなければ行ごと折り返す */
+  white-space: nowrap;
 }
 
 /* コピーボタン。ID の右に小さく添える */
@@ -159,4 +163,16 @@ select.ctl {
   gap: var(--sp-2);
   align-items: center;
   margin-bottom: var(--sp-3);
+}
+
+/* MANTLE-001: もう一つの接続先 bedrock-mantle と、cross-region inference の注記 */
+.mantle-line.mantle-none .mantle-label {
+  color: var(--fg-muted);
+}
+
+.mantle-note {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: var(--fs-xs);
 }
