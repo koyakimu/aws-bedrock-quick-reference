@@ -7,10 +7,36 @@ import {
   judgeGeo,
   judgeGlobal,
   judgeInRegion,
+  priceFor,
   regionStatus,
   selectableRegions,
 } from "./bedrock-view-model.mjs";
 import { isMantleRegion, judgeMantle, mantleEndpointOf } from "./mantle-model.mjs";
+
+// 詳細パネルの価格表の行 (PRICE-001 AC-010)。並びはこの順。
+export const PRICE_KINDS = Object.freeze([
+  "standard",
+  "global",
+  "batch",
+  "cacheRead",
+  "cacheWrite",
+  "priority",
+  "flex",
+]);
+
+/**
+ * 起点リージョン R でのモデル M の単価を 種別 × 入力 / 出力 の行にする (AC-010)。
+ * 単価が 1 つも無ければ空配列 (画面では「価格データなし」)。
+ */
+export function buildPriceRows(modelId, { prices, region } = {}) {
+  const entry = priceFor(prices, modelId, region);
+  if (!entry) return [];
+  return PRICE_KINDS.filter((kind) => entry[kind] != null).map((kind) => ({
+    kind,
+    input: entry[kind]?.input ?? null,
+    output: entry[kind]?.output ?? null,
+  }));
+}
 
 // availability 1 行の種別。
 // types    … 推論タイプが 1 つ以上ある
@@ -114,11 +140,12 @@ export function buildUsageRows(modelId, { models, profiles, region } = {}) {
  */
 export function buildDetail(
   modelId,
-  { models, profiles, fetchLog, regionNotes, region, mantle = null } = {},
+  { models, profiles, fetchLog, regionNotes, prices, region, mantle = null } = {},
 ) {
   const availability = buildAvailabilityRows(modelId, { models, regionNotes, fetchLog });
   const profileRows = buildProfileRows(modelId, profiles);
   const usage = buildUsageRows(modelId, { models, profiles, region });
+  const priceRows = buildPriceRows(modelId, { prices, region });
   const mantleJudged = judgeMantle(mantle, modelId, region);
   return {
     modelId,
@@ -131,6 +158,8 @@ export function buildDetail(
     mantle: mantleJudged,
     usage,
     hasUsage: usage.length > 0,
+    prices: priceRows,
+    hasPrices: priceRows.length > 0,
     availability,
     profiles: profileRows,
     hasProfiles: profileRows.length > 0,

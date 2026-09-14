@@ -3,7 +3,12 @@
 import { vi } from "vitest";
 import { mountApp } from "../src/scripts/app.js";
 import { initI18n } from "../src/scripts/i18n.js";
-import { buildSnapshot, buildOverrides, regionNotes } from "./fixtures/bedrock-fixture.js";
+import {
+  buildSnapshot,
+  buildOverrides,
+  buildPrices,
+  regionNotes,
+} from "./fixtures/bedrock-fixture.js";
 import mantle from "../data/mantle.json";
 
 export const BASE_URL = "https://koyakimu.github.io/aws-bedrock-quick-reference/";
@@ -28,7 +33,7 @@ export function fakeHistory(loc) {
 }
 
 /** fixture のスナップショットで画面一式を組み立てる。 */
-export function mountFixtureApp({ search = "", overrides, lang = "ja-JP" } = {}) {
+export function mountFixtureApp({ search = "", overrides, prices, lang = "ja-JP" } = {}) {
   Object.defineProperty(navigator, "language", { value: lang, configurable: true });
   document.body.innerHTML = '<main id="main"></main>';
   localStorage.clear();
@@ -45,13 +50,14 @@ export function mountFixtureApp({ search = "", overrides, lang = "ja-JP" } = {})
     regionNotes,
     overrides: overrides ?? {},
     mantle,
+    prices: prices ?? buildPrices(),
     location: loc,
     history: hist,
   });
   return { ...app, location: loc, history: hist, snapshot };
 }
 
-export { buildOverrides, regionNotes, mantle };
+export { buildOverrides, buildPrices, regionNotes, mantle };
 
 // --- DOM の取り回し ---
 export const bodyRows = () =>

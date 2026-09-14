@@ -15,10 +15,20 @@ export function mountApp({
   regionNotes,
   overrides = {},
   mantle = null,
+  prices = {},
   location: loc = typeof window !== "undefined" ? window.location : undefined,
   history: hist = typeof window !== "undefined" ? window.history : undefined,
 }) {
-  const view = mountTableView({ host, models, profiles, fetchLog, regionNotes, overrides, mantle });
+  const view = mountTableView({
+    host,
+    models,
+    profiles,
+    fetchLog,
+    regionNotes,
+    overrides,
+    mantle,
+    prices,
+  });
 
   const filter = mountFilterBar({
     view,
@@ -34,6 +44,7 @@ export function mountApp({
     fetchLog,
     regionNotes,
     mantle,
+    prices,
   });
 
   const share = mountShare({ view, filter, regionNotes, host, location: loc, history: hist });

@@ -1,6 +1,7 @@
 // 行の展開と詳細パネル (DETAIL-001)。データの組み立ては detail-model.mjs が持ち、
 // このファイルは DOM とイベントだけを扱う。
 import { buildDetail } from "./detail-model.mjs";
+import { formatPrice } from "./bedrock-view-model.mjs";
 import { createCopyable } from "./copy.js";
 import { t, getLang, LANG_CHANGED_EVENT } from "./i18n.js";
 import { regionName } from "./region-names.js";
@@ -133,6 +134,49 @@ function endpointRow({ name, host, apisKey, className, hostClass = "" }) {
   }
   row.appendChild(el("span", "detail-endpoint-apis", t(apisKey)));
   return row;
+}
+
+// PRICE-001 AC-010: 起点リージョンの単価を 種別 × 入力 / 出力 の小さな表にする。
+function priceSection(detail) {
+  const section = el("section", "detail-price");
+  section.appendChild(el("h4", null, t("price.heading")));
+
+  if (!detail.hasPrices) {
+    section.appendChild(el("p", "detail-no-price", t("price.none")));
+    return section;
+  }
+
+  const table = el("table", "detail-price-table");
+  const thead = document.createElement("thead");
+  const headRow = document.createElement("tr");
+  for (const key of ["price.kindColumn", "price.input", "price.output"]) {
+    const th = el("th", null, t(key));
+    th.setAttribute("scope", "col");
+    headRow.appendChild(th);
+  }
+  thead.appendChild(headRow);
+
+  const tbody = document.createElement("tbody");
+  for (const row of detail.prices) {
+    const tr = el("tr", `detail-price-row detail-price-${row.kind}`);
+    tr.dataset.kind = row.kind;
+    const kindCell = document.createElement("td");
+    kindCell.className = "detail-price-kind";
+    kindCell.textContent = t(`price.kind.${row.kind}`);
+    tr.appendChild(kindCell);
+    for (const value of [row.input, row.output]) {
+      const td = document.createElement("td");
+      td.className = "detail-price-value num mono";
+      const text = formatPrice(value);
+      td.textContent = text == null ? "—" : `$${text}`;
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+  table.append(thead, tbody);
+  section.appendChild(table);
+  section.appendChild(el("p", "detail-price-unit", t("price.unit")));
+  return section;
 }
 
 // DETAIL-001 AC-012 + MANTLE-001 AC-005: 起点リージョンの 2 つの接続先。
@@ -298,6 +342,7 @@ export function mountDetailView({
   fetchLog,
   regionNotes,
   mantle = null,
+  prices = {},
 } = {}) {
   const open = new Set();
 
@@ -308,6 +353,7 @@ export function mountDetailView({
       fetchLog,
       regionNotes,
       mantle,
+      prices,
       region: view.getRegion(),
     });
     const tr = el("tr", "detail-row");
@@ -320,6 +366,7 @@ export function mountDetailView({
     panel.append(
       modelIdSection(detail),
       usageSection(detail, regionNotes),
+      priceSection(detail),
       availabilitySection(detail, regionNotes),
       profileSection(detail, regionNotes),
       endpointSection(detail),

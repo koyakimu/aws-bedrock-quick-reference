@@ -1,0 +1,325 @@
+// @vitest-environment node
+// PRICE-001 の単体テスト。ファイルを読むので node 環境で走らせる。
+import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
+import {
+  PRICE_OFFERS,
+  axisOf,
+  bfmDimension,
+  buildNameIndex,
+  kindOf,
+  normalizePrices,
+  priceFileUrl,
+  readProduct,
+  resolveModelIds,
+  roundPrice,
+  stripEdition,
+  toPerMillion,
+  usagetypeKey,
+} from "../scripts/lib/prices.mjs";
+import { okRegions, parsePriceArgs, rawName } from "../scripts/fetch-bedrock-prices.mjs";
+
+import bedrockTokyo from "./fixtures/prices/AmazonBedrock-ap-northeast-1.json";
+import foundationTokyo from "./fixtures/prices/AmazonBedrockFoundationModels-ap-northeast-1.json";
+import priceModelMap from "../data/price-model-map.json";
+import { buildSnapshot } from "./fixtures/bedrock-fixture.js";
+
+const TOKYO = "ap-northeast-1";
+const CLAUDE = "anthropic.claude-sonnet-4-5-20250929-v1:0";
+const NOVA_LITE = "amazon.nova-lite-v1:0";
+const NVIDIA = "nvidia.nemotron-nano-12b-v2";
+const EMBED = "cohere.embed-v4:0";
+const TITAN = "amazon.titan-embed-text-v1:2:8k";
+
+const read = (relative) =>
+  JSON.parse(readFileSync(fileURLToPath(new URL(relative, import.meta.url)), "utf8"));
+
+function build(models = buildSnapshot().models, map = priceModelMap) {
+  return normalizePrices({
+    files: {
+      AmazonBedrock: { [TOKYO]: bedrockTokyo },
+      AmazonBedrockFoundationModels: { [TOKYO]: foundationTokyo },
+    },
+    models,
+    map,
+    generatedAt: "2026-09-14T09:00:00Z",
+  });
+}
+
+// --- AC-001 取得対象のリージョン ---
+describe("AC-001 取得対象は fetch-log.json の status: ok のリージョン", () => {
+  it("okRegions は ok のリージョンだけを昇順で返す", () => {
+    const regions = okRegions({
+      regions: {
+        "us-east-1": { status: "ok" },
+        "ap-northeast-1": { status: "ok" },
+        "af-south-1": { status: "denied", cause: "not-opted-in" },
+      },
+    });
+    expect(regions).toEqual(["ap-northeast-1", "us-east-1"]);
+  });
+
+  it("実データの fetch-log.json では 17 リージョンが対象になる", () => {
+    expect(okRegions(read("../data/fetch-log.json"))).toHaveLength(17);
+  });
+
+  it("--regions で対象を絞れる。省くと既定 (ok のリージョン全件)", () => {
+    const defaults = ["ap-northeast-1", "us-east-1"];
+    expect(parsePriceArgs(["--regions", "us-west-2"], { defaultRegions: defaults }).regions).toEqual([
+      "us-west-2",
+    ]);
+    expect(parsePriceArgs([], { defaultRegions: defaults }).regions).toEqual(defaults);
+  });
+
+  it("--date は YYYY-MM-DD、既定は呼び出し側が渡す今日", () => {
+    expect(parsePriceArgs(["--date", "2026-09-14"], { today: "2026-01-01" }).date).toBe("2026-09-14");
+    expect(parsePriceArgs([], { today: "2026-01-01" }).date).toBe("2026-01-01");
+    expect(() => parsePriceArgs(["--date", "9/14"])).toThrow();
+    expect(() => parsePriceArgs(["--x"])).toThrow();
+  });
+
+  it("2 つの offer を取る。AmazonBedrockService / AgentCore は対象外", () => {
+    expect(PRICE_OFFERS).toEqual(["AmazonBedrock", "AmazonBedrockFoundationModels"]);
+  });
+});
+
+// --- AC-002 生データの保存と --from-raw ---
+describe("AC-002 生データの保存", () => {
+  it("ファイル名は prices-<offer>-<region>.json", () => {
+    expect(rawName("AmazonBedrock", "ap-northeast-1")).toBe("prices-AmazonBedrock-ap-northeast-1.json");
+  });
+
+  it("取得元 URL は offer とリージョンから組み立てる", () => {
+    expect(priceFileUrl("AmazonBedrock", TOKYO)).toBe(
+      "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/ap-northeast-1/index.json",
+    );
+  });
+
+  it("data/raw/ は gitignore 対象のまま", () => {
+    expect(read.name && readFileSync(fileURLToPath(new URL("../.gitignore", import.meta.url)), "utf8")).toContain(
+      "data/raw/",
+    );
+  });
+
+  it("--from-raw は --regions と併用できない", () => {
+    expect(() => parsePriceArgs(["--from-raw", "2026-09-14", "--regions", "us-east-1"])).toThrow();
+    expect(parsePriceArgs(["--from-raw", "2026-09-14"]).date).toBe("2026-09-14");
+  });
+});
+
+// --- AC-004 単位の正規化と価格の種別 ---
+describe("AC-004 USD / 100 万トークンに揃える", () => {
+  it("1K tokens の単価は 1000 倍する", () => {
+    expect(toPerMillion("0.0038400000", "1K tokens")).toBe(3.84);
+    expect(toPerMillion("0.0000180000", "1K tokens")).toBe(0.018);
+  });
+
+  it("1M tokens の単価はそのまま", () => {
+    expect(toPerMillion("5.5000000000", "1M tokens")).toBe(5.5);
+  });
+
+  it("トークン以外の単位は扱わない", () => {
+    expect(toPerMillion("0.0400000000", "image")).toBeNull();
+    expect(toPerMillion("0.1980000000", "1M TPM Hour")).toBeNull();
+  });
+
+  it("小数 6 桁までで丸める", () => {
+    expect(roundPrice(0.0000724999)).toBe(0.000072);
+    expect(roundPrice(3.8400000000000003)).toBe(3.84);
+  });
+
+  it("軸は input / output / cacheRead / cacheWrite。1h キャッシュと画像・音声・動画は範囲外", () => {
+    expect(axisOf("Input tokens")).toBe("input");
+    expect(axisOf("Output tokens flex")).toBe("output");
+    expect(axisOf("Prompt cache read input tokens")).toBe("cacheRead");
+    expect(axisOf("Prompt cache write input tokens")).toBe("cacheWrite");
+    expect(axisOf("CacheWrite1hInputTokenCount")).toBeNull();
+    expect(axisOf("Input Audio Token Count")).toBeNull();
+    expect(axisOf("Output Image Token Count")).toBeNull();
+    expect(axisOf("Speech Understanding input token")).toBeNull();
+    expect(axisOf("")).toBeNull();
+  });
+
+  it("種別は standard / global / batch / cacheRead / cacheWrite / priority / flex", () => {
+    expect(kindOf("input", {})).toBe("standard");
+    expect(kindOf("input", { global: true })).toBe("global");
+    expect(kindOf("output", { batch: true })).toBe("batch");
+    expect(kindOf("output", { priority: true })).toBe("priority");
+    expect(kindOf("input", { flex: true })).toBe("flex");
+    expect(kindOf("cacheRead", {})).toBe("cacheRead");
+    // Global と batch / flex / priority の組み合わせは v1 の範囲外
+    expect(kindOf("input", { global: true, batch: true })).toBeNull();
+    expect(kindOf("cacheRead", { global: true })).toBeNull();
+    expect(kindOf(null, {})).toBeNull();
+  });
+
+  it("AmazonBedrock の product から軸と種別を読む", () => {
+    const read1 = readProduct("AmazonBedrock", {
+      attributes: { usagetype: "APN1-NovaPro-output-tokens", inferenceType: "Output tokens", model: "Nova Pro" },
+    });
+    expect(read1).toMatchObject({ sourceName: "Nova Pro", axis: "output", kind: "standard" });
+
+    const globalSku = readProduct("AmazonBedrock", {
+      attributes: { usagetype: "APN1-Nova2.0Lite-input-tokens-cross-region-global", inferenceType: "Input tokens", model: "Nova 2.0 Lite" },
+    });
+    expect(globalSku.kind).toBe("global");
+
+    const batchSku = readProduct("AmazonBedrock", {
+      attributes: { usagetype: "APN1-NovaPro-input-tokens-batch", inferenceType: "Input tokens", feature: "Batch Inference", model: "Nova Pro" },
+    });
+    expect(batchSku.kind).toBe("batch");
+
+    // Mantle は同じ単価の別の接続先。価格表には載せない
+    const mantle = readProduct("AmazonBedrock", {
+      attributes: { usagetype: "APN1-xai.grok-4.6-mantle-input-tokens-standard", service_tier: "standard", model: "Grok 4.6" },
+    });
+    expect(mantle.mantle).toBe(true);
+
+    // latency optimized は標準と別建てなので範囲外
+    const latency = readProduct("AmazonBedrock", {
+      attributes: { usagetype: "USE1-NovaPro-output-tokens-latency-optimized", inferenceType: "Output tokens", model: "Nova Pro Latency Optimized" },
+    });
+    expect(latency.kind).toBeNull();
+  });
+
+  it("AmazonBedrockFoundationModels は servicename と usagetype の寸法を読む", () => {
+    expect(bfmDimension("APN1-MP:APN1_input_tokens_global_standard-Units")).toBe(
+      "input_tokens_global_standard",
+    );
+    expect(bfmDimension("not-a-usagetype")).toBeNull();
+    const row = readProduct("AmazonBedrockFoundationModels", {
+      attributes: {
+        servicename: "Claude Opus 5 (Amazon Bedrock Edition)",
+        usagetype: "APN1-MP:APN1_output_tokens_global_standard-Units",
+      },
+    });
+    expect(row).toMatchObject({ sourceName: "Claude Opus 5", axis: "output", kind: "global" });
+    // 旧い Claude は CamelCase の寸法
+    expect(
+      readProduct("AmazonBedrockFoundationModels", {
+        attributes: { servicename: "Claude Sonnet 4.5 (Amazon Bedrock Edition)", usagetype: "APN1-MP:APN1_InputTokenCount_Batch-Units" },
+      }).kind,
+    ).toBe("batch");
+  });
+});
+
+// --- AC-005 SKU → モデル ID の対応 ---
+describe("AC-005 モデル名からモデル ID を引く", () => {
+  const models = buildSnapshot().models;
+  const nameIndex = buildNameIndex(models);
+
+  it("(Amazon Bedrock Edition) を外してから比べる", () => {
+    expect(stripEdition("Claude Opus 5 (Amazon Bedrock Edition)")).toBe("Claude Opus 5");
+    expect(stripEdition("Nova Pro")).toBe("Nova Pro");
+  });
+
+  it("大文字小文字と記号を無視して models.json の name に一致させる", () => {
+    expect(resolveModelIds("Claude Sonnet 4.5", { nameIndex })).toEqual([CLAUDE]);
+    expect(resolveModelIds("nova lite", { nameIndex })).toEqual([NOVA_LITE]);
+  });
+
+  it("手書きの地図が自動一致より優先される", () => {
+    expect(resolveModelIds("NVIDIA Nemotron Nano 2 VL", { nameIndex, map: priceModelMap })).toEqual([
+      NVIDIA,
+    ]);
+    expect(resolveModelIds("Cohere Embed 4 Model", { nameIndex, map: priceModelMap })).toEqual([EMBED]);
+  });
+
+  it("同じ name のモデル ID が複数あれば全件に同じ単価を入れる", () => {
+    const many = {
+      "amazon.nova-pro-v1:0": { name: "Nova Pro" },
+      "amazon.nova-pro-v1:0:24k": { name: "Nova Pro" },
+    };
+    expect(resolveModelIds("Nova Pro", { nameIndex: buildNameIndex(many) })).toEqual([
+      "amazon.nova-pro-v1:0",
+      "amazon.nova-pro-v1:0:24k",
+    ]);
+  });
+
+  it("model 属性を持たない SKU は usagetype の鍵で引く", () => {
+    expect(usagetypeKey("APN1-TitanEmbeddingsG1-Text-input-tokens")).toBe("TitanEmbeddingsG1-Text");
+    expect(usagetypeKey("USE1-TitanTextG1-Express-output-tokens")).toBe("TitanTextG1-Express");
+    expect(
+      resolveModelIds("usagetype:TitanEmbeddingsG1-Text", { nameIndex, map: priceModelMap }),
+    ).toContain("amazon.titan-embed-text-v1");
+  });
+
+  it("地図に null と書いたものは「該当なし」で、未マッピングにしない", () => {
+    expect(resolveModelIds("Nova Premier", { nameIndex, map: priceModelMap })).toEqual([]);
+    expect(resolveModelIds("知らないモデル", { nameIndex, map: priceModelMap })).toBeNull();
+  });
+});
+
+// --- AC-004 / AC-006 正規化の結果 ---
+describe("AC-004 / AC-006 prices.json の中身", () => {
+  const { prices, unmappedList } = build();
+
+  it("すべての単価が USD / 100 万トークンで入る", () => {
+    expect(prices.byModel[CLAUDE][TOKYO]).toEqual({
+      standard: { input: 3.3, output: 16.5 },
+      global: { input: 3, output: 15 },
+      batch: { input: 1.65 },
+      cacheRead: { input: 0.33 },
+    });
+    expect(prices.byModel[NOVA_LITE][TOKYO]).toEqual({
+      standard: { input: 0.072, output: 0.288 },
+      batch: { input: 0.036 },
+      cacheRead: { input: 0.018 },
+    });
+  });
+
+  it("地図で引いたモデルにも単価が入る", () => {
+    expect(prices.byModel[NVIDIA][TOKYO].standard).toEqual({ input: 0.24, output: 0.73 });
+    expect(prices.byModel[EMBED][TOKYO].standard).toEqual({ input: 0.12 });
+    expect(prices.byModel[TITAN][TOKYO].standard).toEqual({ input: 0.2 });
+  });
+
+  it("Mantle の SKU と トークン以外の単位は載らない", () => {
+    // Mantle も NovaCanvas (image) も同じ fixture に入っているが byModel には現れない
+    const values = JSON.stringify(prices.byModel);
+    expect(values).not.toContain("mantle");
+    expect(prices.outOfScope).toBeGreaterThan(0);
+  });
+
+  it("generatedAt / publicationDate / source を持つ", () => {
+    expect(prices.generatedAt).toBe("2026-09-14T09:00:00Z");
+    expect(prices.publicationDate).toBe(bedrockTokyo.publicationDate > foundationTokyo.publicationDate ? bedrockTokyo.publicationDate : foundationTokyo.publicationDate);
+    expect(prices.source.index).toContain("pricing.us-east-1.amazonaws.com");
+    expect(Object.keys(prices.source.offers)).toEqual(PRICE_OFFERS);
+  });
+
+  it("地図に無い名前は unmapped に数え、一覧を返す", () => {
+    const { prices: bare, unmappedList: list } = build(buildSnapshot().models, {});
+    expect(bare.unmapped).toBeGreaterThan(0);
+    expect(list.map((entry) => entry.name)).toContain("NVIDIA Nemotron Nano 2 VL");
+    expect(list[0]).toHaveProperty("count");
+    expect(list[0]).toHaveProperty("offer");
+  });
+
+  it("地図が揃っていれば unmapped は 0", () => {
+    expect(prices.unmapped).toBe(0);
+    expect(unmappedList).toEqual([]);
+  });
+
+  it("実データの data/prices.json も unmapped 0 で、東京の標準価格を持つ", () => {
+    const real = read("../data/prices.json");
+    expect(real.unmapped).toBe(0);
+    expect(real.byModel["anthropic.claude-opus-5"][TOKYO].standard).toEqual({
+      input: 5.5,
+      output: 27.5,
+    });
+    expect(real.byModel["anthropic.claude-opus-5"][TOKYO].global).toEqual({ input: 5, output: 25 });
+  });
+});
+
+// --- AC-011 価格が無いとき ---
+describe("AC-011 価格が無いモデル / 価格データが無いとき", () => {
+  it("prices.json が空でも例外にならず byModel は空", () => {
+    const { prices } = normalizePrices({ files: {}, models: {}, map: {}, generatedAt: "x" });
+    expect(prices.byModel).toEqual({});
+    expect(prices.unmapped).toBe(0);
+    expect(prices.publicationDate).toBeNull();
+  });
+});

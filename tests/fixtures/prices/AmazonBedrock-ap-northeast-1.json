@@ -1,0 +1,421 @@
+{
+  "formatVersion": "v1.0",
+  "disclaimer": "テスト用。AWS Price List Bulk API の実データ (2026-09-11 発行) から数 SKU だけ間引いたもの。",
+  "offerCode": "AmazonBedrock",
+  "version": "20260911124408",
+  "publicationDate": "2026-09-11T12:44:08Z",
+  "products": {
+    "USMKU7YEH9UG953Z": {
+      "sku": "USMKU7YEH9UG953Z",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-NovaLite-input-tokens-batch",
+        "operation": "",
+        "feature": "Batch Inference",
+        "inferenceType": "Input tokens",
+        "model": "Nova Lite",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "F37UETDEDFTGNZS9": {
+      "sku": "F37UETDEDFTGNZS9",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-NovaLite-cache-read-input-token-count",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Prompt cache read input tokens",
+        "model": "Nova Lite",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "MK4X2BQQM4CQRDT5": {
+      "sku": "MK4X2BQQM4CQRDT5",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-Nemotron-Nano-12B-V2-VL-BF16-input-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Input tokens",
+        "model": "NVIDIA Nemotron Nano 2 VL",
+        "provider": "Nvidia",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "S9GAZXJ5BZSM3UT2": {
+      "sku": "S9GAZXJ5BZSM3UT2",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-NovaCanvas-T2I-1024-Standard",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "T2I 1024 Standard",
+        "model": "Nova Canvas",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "AZXNYY36FFAS39SK": {
+      "sku": "AZXNYY36FFAS39SK",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-Nova2.0Lite-output-tokens-cross-region-global",
+        "operation": "",
+        "inferenceType": "Output tokens",
+        "model": "Nova 2.0 Lite",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "4K4W96872BAV6PTG": {
+      "sku": "4K4W96872BAV6PTG",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-nvidia.nemotron-nano-12b-v2-mantle-input-tokens-standard",
+        "operation": "",
+        "inferenceType": "Input tokens",
+        "model": "NVIDIA Nemotron Nano 2 VL",
+        "provider": "Nvidia",
+        "regionCode": "ap-northeast-1",
+        "service_tier": "standard",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "FGQ9PVC9YXM9YY52": {
+      "sku": "FGQ9PVC9YXM9YY52",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-NovaLite-output-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Output tokens",
+        "model": "Nova Lite",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "P569N2VH2DAWEFWX": {
+      "sku": "P569N2VH2DAWEFWX",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-NovaLite-input-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Input tokens",
+        "model": "Nova Lite",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "QUJHFKSYNPKM4FFG": {
+      "sku": "QUJHFKSYNPKM4FFG",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-TitanEmbeddingsG1-Text-input-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Input tokens",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Amazon Bedrock",
+        "titanModel": "Titan Embeddings G1 Text"
+      }
+    },
+    "RZYSHT75P8BPD5F6": {
+      "sku": "RZYSHT75P8BPD5F6",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-Nemotron-Nano-12B-V2-VL-BF16-output-tokens",
+        "operation": "",
+        "feature": "On-demand Inference",
+        "inferenceType": "Output tokens",
+        "model": "NVIDIA Nemotron Nano 2 VL",
+        "provider": "Nvidia",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Amazon Bedrock"
+      }
+    },
+    "AKQFYXD4AUGMS78D": {
+      "sku": "AKQFYXD4AUGMS78D",
+      "productFamily": "Amazon Bedrock",
+      "attributes": {
+        "servicecode": "AmazonBedrock",
+        "location": "Asia Pacific (Tokyo)",
+        "locationType": "AWS Region",
+        "usagetype": "APN1-Nova2.0Lite-input-tokens-cross-region-global",
+        "operation": "",
+        "inferenceType": "Input tokens",
+        "model": "Nova 2.0 Lite",
+        "regionCode": "ap-northeast-1",
+        "servicename": "Amazon Bedrock"
+      }
+    }
+  },
+  "terms": {
+    "OnDemand": {
+      "USMKU7YEH9UG953Z": {
+        "USMKU7YEH9UG953Z.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "USMKU7YEH9UG953Z",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "priceDimensions": {
+            "USMKU7YEH9UG953Z.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "USMKU7YEH9UG953Z.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.000036 per 1K tokens for APN1-NovaLite-input-tokens-batch in Asia Pacific (Tokyo)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0000360000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "F37UETDEDFTGNZS9": {
+        "F37UETDEDFTGNZS9.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "F37UETDEDFTGNZS9",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "priceDimensions": {
+            "F37UETDEDFTGNZS9.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "F37UETDEDFTGNZS9.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.000018 per 1K tokens for APN1-NovaLite-cache-read-input-token-count in Asia Pacific (Tokyo)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0000180000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "MK4X2BQQM4CQRDT5": {
+        "MK4X2BQQM4CQRDT5.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "MK4X2BQQM4CQRDT5",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "priceDimensions": {
+            "MK4X2BQQM4CQRDT5.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "MK4X2BQQM4CQRDT5.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00024 per 1K input tokens for NVIDIA Nemotron Nano 2 VL in Asia Pacific (Tokyo)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0002400000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "S9GAZXJ5BZSM3UT2": {
+        "S9GAZXJ5BZSM3UT2.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "S9GAZXJ5BZSM3UT2",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "priceDimensions": {
+            "S9GAZXJ5BZSM3UT2.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "S9GAZXJ5BZSM3UT2.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.04 per image for APN1-NovaCanvas-T2I-1024-Standard in Asia Pacific (Tokyo)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "image",
+              "pricePerUnit": {
+                "USD": "0.0400000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "AZXNYY36FFAS39SK": {
+        "AZXNYY36FFAS39SK.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "AZXNYY36FFAS39SK",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "priceDimensions": {
+            "AZXNYY36FFAS39SK.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "AZXNYY36FFAS39SK.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00301 per 1K token for Nova2.0Lite-output-tokens-cross-region-global in Asia Pacific (Tokyo)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0030100000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "4K4W96872BAV6PTG": {
+        "4K4W96872BAV6PTG.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "4K4W96872BAV6PTG",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "priceDimensions": {
+            "4K4W96872BAV6PTG.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "4K4W96872BAV6PTG.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00024 per 1K token for nvidia.nemotron-nano-12b-v2-mantle-input-tokens-standard in Asia Pacific (Tokyo)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0002400000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "FGQ9PVC9YXM9YY52": {
+        "FGQ9PVC9YXM9YY52.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "FGQ9PVC9YXM9YY52",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "priceDimensions": {
+            "FGQ9PVC9YXM9YY52.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "FGQ9PVC9YXM9YY52.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.000288 per 1K tokens for APN1-NovaLite-output-tokens in Asia Pacific (Tokyo)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0002880000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "P569N2VH2DAWEFWX": {
+        "P569N2VH2DAWEFWX.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "P569N2VH2DAWEFWX",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "priceDimensions": {
+            "P569N2VH2DAWEFWX.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "P569N2VH2DAWEFWX.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.000072 per 1K tokens for APN1-NovaLite-input-tokens in Asia Pacific (Tokyo)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0000720000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "QUJHFKSYNPKM4FFG": {
+        "QUJHFKSYNPKM4FFG.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "QUJHFKSYNPKM4FFG",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "priceDimensions": {
+            "QUJHFKSYNPKM4FFG.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "QUJHFKSYNPKM4FFG.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.0002 per 1K tokens for TitanEmbeddingsG1-Text-input-tokens in Asia Pacific (Tokyo)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0002000000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "RZYSHT75P8BPD5F6": {
+        "RZYSHT75P8BPD5F6.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "RZYSHT75P8BPD5F6",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "priceDimensions": {
+            "RZYSHT75P8BPD5F6.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "RZYSHT75P8BPD5F6.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00073 per 1K output tokens for NVIDIA Nemotron Nano 2 VL in Asia Pacific (Tokyo)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0007300000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      },
+      "AKQFYXD4AUGMS78D": {
+        "AKQFYXD4AUGMS78D.JRTCKXETXF": {
+          "offerTermCode": "JRTCKXETXF",
+          "sku": "AKQFYXD4AUGMS78D",
+          "effectiveDate": "2026-08-01T00:00:00Z",
+          "priceDimensions": {
+            "AKQFYXD4AUGMS78D.JRTCKXETXF.6YS6EN2CT7": {
+              "rateCode": "AKQFYXD4AUGMS78D.JRTCKXETXF.6YS6EN2CT7",
+              "description": "$0.00036 per 1K token for Nova2.0Lite-input-tokens-cross-region-global in Asia Pacific (Tokyo)",
+              "beginRange": "0",
+              "endRange": "Inf",
+              "unit": "1K tokens",
+              "pricePerUnit": {
+                "USD": "0.0003600000"
+              },
+              "appliesTo": []
+            }
+          },
+          "termAttributes": {}
+        }
+      }
+    }
+  }
+}

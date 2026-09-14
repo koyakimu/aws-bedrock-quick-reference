@@ -94,6 +94,28 @@ export function outsideCount(places) {
   return (places ?? []).filter((place) => place.outside).length;
 }
 
+// --- 価格 (PRICE-001) -----------------------------------------------------
+
+// prices.json の 1 モデル × 1 リージョン分。無ければ null (画面では「—」)。
+export function priceFor(prices, modelId, region) {
+  const entry = prices?.byModel?.[modelId]?.[region];
+  return entry && typeof entry === "object" ? entry : null;
+}
+
+/**
+ * 単価の表示 (TABLE-001 v7 AC-013)。
+ * $1 以上は小数 2 桁、$1 未満は有効数字 3 桁。値が無ければ null。
+ */
+export function formatPrice(value) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return null;
+  if (value === 0) return "0";
+  if (Math.abs(value) >= 1) return value.toFixed(2);
+  return value
+    .toPrecision(3)
+    .replace(/(\.\d*?)0+$/, "$1")
+    .replace(/\.$/, "");
+}
+
 // fetch-log.json の 1 リージョン分。記録が無いリージョンは "unknown" にする。
 export function regionStatus(fetchLog, region) {
   const entry = fetchLog?.regions?.[region];
@@ -144,9 +166,10 @@ function modelsVisibleFrom(models, region) {
 }
 
 // 1 行分。table-engine に渡すプレーンオブジェクト。
-export function buildRow({ modelId, model, profiles, region, overrides, mantle = null }) {
+export function buildRow({ modelId, model, profiles, region, overrides, mantle = null, prices }) {
   const geo = judgeGeo(profiles, modelId, region);
   const globalProfile = judgeGlobal(profiles, modelId, region);
+  const price = priceFor(prices, modelId, region);
   return {
     // MANTLE-001 AC-003。判定材料が無ければ null (画面では「—」)。
     mantle: judgeMantle(mantle, modelId, region),
@@ -163,6 +186,11 @@ export function buildRow({ modelId, model, profiles, region, overrides, mantle =
     inRegion: judgeInRegion({ [modelId]: model }, modelId, region),
     geo,
     global: globalProfile,
+    // 起点リージョンの単価 (USD / 100 万トークン)。並べ替えに使えるよう
+    // 標準の入力・出力だけは行の直下にも置く (PRICE-001 AC-007)。
+    price,
+    priceInput: price?.standard?.input ?? null,
+    priceOutput: price?.standard?.output ?? null,
     // 備考はモデル ID のものに、そのモデルに紐づくプロファイル ID のものを続ける。
     notes: [
       { id: modelId, note: noteFor(overrides, modelId) },
@@ -187,6 +215,7 @@ export function buildViewModel({
   regionNotes,
   overrides = {},
   mantle = null,
+  prices = {},
   region,
 }) {
   const fetch = regionStatus(fetchLog, region);
@@ -194,7 +223,7 @@ export function buildViewModel({
     fetch.status === "ok"
       ? modelsVisibleFrom(models, region)
           .map(([modelId, model]) =>
-            buildRow({ modelId, model, profiles, region, overrides, mantle }),
+            buildRow({ modelId, model, profiles, region, overrides, mantle, prices }),
           )
           // 一覧は プロバイダ → モデル名 の昇順 (TABLE-001 v2 AC-006)。
           // 同名のモデルが複数あるときだけモデル ID で決着させる。
@@ -219,5 +248,9 @@ export function buildViewModel({
     generatedAt: fetchLog?.generatedAt ?? null,
     accountKind: fetchLog?.accountKind ?? null,
     deniedRegions: deniedRegions(fetchLog),
+    // 価格の脚注 (PRICE-001 AC-009)。
+    priceGeneratedAt: prices?.generatedAt ?? null,
+    pricePublicationDate: prices?.publicationDate ?? null,
+    priceSource: prices?.source ?? null,
   };
 }

@@ -3,6 +3,7 @@
 import { createTable, EMPTY } from "./table-engine.js";
 import {
   buildViewModel,
+  formatPrice,
   geoPlaces,
   outsideCount,
   selectableRegions,
@@ -39,6 +40,9 @@ export const DOC_LINKS = Object.freeze([
 ]);
 
 const GLOBAL_CRIS_DOC = DOC_LINKS.find((link) => link.labelKey === "footnote.docGlobalCris").href;
+
+// 価格の出典 (PRICE-001 / D-009)。prices.json に source が無いときの控え。
+export const PRICE_INDEX_URL = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/index.json";
 
 // 起点リージョンが変わったことを外に知らせるイベント (SHARE-001 / FILTER-001 の入口)。
 export const SOURCE_REGION_EVENT = "source-region-changed";
@@ -178,11 +182,28 @@ function geoCell(row, notes) {
   return wrap;
 }
 
+// PRICE-001 AC-007 / AC-008: 単価は $ 付きで右寄せ。値が無ければ「—」。
+export function priceCell(value) {
+  const text = formatPrice(value);
+  if (text == null) return EMPTY;
+  return el("span", "price-value", `$${text}`);
+}
+
 // Global は destination を列挙しない。sources[R] の ["*"] は画面に出さない (AC-005)。
+// Global に別の単価があれば「$入力 / $出力」を同じセルに添える (PRICE-001 AC-008)。
 function globalCell(row) {
   if (!row.global) return markNo();
   const wrap = el("span", "cell-global");
   wrap.appendChild(markYes());
+  const globalPrice = row.price?.global;
+  const input = formatPrice(globalPrice?.input);
+  const output = formatPrice(globalPrice?.output);
+  if (input != null || output != null) {
+    const line = el("span", "global-price");
+    line.textContent = `$${input ?? EMPTY} / $${output ?? EMPTY}`;
+    line.title = t("price.globalHint");
+    wrap.appendChild(line);
+  }
   const note = el("span", "global-note");
   note.append(el("span", "global-note-text", t("value.globalNote")), document.createTextNode(" "));
   const link = el("a", "global-note-link", t("value.globalDocs"));
@@ -231,7 +252,7 @@ function notesCell(row) {
 }
 
 // AC-006 の列構成。左から プロバイダ / モデル名 / できること / In-Region / Geo /
-// Global / 備考。技術的な識別子 (モデル ID / プロファイル ID / lifecycle) は表に出さず
+// Global / 入力 $/1M / 出力 $/1M / Mantle / 備考。技術的な識別子 (モデル ID / プロファイル ID / lifecycle) は表に出さず
 // DETAIL-001 の詳細パネルへ移した。モデル名列は横スクロールしても左端に残す (AC-NFR-001)。
 export function buildColumns(regionNotes) {
   return [
@@ -275,6 +296,23 @@ export function buildColumns(regionNotes) {
       sortable: false,
       format: (_value, row) => globalCell(row),
     },
+    // PRICE-001 AC-007: Global の右に 標準の 入力 / 出力 の単価 (USD / 100 万トークン)。
+    {
+      key: "priceInput",
+      group: "price",
+      labelKey: "price.inputColumn",
+      type: "number",
+      align: "right",
+      format: (value) => priceCell(value),
+    },
+    {
+      key: "priceOutput",
+      group: "price",
+      labelKey: "price.outputColumn",
+      type: "number",
+      align: "right",
+      format: (value) => priceCell(value),
+    },
     // MANTLE-001 AC-003: 備考の手前に置く最後の列。
     {
       key: "mantle",
@@ -308,6 +346,7 @@ export function mountTableView({
   regionNotes,
   overrides = {},
   mantle = null,
+  prices = {},
 }) {
   const regions = selectableRegions(regionNotes);
   let region = regions.includes(DEFAULT_REGION) ? DEFAULT_REGION : regions[0];
@@ -479,6 +518,25 @@ export function mountTableView({
             }),
       ),
     );
+    // 価格の取得日・価格表の発行日・出典 (PRICE-001 AC-009)。
+    if (model.priceGeneratedAt || model.pricePublicationDate) {
+      list.appendChild(
+        el("li", "footnote-price-generated", t("price.fetchedAt", { date: model.priceGeneratedAt ?? EMPTY })),
+      );
+      const item = el("li", "footnote-price-source");
+      item.append(
+        document.createTextNode(
+          t("price.publicationDate", { date: model.pricePublicationDate ?? EMPTY }),
+        ),
+        document.createTextNode(" "),
+      );
+      const anchor = el("a", "doc-link price-source-link", t("price.sourceLabel"));
+      anchor.href = model.priceSource?.index ?? PRICE_INDEX_URL;
+      anchor.target = "_blank";
+      anchor.rel = "noreferrer";
+      item.appendChild(anchor);
+      list.appendChild(item);
+    }
     footnote.appendChild(list);
 
     footnote.appendChild(el("h4", null, t("footnote.sources")));
@@ -496,7 +554,16 @@ export function mountTableView({
   }
 
   function render() {
-    model = buildViewModel({ models, profiles, fetchLog, regionNotes, overrides, mantle, region });
+    model = buildViewModel({
+      models,
+      profiles,
+      fetchLog,
+      regionNotes,
+      overrides,
+      mantle,
+      prices,
+      region,
+    });
 
     endpointValue.textContent = model.endpoint;
 

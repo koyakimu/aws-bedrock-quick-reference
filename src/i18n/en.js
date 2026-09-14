@@ -80,6 +80,31 @@ export const en = {
     mantleUnknownModel: "The AWS endpoint availability tables do not list this model",
     docs: "Endpoint availability (AWS docs)",
   },
+
+  // PRICE-001: pricing. All unit prices are USD per 1M tokens.
+  price: {
+    inputColumn: "Input $/1M",
+    outputColumn: "Output $/1M",
+    heading: "Pricing",
+    kindColumn: "Kind",
+    input: "Input",
+    output: "Output",
+    unit: "USD per 1M tokens (list price; discounts, commitments and free tiers not included)",
+    none: "No pricing data for this source Region",
+    globalHint: "Input / output unit price when inferring globally (USD per 1M tokens)",
+    fetchedAt: "Pricing fetched: {date}",
+    publicationDate: "Price list published: {date}",
+    sourceLabel: "AWS Price List Bulk API",
+    kind: {
+      standard: "Standard",
+      global: "Global",
+      batch: "Batch",
+      cacheRead: "Cache read",
+      cacheWrite: "Cache write",
+      priority: "Priority",
+      flex: "Flex",
+    },
+  },
   copy: {
     action: "Copy",
     done: "Copied",

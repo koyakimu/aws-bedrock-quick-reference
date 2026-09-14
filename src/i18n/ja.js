@@ -80,6 +80,31 @@ export const ja = {
     mantleUnknownModel: "公式 docs の対応表にこのモデルの記載がありません",
     docs: "Endpoint availability (公式 docs)",
   },
+
+  // PRICE-001: 価格。単価は USD / 100 万トークン。
+  price: {
+    inputColumn: "入力 $/1M",
+    outputColumn: "出力 $/1M",
+    heading: "価格",
+    kindColumn: "種別",
+    input: "入力",
+    output: "出力",
+    unit: "USD / 100 万トークン（標準価格。割引・契約価格・無料枠は含まない）",
+    none: "この起点リージョンの価格データがありません",
+    globalHint: "Global で推論したときの 入力 / 出力 の単価（USD / 100 万トークン）",
+    fetchedAt: "価格の取得日: {date}",
+    publicationDate: "価格表の発行日: {date}",
+    sourceLabel: "AWS Price List Bulk API",
+    kind: {
+      standard: "標準",
+      global: "Global",
+      batch: "バッチ",
+      cacheRead: "キャッシュ読み",
+      cacheWrite: "キャッシュ書き",
+      priority: "優先",
+      flex: "Flex",
+    },
+  },
   copy: {
     action: "コピー",
     done: "コピーしました",
