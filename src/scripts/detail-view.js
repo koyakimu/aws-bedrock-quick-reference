@@ -1,12 +1,11 @@
 // 行の展開と詳細パネル (DETAIL-001)。データの組み立ては detail-model.mjs が持ち、
 // このファイルは DOM とイベントだけを扱う。
 import { buildDetail } from "./detail-model.mjs";
-import { causeLabelKey } from "./bedrock-view-model.mjs";
 import { createCopyable } from "./copy.js";
 import { t, getLang, LANG_CHANGED_EVENT } from "./i18n.js";
 import { regionName } from "./region-names.js";
 
-// availability の種別 → 表示ラベルのキー。「提供なし」と「データなし」は
+// availability の種別 → 表示ラベルのキー。「提供なし」と「未取得」は
 // 別のクラス名・別の文言で描く (AC-003 / AC-008)。
 const KIND_LABEL = Object.freeze({
   none: "detail.notOffered",
@@ -146,14 +145,8 @@ function availabilitySection(detail, regionNotes) {
       }
       item.appendChild(badges);
     } else {
-      const label = el("span", `detail-region-state state-${row.kind}`, t(KIND_LABEL[row.kind]));
-      if (row.kind === "nodata") {
-        // 理由は分類から起こした平易な説明文だけを出す (AC-008)。
-        const text = t(causeLabelKey(row.cause));
-        label.title = text;
-        label.append(" ", el("span", "detail-region-cause", text));
-      }
-      item.appendChild(label);
+      // 未取得は「未取得」とだけ出す。理由 (cause) はメンテナ向けの情報 (AC-008 / D-008)。
+      item.appendChild(el("span", `detail-region-state state-${row.kind}`, t(KIND_LABEL[row.kind])));
     }
     list.appendChild(item);
   }

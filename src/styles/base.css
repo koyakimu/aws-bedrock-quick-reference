@@ -73,17 +73,6 @@ a:hover {
   margin-bottom: var(--sp-2);
 }
 
-/* 取得できなかった理由。分類から起こした 1 文だけを出す (D-008) */
-.banner-cause {
-  word-break: break-word;
-  line-height: 1.6;
-  color: var(--fg);
-  background: var(--bg-panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: var(--sp-2);
-}
-
 /* 「提供なし」の空状態 (AC-010)。バナーと違って警告色を使わない */
 .empty {
   margin-top: var(--sp-3);

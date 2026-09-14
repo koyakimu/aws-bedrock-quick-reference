@@ -175,11 +175,6 @@ tr.expanded > td {
   border-radius: var(--radius);
   padding: 0 4px;
 }
-.detail-region-cause {
-  color: var(--fg-muted);
-  font-size: var(--fs-xs);
-}
-
 .detail-profile {
   margin-bottom: var(--sp-3);
 }

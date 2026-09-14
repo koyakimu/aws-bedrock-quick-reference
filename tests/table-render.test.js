@@ -56,12 +56,12 @@ describe("AC-001 起点リージョンセレクタ", () => {
     expect(option.textContent).toContain("東京");
   });
 
-  it("denied のリージョンも選べるが「データなし」と印が付く", () => {
+  it("未取得のリージョンも選べるが「（未取得）」と印が付く", () => {
     mount();
     const option = [...select().options].find((o) => o.value === DENIED_REGION);
     expect(option.disabled).toBe(false);
     expect(option.dataset.status).toBe("denied");
-    expect(option.textContent).toContain("データなし");
+    expect(option.textContent).toContain("（未取得）");
   });
 });
 
@@ -389,7 +389,10 @@ describe("AC-008 脚注", () => {
     const footnote = document.getElementById("footnote");
     expect(footnote.textContent).toContain("2026-09-14T08:10:00Z");
     expect(footnote.textContent).toContain("sandbox");
-    expect(footnote.querySelector(".footnote-denied").textContent).toContain(DENIED_REGION);
+    const deniedNote = footnote.querySelector(".footnote-denied").textContent;
+    expect(deniedNote).toContain("未取得のリージョン");
+    expect(deniedNote).toContain(DENIED_REGION);
+    expect(deniedNote).not.toContain("組織のポリシー");
     const links = [...footnote.querySelectorAll("a.doc-link")];
     expect(links).toHaveLength(DOC_LINKS.length);
     expect(links).toHaveLength(5);
@@ -399,15 +402,30 @@ describe("AC-008 脚注", () => {
 
 // --- AC-009 denied リージョン ---
 describe("AC-009 denied リージョンを選んだとき", () => {
-  it("バナーが出て分類の説明文が表示され、表は 0 行になる", () => {
+  it("バナーが出て「まだ取得できていません」とだけ伝え、表は 0 行になる", () => {
     const view = mount();
     view.setRegion(DENIED_REGION);
     const banner = document.getElementById("denied-banner");
     expect(banner.hidden).toBe(false);
-    expect(banner.textContent).toContain("データを取得できませんでした");
-    const cause = document.getElementById("denied-cause").textContent;
-    expect(cause).toBe("組織のポリシーで取得できませんでした");
+    expect(banner.textContent).toContain("このリージョンのデータはまだ取得できていません");
+    expect(banner.textContent).toContain("提供がないという意味ではありません");
     expect(bodyRows()).toHaveLength(0);
+  });
+
+  it("取得できなかった理由は画面に出さない (D-008)", () => {
+    const view = mount();
+    view.setRegion(DENIED_REGION);
+    expect(document.getElementById("denied-cause")).toBeNull();
+    const text = document.body.textContent;
+    for (const sentence of [
+      "組織のポリシーで取得できませんでした",
+      "権限が足りず取得できませんでした",
+      "このアカウントで有効化されていないリージョンです",
+      "接続できませんでした",
+    ]) {
+      expect(text).not.toContain(sentence);
+    }
+    expect(text).not.toContain("cause.");
   });
 
   it("エラー原文は画面のどこにも出さない (D-008)", () => {
@@ -497,12 +515,14 @@ describe("言語を切り替えても表のデータ値は変わらない", () =
     ).toEqual(before.regions);
   });
 
-  it("denied の分類の説明文は翻訳する (原文ではないため)", () => {
+  it("未取得バナーの文言は翻訳する", () => {
     const view = mount();
     view.setRegion(DENIED_REGION);
-    expect(document.getElementById("denied-cause").textContent).toBe("組織のポリシーで取得できませんでした");
+    const banner = () => document.getElementById("denied-banner").textContent;
+    expect(banner()).toContain("このリージョンのデータはまだ取得できていません");
     setLang("en");
     view.rerender();
-    expect(document.getElementById("denied-cause").textContent).toBe("Blocked by an organization policy");
+    expect(banner()).toContain("Data for this Region has not been fetched yet");
+    expect(banner()).toContain("This does not mean the models are not offered here");
   });
 });

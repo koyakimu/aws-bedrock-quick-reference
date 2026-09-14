@@ -94,7 +94,7 @@ describe("DETAIL-001 AC-003 提供なしの表示", () => {
 });
 
 describe("DETAIL-001 AC-004 空配列の表示", () => {
-  it("「提供あり・推論タイプの指定なし」は提供なし / データなし と別のクラス", () => {
+  it("「提供あり・推論タイプの指定なし」は提供なし / 未取得 と別のクラス", () => {
     mountFixtureApp();
     toggleOf(TITAN).click();
     const panel = panelOf(TITAN);
@@ -162,8 +162,8 @@ describe("DETAIL-001 AC-007 現在の起点リージョンの強調", () => {
   });
 });
 
-// --- AC-008 denied は「データなし」 ---
-describe("DETAIL-001 AC-008 denied リージョンは「データなし」", () => {
+// --- AC-008 denied は「未取得」 ---
+describe("DETAIL-001 AC-008 denied リージョンは「未取得」", () => {
   it("「提供なし」と異なるクラス名で描画される", () => {
     mountFixtureApp();
     toggleOf(CLAUDE).click();
@@ -172,19 +172,29 @@ describe("DETAIL-001 AC-008 denied リージョンは「データなし」", () 
     expect(denied.dataset.kind).toBe("nodata");
     expect(denied.querySelector(".state-nodata")).not.toBeNull();
     expect(denied.querySelector(".state-none")).toBeNull();
-    expect(denied.textContent).toContain("データなし");
+    expect(denied.textContent).toContain("未取得");
     expect(denied.textContent).not.toContain("提供なし");
   });
 
-  it("理由は分類から起こした平易な説明文だけを出す (D-008)", () => {
+  it("取得できなかった理由は出さない (D-008)", () => {
     mountFixtureApp();
     toggleOf(CLAUDE).click();
     const denied = panelOf(CLAUDE).querySelector(
       `.detail-region[data-region="${DENIED_REGION}"] .state-nodata`,
     );
-    expect(denied.textContent).toContain("組織のポリシーで取得できませんでした");
-    expect(denied.title).toBe("組織のポリシーで取得できませんでした");
+    expect(denied.textContent.trim()).toBe("未取得");
+    expect(denied.title).toBe("");
+    expect(denied.querySelector(".detail-region-cause")).toBeNull();
     expect(denied.querySelector("a")).toBeNull();
+    const text = document.body.textContent;
+    for (const sentence of [
+      "組織のポリシーで取得できませんでした",
+      "権限が足りず取得できませんでした",
+      "このアカウントで有効化されていないリージョンです",
+    ]) {
+      expect(text).not.toContain(sentence);
+    }
+    expect(text).not.toContain("cause.");
   });
 
   it("エラー原文は詳細パネルのどこにも出ない", () => {

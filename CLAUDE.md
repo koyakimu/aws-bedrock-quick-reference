@@ -97,8 +97,9 @@ denied の行を消すと区別が壊れる (D-003)。
   載って公開サイトにも描画されるため。代わりに `cause` (分類) だけを残す:
   `scp-deny` / `access-denied` / `not-opted-in` / `timeout` / `other`。
   分類は `scripts/lib/normalize.mjs` の `classifyFetchError` が原文から機械的に決める
-- 原文を読みたいときは gitignore 対象の `data/raw/<日付>/*.err` を見る。画面に出るのは
-  `cause` に対応する平易な説明文 (i18n の `cause.*`) で、原文を開くトグルは置かない
+- 原文を読みたいときは gitignore 対象の `data/raw/<日付>/*.err` を見る。`cause` はメンテナ向けの
+  情報なので**画面には出さない**。未取得のリージョンは「未取得」とだけ表示する
+  (TABLE-001 v5 AC-009 / DETAIL-001 v5 AC-008)
 
 ### region-notes.json を直すとき
 
