@@ -2,19 +2,24 @@
 // このファイルは DOM とイベントだけを扱う。
 // コントロールはすべてネイティブ要素なので Tab / Enter / Space で操作できる。
 import {
+  CUSTOM_LIMIT,
   DEFAULT_FILTERS,
   MODALITIES,
   NO_LIMIT,
   activeConditions,
   applyFilters,
   buildLimitOptions,
+  customLimitCodes,
+  customLimitValue,
+  customRegionGroups,
+  isCustomLimit,
   limitOption,
   limitRegionSet,
   providerOptions,
   removeCondition,
 } from "./filter-model.mjs";
 import { t, getLang, applyTranslations, LANG_CHANGED_EVENT } from "./i18n.js";
-import { regionName } from "./region-names.js";
+import { regionName, regionOptionLabel } from "./region-names.js";
 
 export const FILTER_CHANGED_EVENT = "filter-changed";
 
@@ -46,6 +51,11 @@ export function conditionLabel(condition, limitOptions) {
   if (condition.param === "q") return `${t("filter.search")}: ${condition.value}`;
   if (condition.param === "callable") return t("filter.callable");
   if (condition.param === "limit") {
+    // カスタムは集合の件数で示す (AC-012)。
+    if (isCustomLimit(condition.value)) {
+      const count = customLimitCodes(condition.value).length;
+      return `${t("filter.limit")}: ${t("filter.customChip", { count })}`;
+    }
     const option = limitOption(limitOptions, condition.value);
     return `${t("filter.limit")}: ${option ? t(option.labelKey) : condition.value}`;
   }
@@ -136,9 +146,44 @@ export function mountFilterBar({
   reset.textContent = t("filter.reset");
   reset.addEventListener("click", () => setState({ ...DEFAULT_FILTERS }));
 
+  // --- カスタムのリージョン複数選択 (AC-012 〜 AC-015) ---
+  // 「カスタム…」を選んだときだけ開く。要素はネイティブの checkbox / button なので
+  // Tab / Space / Enter だけで操作できる。
+  const customPicker = el("section", "filter-custom");
+  customPicker.id = "filter-custom";
+  customPicker.hidden = true;
+  customPicker.setAttribute("data-i18n-aria-label", "filter.customHeading");
+  customPicker.setAttribute("aria-label", t("filter.customHeading"));
+
+  const customHead = el("div", "filter-custom-head");
+  const customHeading = el("h3", "filter-custom-heading");
+  customHeading.setAttribute("data-i18n", "filter.customHeading");
+  customHeading.textContent = t("filter.customHeading");
+  const customClear = el("button", "ctl filter-custom-clear");
+  customClear.id = "filter-custom-clear";
+  customClear.type = "button";
+  customClear.setAttribute("data-i18n", "filter.customClear");
+  customClear.textContent = t("filter.customClear");
+  customClear.addEventListener("click", () => setState({ ...state, limit: CUSTOM_LIMIT }));
+  customHead.append(customHeading, customClear);
+
+  // 1 つも選んでいないときのヒント (AC-015)。
+  const customHint = el("p", "filter-custom-hint");
+  customHint.id = "filter-custom-hint";
+  customHint.setAttribute("role", "status");
+  customHint.setAttribute("data-i18n", "filter.customEmptyHint");
+  customHint.textContent = t("filter.customEmptyHint");
+  customHint.hidden = true;
+
+  const customGroups = el("div", "filter-custom-groups");
+  customGroups.id = "filter-custom-groups";
+  customPicker.append(customHead, customHint, customGroups);
+
+  const customBoxes = new Map();
+
   const summary = el("div", "filter-summary");
   summary.append(count, chips, reset);
-  host.append(controls, summary);
+  host.append(controls, customPicker, summary);
 
   // --- 0 件の空状態 (AC-010)。データなしバナーとも「提供なし」とも別物 ---
   const empty = el("section", "banner filter-empty");
@@ -187,8 +232,78 @@ export function mountFilterBar({
       }
       return group;
     });
-    limitSelect.replaceChildren(none, ...groups);
-    limitSelect.value = state.limit;
+    // 末尾が「カスタム…」。グループには入れない (AC-012)。
+    const custom = document.createElement("option");
+    const customOption = limitOption(limitOptions, CUSTOM_LIMIT);
+    custom.value = CUSTOM_LIMIT;
+    custom.textContent = t(customOption?.labelKey ?? "filter.limitCustom");
+    limitSelect.replaceChildren(none, ...groups, custom);
+    limitSelect.value = selectValue();
+  }
+
+  /** セレクタに表示する値。カスタムは集合が何であれ "custom" を選んだ状態にする。 */
+  function selectValue() {
+    return isCustomLimit(state.limit) ? CUSTOM_LIMIT : state.limit;
+  }
+
+  function customGroupLabel(geo) {
+    // 地理圏の名前は I18N-001 の geoArea が正。region-notes.json にしか無い
+    // "other" だけ filter 名前空間に持つ。
+    return geo === "other" ? t("filter.customGroupOther") : t(`geoArea.${geo}`);
+  }
+
+  /** リージョンのチェックボックス一覧 (AC-012 / AC-013)。言語が変わったら作り直す。 */
+  function renderCustomPicker() {
+    const lang = getLang();
+    customBoxes.clear();
+    const groups = customRegionGroups(regionNotes).map(({ geo, regions }) => {
+      const fieldset = el("fieldset", "filter-custom-group");
+      fieldset.dataset.geo = geo;
+      const groupLabel = customGroupLabel(geo);
+      fieldset.append(el("legend", "filter-custom-legend", groupLabel));
+
+      // グループ一括選択 (AC-013)。
+      const selectAll = el("button", "filter-custom-all", t("filter.customSelectAll"));
+      selectAll.type = "button";
+      selectAll.dataset.geo = geo;
+      selectAll.setAttribute("aria-label", t("filter.customSelectAllOf", { group: groupLabel }));
+      selectAll.addEventListener("click", () => {
+        const next = new Set(customLimitCodes(state.limit));
+        for (const code of regions) next.add(code);
+        setState({ ...state, limit: customLimitValue([...next]) });
+      });
+      fieldset.append(selectAll);
+
+      const list = el("ul", "filter-custom-list");
+      for (const code of regions) {
+        const item = el("li", "filter-custom-item");
+        const label = el("label", "filter-custom-label");
+        const box = el("input", "filter-custom-box");
+        box.type = "checkbox";
+        box.value = code;
+        box.id = `filter-custom-${code}`;
+        box.addEventListener("change", () => setState(readControls()));
+        // ラベルは「コード — 現地名」。名前は region-notes.json が正 (I18N-001 AC-005)。
+        label.append(box, el("span", null, regionOptionLabel(code, lang, regionNotes)));
+        customBoxes.set(code, box);
+        item.append(label);
+        list.append(item);
+      }
+      fieldset.append(list);
+      return fieldset;
+    });
+    customGroups.replaceChildren(...groups);
+    syncCustom();
+  }
+
+  /** ピッカーの開閉・チェック状態・ヒントを state に合わせる。 */
+  function syncCustom() {
+    const custom = isCustomLimit(state.limit);
+    const codes = new Set(customLimitCodes(state.limit));
+    customPicker.hidden = !custom;
+    // 固定の選択肢に戻したらピッカーは閉じ、集合も持たない (AC-014)。
+    for (const [code, box] of customBoxes) box.checked = custom && codes.has(code);
+    customHint.hidden = !(custom && codes.size === 0);
   }
 
   // 選択肢は表示中データに現れる providerName の実値から生成する (AC-001)。
@@ -214,7 +329,8 @@ export function mountFilterBar({
     }
     search.value = state.q;
     callable.checked = state.callable === true;
-    limitSelect.value = state.limit;
+    limitSelect.value = selectValue();
+    syncCustom();
   }
 
   function renderChips() {
@@ -271,7 +387,13 @@ export function mountFilterBar({
       modality: [...modalitySelect.selectedOptions].map((option) => option.value),
       q: search.value,
       callable: callable.checked,
-      limit: limitSelect.value,
+      // カスタムのときはチェック済みのリージョンから値を組み立てる (AC-012)。
+      limit:
+        limitSelect.value === CUSTOM_LIMIT
+          ? customLimitValue(
+              [...customBoxes].filter(([, box]) => box.checked).map(([code]) => code),
+            )
+          : limitSelect.value,
     };
   }
 
@@ -301,10 +423,12 @@ export function mountFilterBar({
     applyTranslations(host);
     search.placeholder = t("filter.searchPlaceholder");
     renderLimitOptions();
+    renderCustomPicker();
     view.refresh();
   });
 
   renderLimitOptions();
+  renderCustomPicker();
   applyTranslations(host);
   view.setRowTransform(transform);
   view.onRender(afterRender);
@@ -312,6 +436,7 @@ export function mountFilterBar({
   return {
     el: host,
     empty,
+    customPicker,
     getState,
     setState: (next) => setState(next),
     setStateSilently: (next) => setState(next, { notify: false }),

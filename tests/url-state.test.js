@@ -170,3 +170,57 @@ describe("SHARE-001 AC-005 共有用 URL の組み立て", () => {
     );
   });
 });
+
+// --- AC-010 limit のカスタム集合 (Issue #1 / FILTER-001 AC-016 / AC-017) ---
+describe("SHARE-001 AC-010 limit のカスタム集合", () => {
+  it("custom:<code>+<code> を状態に戻す (コードは昇順)", () => {
+    const { state, ignored } = parseState("?limit=custom:ap-northeast-3%2Bap-northeast-1", vocab);
+    expect(state.limit).toBe("custom:ap-northeast-1+ap-northeast-3");
+    expect(ignored).toEqual([]);
+  });
+
+  it("生の + が空白に復号されても同じ集合になる", () => {
+    // ?limit=custom:ap-northeast-1+ap-northeast-3 と手で書いた URL
+    expect(parseState("?limit=custom:ap-northeast-1+ap-northeast-3", vocab).state.limit).toBe(
+      "custom:ap-northeast-1+ap-northeast-3",
+    );
+  });
+
+  it("serializeState → parseState で往復する", () => {
+    const before = {
+      region: "ap-northeast-1",
+      provider: [],
+      modality: [],
+      q: "",
+      callable: false,
+      limit: "custom:ap-northeast-1+us-east-1",
+    };
+    const query = serializeState(before);
+    expect(query).toBe("limit=custom%3Aap-northeast-1%2Bus-east-1");
+    expect(parseState(`?${query}`, vocab).state).toEqual(before);
+  });
+
+  it("region-notes.json に無いコードだけを落として報告する (AC-008 と同じ扱い)", () => {
+    const { state, ignored } = parseState(
+      "?limit=custom:ap-northeast-1%2Bxx-nowhere-9%2Bzz-void-1",
+      vocab,
+    );
+    expect(state.limit).toBe("custom:ap-northeast-1");
+    expect(ignored).toEqual([
+      { param: "limit", value: "xx-nowhere-9" },
+      { param: "limit", value: "zz-void-1" },
+    ]);
+  });
+
+  it("空のカスタム集合は限定なしと同じ意味だが URL には残る", () => {
+    expect(parseState("?limit=custom", vocab).state.limit).toBe("custom");
+    expect(serializeState({ limit: "custom" })).toBe("limit=custom");
+    // 全部が未知のコードなら空集合に潰れる
+    expect(parseState("?limit=custom:xx-nowhere-9", vocab).state.limit).toBe("custom");
+  });
+
+  it("固定リストの値は今までどおり一覧で検査する", () => {
+    expect(parseState("?limit=country:atlantis", vocab).state.limit).toBe("none");
+    expect(parseState("?limit=geo:apac", vocab).state.limit).toBe("geo:apac");
+  });
+});

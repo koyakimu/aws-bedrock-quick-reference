@@ -5,7 +5,14 @@ import { buildViewModel } from "../src/scripts/bedrock-view-model.mjs";
 import { regionName } from "../src/scripts/region-names.js";
 import {
   COUNTRY_CODES,
+  CUSTOM_LIMIT,
   GEO_CODES,
+  allRegionCodes,
+  customLimitCodes,
+  customLimitValue,
+  customRegionGroups,
+  isCustomLimit,
+  normalizeCustomLimit,
   MODALITIES,
   NO_LIMIT,
   annotateRow,
@@ -249,7 +256,12 @@ describe("FILTER-001 AC-007 In-Region と限定集合の関係", () => {
 // --- AC-008 Global は常に満たさない ---
 describe("FILTER-001 AC-008 Global は限定を満たさない", () => {
   it("destination が ['*'] のときどの L でも false", () => {
-    for (const value of options.filter((o) => o.kind !== "none").map((o) => o.value)) {
+    // 空のカスタム集合は「制限なし」と同じ意味なので、L を持つ選択肢だけを見る (AC-015)。
+    const values = [
+      ...options.filter((o) => o.kind !== "none" && o.kind !== "custom").map((o) => o.value),
+      "custom:ap-northeast-1+ap-northeast-3",
+    ];
+    for (const value of values) {
       expect(satisfiesLimit(["*"], setFor(value)), value).toBe(false);
     }
   });
@@ -350,7 +362,7 @@ describe("FILTER-001 条件チップ", () => {
     expect(removeCondition(next, { param: "limit", value: "country:jp" }).limit).toBe(NO_LIMIT);
   });
 
-  it("limit の正当値は 制限なし + 国 3 + 地理圏 5 の 9 件", () => {
+  it("limit の正当値は 制限なし + 国 3 + 地理圏 5 + カスタム の 10 件", () => {
     expect(options.map((option) => option.value)).toEqual([
       "none",
       "country:jp",
@@ -361,8 +373,146 @@ describe("FILTER-001 条件チップ", () => {
       "geo:eu",
       "geo:us",
       "geo:au",
+      "custom",
     ]);
     expect(isValidLimit(options, "country:atlantis")).toBe(false);
     expect(isValidLimit(options, "geo:apac")).toBe(true);
+  });
+});
+
+// --- AC-012 〜 AC-017 カスタム (リージョン複数選択、Issue #1) ---
+describe("FILTER-001 AC-012 カスタムの限定集合", () => {
+  it("セレクタの末尾がカスタムで、集合は持たない", () => {
+    const custom = options.at(-1);
+    expect(custom.value).toBe(CUSTOM_LIMIT);
+    expect(custom.kind).toBe("custom");
+    expect(custom.labelKey).toBe("filter.limitCustom");
+    expect(isValidLimit(options, CUSTOM_LIMIT)).toBe(true);
+    expect(isValidLimit(options, "custom:ap-northeast-1")).toBe(true);
+  });
+
+  it("選んだリージョンから L を作り、satisfiesLimit は固定リストと同じ判定をする", () => {
+    const value = customLimitValue(["ap-northeast-3", "ap-northeast-1"]);
+    expect(value).toBe("custom:ap-northeast-1+ap-northeast-3");
+    const L = setFor(value);
+    expect([...L].sort()).toEqual(["ap-northeast-1", "ap-northeast-3"]);
+    // jp. プロファイルは収まる / apac. は収まらない / Global は常に満たさない
+    expect(satisfiesLimit(["ap-northeast-1", "ap-northeast-3"], L)).toBe(true);
+    expect(satisfiesLimit(["ap-northeast-1", "ap-south-1"], L)).toBe(false);
+    expect(satisfiesLimit(["*"], L)).toBe(false);
+  });
+
+  it("同じ集合なら固定リストの country:jp と結果が一致する", () => {
+    const custom = applyFilters(
+      rows,
+      { limit: "custom:ap-northeast-1+ap-northeast-3" },
+      { region: TOKYO, limitRegions: setFor("custom:ap-northeast-1+ap-northeast-3") },
+    );
+    const fixed = applyFilters(
+      rows,
+      { limit: "country:jp" },
+      { region: TOKYO, limitRegions: setFor("country:jp") },
+    );
+    expect(ids(custom)).toEqual(ids(fixed));
+  });
+
+  it("チップは件数で表す (activeConditions に載る)", () => {
+    expect(activeConditions({ limit: "custom:ap-northeast-1+ap-northeast-3" })).toEqual([
+      { param: "limit", value: "custom:ap-northeast-1+ap-northeast-3" },
+    ]);
+  });
+});
+
+describe("FILTER-001 AC-013 地理圏ごとのグループ", () => {
+  it("ピッカーの区分は region-notes.json の geo から作る (固定表を持たない)", () => {
+    const groups = customRegionGroups(regionNotes);
+    expect(groups.map((group) => group.geo)).toEqual(["jp", "apac", "eu", "us", "au", "other"]);
+    expect(groups.find((group) => group.geo === "jp").regions).toEqual([
+      "ap-northeast-1",
+      "ap-northeast-3",
+    ]);
+    // 全リージョンがちょうど 1 つのグループに入る
+    const all = groups.flatMap((group) => group.regions).sort();
+    expect(all).toEqual(allRegionCodes(regionNotes));
+    expect(new Set(all).size).toBe(all.length);
+  });
+
+  it("グループ一括選択は既存の選択に足し込む", () => {
+    const jp = customRegionGroups(regionNotes).find((group) => group.geo === "jp").regions;
+    const next = customLimitValue([...new Set(["us-east-1", ...jp])]);
+    expect(next).toBe("custom:ap-northeast-1+ap-northeast-3+us-east-1");
+  });
+});
+
+describe("FILTER-001 AC-014 選択のクリアと固定リストへの復帰", () => {
+  it("クリアすると空集合の custom に戻る", () => {
+    expect(customLimitValue([])).toBe(CUSTOM_LIMIT);
+    expect(customLimitCodes(CUSTOM_LIMIT)).toEqual([]);
+  });
+
+  it("固定リストに戻すとカスタムの集合は残らない", () => {
+    expect(isCustomLimit("country:jp")).toBe(false);
+    expect(customLimitCodes("country:jp")).toEqual([]);
+    expect(removeCondition({ limit: "custom:ap-northeast-1" }, { param: "limit" }).limit).toBe(
+      NO_LIMIT,
+    );
+  });
+});
+
+describe("FILTER-001 AC-015 空のカスタム集合は限定しない", () => {
+  it("L は null になり、どの行も落ちない", () => {
+    expect(setFor(CUSTOM_LIMIT)).toBeNull();
+    const result = applyFilters(rows, { limit: CUSTOM_LIMIT }, { region: TOKYO, limitRegions: null });
+    expect(result.shown).toBe(rows.length);
+    // 限定の印も付かない (制限なしと同じ扱い)
+    expect(result.rows.every((row) => row.limit.active === false)).toBe(true);
+  });
+
+  it("条件チップには数えない (制限なしと同じ意味のため)", () => {
+    expect(activeConditions({ limit: CUSTOM_LIMIT })).toEqual([]);
+  });
+});
+
+describe("FILTER-001 AC-016 カスタム集合の表現", () => {
+  it("コードは昇順・重複なしで + 連結する", () => {
+    expect(customLimitValue(["us-east-1", "ap-northeast-1", "us-east-1"])).toBe(
+      "custom:ap-northeast-1+us-east-1",
+    );
+    expect(customLimitCodes("custom:us-east-1+ap-northeast-1")).toEqual([
+      "ap-northeast-1",
+      "us-east-1",
+    ]);
+  });
+
+  it("URLSearchParams が + を空白に復号しても読める", () => {
+    expect(customLimitCodes("custom:ap-northeast-1 ap-northeast-3")).toEqual([
+      "ap-northeast-1",
+      "ap-northeast-3",
+    ]);
+  });
+});
+
+describe("FILTER-001 AC-017 カスタム集合に未知のリージョンコード", () => {
+  const known = allRegionCodes(regionNotes);
+
+  it("region-notes.json に無いコードは落とし、落としたことを報告する", () => {
+    const result = normalizeCustomLimit("custom:ap-northeast-1+xx-nowhere-9", known);
+    expect(result.codes).toEqual(["ap-northeast-1"]);
+    expect(result.dropped).toEqual(["xx-nowhere-9"]);
+    expect(result.value).toBe("custom:ap-northeast-1");
+  });
+
+  it("全部が未知なら空集合 (= 限定しない) になる", () => {
+    const result = normalizeCustomLimit("custom:xx-nowhere-9+zz-void-1", known);
+    expect(result.codes).toEqual([]);
+    expect(result.value).toBe(CUSTOM_LIMIT);
+    expect(result.dropped).toEqual(["xx-nowhere-9", "zz-void-1"]);
+  });
+
+  it("落とした結果の判定は緩まない (残ったコードだけで包含を見る)", () => {
+    const { value } = normalizeCustomLimit("custom:ap-northeast-1+xx-nowhere-9", known);
+    const L = setFor(value);
+    expect(satisfiesLimit(["ap-northeast-1"], L)).toBe(true);
+    expect(satisfiesLimit(["ap-northeast-1", "ap-northeast-3"], L)).toBe(false);
   });
 });

@@ -1,7 +1,13 @@
 // URL クエリと画面状態の相互変換 (SHARE-001)。純関数。DOM も history も触らない。
 // 言語は URL に載せない (AC-006)。展開中の行も載せない (Spec Notes)。
 
-import { DEFAULT_FILTERS, MODALITIES, NO_LIMIT } from "./filter-model.mjs";
+import {
+  DEFAULT_FILTERS,
+  MODALITIES,
+  NO_LIMIT,
+  isCustomLimit,
+  normalizeCustomLimit,
+} from "./filter-model.mjs";
 
 export const DEFAULT_REGION = "ap-northeast-1";
 
@@ -83,7 +89,13 @@ export function parseState(search, { regions = [], providers = [], limits = [] }
 
   const limit = params.get("limit");
   if (limit != null) {
-    if (limits.includes(limit)) {
+    if (isCustomLimit(limit)) {
+      // custom:<code>+<code>... は固定リストに無いので、コードを 1 件ずつ検査する
+      // (SHARE-001 AC-010)。region-notes.json に無いコードだけを落として報告する。
+      const { value, dropped } = normalizeCustomLimit(limit, regions);
+      state.limit = value;
+      for (const code of dropped) ignored.push({ param: "limit", value: code });
+    } else if (limits.includes(limit)) {
       state.limit = limit;
     } else {
       ignored.push({ param: "limit", value: limit });

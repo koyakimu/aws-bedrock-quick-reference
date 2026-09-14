@@ -10,9 +10,16 @@ export const NO_LIMIT = "none";
 
 // 固定リストの選択肢 (D-007 の Option A の経路)。
 // 国は region-notes.json の country、地理圏は接頭辞と同じ 5 種。
-// カスタムのリージョン複数選択 (D-007 の B の経路) は後続サイクル。
 export const COUNTRY_CODES = Object.freeze(["jp", "au", "us"]);
 export const GEO_CODES = Object.freeze(["jp", "apac", "eu", "us", "au"]);
+
+// カスタムのリージョン複数選択 (D-007 の B の経路、Issue #1)。
+// セレクタの値は集合が空のとき "custom"、選択があるとき "custom:<code>+<code>..." (昇順)。
+export const CUSTOM_LIMIT = "custom";
+const CUSTOM_PREFIX = "custom:";
+
+// 地理圏グループの並び。region-notes.json の geo にしか無い "other" を末尾に置く。
+export const CUSTOM_GROUP_ORDER = Object.freeze([...GEO_CODES, "other"]);
 
 export const DEFAULT_FILTERS = Object.freeze({
   provider: [],
@@ -24,6 +31,67 @@ export const DEFAULT_FILTERS = Object.freeze({
 
 function regionCodes(regionNotes) {
   return Object.keys(regionNotes ?? {}).filter((key) => key !== "_source");
+}
+
+/** region-notes.json が持つリージョンコードの全件 (昇順)。カスタム経路の母集団。 */
+export function allRegionCodes(regionNotes) {
+  return regionCodes(regionNotes).sort();
+}
+
+/** カスタムの値か (AC-012)。"custom" と "custom:..." の両方。 */
+export function isCustomLimit(value) {
+  const text = String(value ?? "");
+  return text === CUSTOM_LIMIT || text.startsWith(CUSTOM_PREFIX);
+}
+
+/**
+ * "custom:a+b" からリージョンコードを取り出す。重複を除いて昇順 (AC-016)。
+ * URLSearchParams はクエリ中の生の "+" を空白に復号するので、区切りは "+" と空白の
+ * どちらも受ける (手で書いた URL も、アプリが書いた %2B もどちらも読める)。
+ */
+export function customLimitCodes(value) {
+  const text = String(value ?? "");
+  if (!text.startsWith(CUSTOM_PREFIX)) return [];
+  const codes = text
+    .slice(CUSTOM_PREFIX.length)
+    .split(/[+\s]+/)
+    .map((code) => code.trim())
+    .filter((code) => code.length > 0);
+  return [...new Set(codes)].sort();
+}
+
+/** リージョンコードの集合を URL の値にする。空集合は "custom" (= 限定しない、AC-015)。 */
+export function customLimitValue(codes) {
+  const list = [...new Set((codes ?? []).filter((code) => String(code ?? "").length > 0))].sort();
+  return list.length === 0 ? CUSTOM_LIMIT : `${CUSTOM_PREFIX}${list.join("+")}`;
+}
+
+/**
+ * URL から来たカスタムの値を、既知のリージョンコードだけに揃える (AC-017)。
+ * 固定リストの限定集合 (AC-011) と違い、こちらは閲覧者が URL に書いた値なので、
+ * region-notes.json に無いコードは落として報告する (黙って限定を緩めない)。
+ */
+export function normalizeCustomLimit(value, known = []) {
+  const codes = customLimitCodes(value);
+  const kept = codes.filter((code) => known.includes(code));
+  const dropped = codes.filter((code) => !known.includes(code));
+  return { value: customLimitValue(kept), codes: kept, dropped };
+}
+
+/**
+ * カスタムのピッカーに並べる地理圏ごとのリージョン (AC-012 / AC-013)。
+ * 区分は region-notes.json の geo。固定表は持たず、データのキーから作る。
+ */
+export function customRegionGroups(regionNotes) {
+  const byGeo = new Map();
+  for (const code of allRegionCodes(regionNotes)) {
+    const geo = regionNotes?.[code]?.geo ?? "other";
+    if (!byGeo.has(geo)) byGeo.set(geo, []);
+    byGeo.get(geo).push(code);
+  }
+  const known = CUSTOM_GROUP_ORDER.filter((geo) => byGeo.has(geo));
+  const unknown = [...byGeo.keys()].filter((geo) => !CUSTOM_GROUP_ORDER.includes(geo)).sort();
+  return [...known, ...unknown].map((geo) => ({ geo, regions: byGeo.get(geo) }));
 }
 
 /** 表示中のデータに実際に現れる providerName の一覧 (AC-001)。固定表は持たない。 */
@@ -83,6 +151,15 @@ export function buildLimitOptions({ regionNotes, profiles } = {}) {
       labelKey: `filter.geo.${code}`,
       regions: geoGroupRegions(regionNotes, profiles, code),
     })),
+    // 末尾がカスタム (AC-012)。集合は選択のたびに値そのものへ書き込むので、
+    // ここでは空にしておく。
+    {
+      value: CUSTOM_LIMIT,
+      kind: "custom",
+      code: null,
+      labelKey: "filter.limitCustom",
+      regions: [],
+    },
   ];
 }
 
@@ -91,11 +168,16 @@ export function limitOption(options, value) {
 }
 
 export function isValidLimit(options, value) {
-  return limitOption(options, value) != null;
+  return isCustomLimit(value) || limitOption(options, value) != null;
 }
 
-/** 限定集合 L。制限なし / 未知の値は null (= 限定しない)。 */
+/** 限定集合 L。制限なし / 空のカスタム集合 / 未知の値は null (= 限定しない)。 */
 export function limitRegionSet(options, value) {
+  // カスタムは集合を値そのものが持つ (AC-012)。空集合は限定しない (AC-015)。
+  if (isCustomLimit(value)) {
+    const codes = customLimitCodes(value);
+    return codes.length === 0 ? null : new Set(codes);
+  }
   const option = limitOption(options, value);
   if (!option || option.kind === "none") return null;
   return new Set(option.regions);
@@ -188,7 +270,11 @@ export function activeConditions(filters = {}) {
   for (const modality of active.modality) chips.push({ param: "modality", value: modality });
   if ((active.q ?? "").trim() !== "") chips.push({ param: "q", value: active.q });
   if (active.callable) chips.push({ param: "callable", value: true });
-  if (active.limit !== NO_LIMIT) chips.push({ param: "limit", value: active.limit });
+  // 空のカスタム集合は「制限なし」と同じ意味なので条件に数えない (AC-015)。
+  const emptyCustom = isCustomLimit(active.limit) && customLimitCodes(active.limit).length === 0;
+  if (active.limit !== NO_LIMIT && !emptyCustom) {
+    chips.push({ param: "limit", value: active.limit });
+  }
   return chips;
 }
 

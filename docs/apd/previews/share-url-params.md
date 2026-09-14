@@ -13,10 +13,13 @@
 | `modality` | `TEXT` / `IMAGE` / `SPEECH` / `VIDEO` / `EMBEDDING` のカンマ区切り。小文字も受ける | 空（絞らない） | 1 件も選んでいないとき | 5 種に無い値だけを落として通知 |
 | `q` | 任意の文字列（`modelId` / `modelName` の部分一致、大文字小文字を区別しない） | 空文字列 | 空、または空白だけのとき | 不正値なし。DOM にはテキストとして入れる |
 | `callable` | `1`（ON）または `0`（OFF） | `0`（OFF） | OFF のとき | `1` / `0` 以外は落として通知 |
-| `limit` | `none` / `country:<jp\|au\|us>` / `geo:<jp\|apac\|eu\|us\|au>` | `none` | `none` のとき | 一覧に無い値は落として通知（選択肢は `filter-limit-options.md`） |
+| `limit` | `none` / `country:<jp\|au\|us>` / `geo:<jp\|apac\|eu\|us\|au>` / `custom` / `custom:<code>(+<code>)*` | `none` | `none` のとき | 固定リストは一覧に無い値を落として通知。`custom:` はコードごとに `region-notes.json` と突き合わせ、無いコードだけを落として通知（選択肢は `filter-limit-options.md`） |
 
 - 並び順は `region` → `provider` → `modality` → `q` → `callable` → `limit`
 - **既定状態の URL はクエリなしになる**（全パラメータが既定値なら `?` ごと付かない）
+- `limit=custom:...` のリージョンコードは昇順・重複なしで `+` 連結する。アプリが書くときは `+` が
+  `%2B` に percent encode されるが、手で書いた生の `+` も（`URLSearchParams` が空白に復号するため
+  空白として）区切りに受ける。1 つも選んでいない状態は `custom` で、意味は `none` と同じ（FILTER-001 AC-015）
 - 言語は URL に載せない。開いた人の `localStorage` / `navigator.language` で決まる（AC-006）
 - 展開中の行（DETAIL-001）も URL に載せない（共有の主目的がぼやけるため）
 
@@ -37,4 +40,7 @@
 | `?region=eu-central-1` | フランクフルト起点 |
 | `?provider=Anthropic&limit=country:jp` | 東京起点で Anthropic、推論先を日本国内に限定 |
 | `?region=ap-northeast-1&modality=TEXT&q=claude&callable=1&limit=geo:apac` | 全 5 条件を設定した状態 |
+| `?limit=custom:ap-northeast-1+ap-northeast-3` | 東京起点で推論先を東京・大阪の 2 リージョンに限定（カスタム） |
+| `?limit=custom` | カスタムのピッカーを開いた状態。リージョン未選択なので限定はかからない |
+| `?limit=custom:ap-northeast-1+xx-nowhere-9` | 未知の `xx-nowhere-9` を落として通知し、URL は `?limit=custom%3Aap-northeast-1` に書き換わる |
 | `?region=xx-nowhere-9` | 対象外のリージョン。東京にフォールバックし通知を出し、URL は `/aws-bedrock-quick-reference/` に書き換わる |
