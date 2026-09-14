@@ -28,7 +28,7 @@ export function mountShare({
   history: hist = window.history,
 } = {}) {
   const regions = view.getRegions();
-  const limits = filter ? filter.getLimitOptions().map((option) => option.value) : [];
+  const limitOptions = filter ? filter.getLimitOptions() : [];
 
   // --- 通知 (AC-007 / AC-008) ---
   const notice = el("section", "banner notice");
@@ -116,7 +116,7 @@ export function mountShare({
   function restore(search = loc.search) {
     // provider の正当値は「今の起点で表示できる行」の実値 (FILTER-001 AC-001)。
     const providers = providerOptions(view.getModel()?.rows ?? []);
-    const { state, ignored } = parseState(search, { regions, providers, limits });
+    const { state, ignored } = parseState(search, { regions, providers, limitOptions });
 
     if (state.region !== view.getRegion()) view.setRegion(state.region);
 

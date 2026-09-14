@@ -130,8 +130,8 @@ export const en = {
     limit: "Limit inference destinations",
     limitNone: "No limit",
     limitCustom: "Custom…",
-    groupCountry: "Country",
-    groupGeo: "Geography",
+    // Option and chip label; the Region count comes with it (AC-018).
+    limitOptionLabel: "{label} ({count})",
     customHeading: "Choose the Regions allowed as destinations",
     customGroupOther: "Other",
     customSelectAll: "Select all in this group",
@@ -148,16 +148,19 @@ export const en = {
     emptyTitle: "No model matches these conditions",
     emptyBody: "The active conditions are listed below. Remove one, or reset them.",
     country: {
-      jp: "Japan only",
-      au: "Australia only",
-      us: "United States only",
+      jp: "Japan",
+      au: "Australia",
+      us: "United States",
     },
+    // Geography labels live in the dictionary, never derived from the code. Only the
+    // geographies whose Region set differs from a country survive, so the label says
+    // how it differs (AC-018).
     geo: {
-      jp: "Japan (jp) only",
-      apac: "APAC only",
-      eu: "EU only",
-      us: "US (us) only",
-      au: "Australia (au) only",
+      jp: "Japan",
+      apac: "Asia Pacific",
+      eu: "EU",
+      us: "United States + Canada",
+      au: "Australia + New Zealand",
     },
   },
   detail: {

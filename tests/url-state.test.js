@@ -14,8 +14,10 @@ import { buildSnapshot, regionNotes } from "./fixtures/bedrock-fixture.js";
 const snapshot = buildSnapshot();
 const regions = Object.keys(regionNotes).filter((key) => key !== "_source");
 const providers = ["Amazon", "Anthropic", "Cohere", "NVIDIA"];
-const limits = buildLimitOptions({ regionNotes, profiles: snapshot.profiles }).map((o) => o.value);
-const vocab = { regions, providers, limits };
+// limit の正当値は FILTER-001 の選択肢そのもの。畳まれた値 (geo:jp など) も
+// 選択肢が aliases に持っているので、ここでは値の一覧ではなく選択肢を渡す。
+const limitOptions = buildLimitOptions({ regionNotes, profiles: snapshot.profiles });
+const vocab = { regions, providers, limitOptions };
 
 // --- AC-003 絞り込み条件が URL に載る ---
 describe("SHARE-001 AC-003 絞り込み条件が URL に載る", () => {
@@ -219,8 +221,18 @@ describe("SHARE-001 AC-010 limit のカスタム集合", () => {
     expect(parseState("?limit=custom:xx-nowhere-9", vocab).state.limit).toBe("custom");
   });
 
-  it("固定リストの値は今までどおり一覧で検査する", () => {
+  it("固定リストの値は今までどおり選択肢で検査する", () => {
     expect(parseState("?limit=country:atlantis", vocab).state.limit).toBe("none");
     expect(parseState("?limit=geo:apac", vocab).state.limit).toBe("geo:apac");
+  });
+
+  // FILTER-001 AC-019: 国と同じ集合になって畳まれた地理圏の値 (既存のリンク) は、
+  // 残った選択肢の値に直して同じ集合を当てる。無視しない。
+  it("畳まれた地理圏の値は残った選択肢の値に直す", () => {
+    const jp = limitOptions.find((option) => option.value === "country:jp");
+    expect(jp.aliases).toContain("geo:jp");
+    const { state, ignored } = parseState("?limit=geo:jp", vocab);
+    expect(state.limit).toBe("country:jp");
+    expect(ignored).toEqual([]);
   });
 });

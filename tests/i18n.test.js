@@ -145,7 +145,11 @@ describe("AC-005 リージョン表示名", () => {
 
   it("i18n 辞書はリージョン名を持たない (二重に持たない)", () => {
     const codes = Object.keys(regionNotes).filter((key) => key !== "_source");
-    const flat = JSON.stringify({ ja, en });
+    // filter.geo は地理圏 (推論先の限定の選択肢) の表示名で、FILTER-001 AC-018 により
+    // 辞書が正。「オーストラリア＋ニュージーランド」のように国名を含むので、
+    // リージョン表示名の二重持ちの検査からは外す。
+    const strip = (dict) => ({ ...dict, filter: { ...dict.filter, geo: undefined } });
+    const flat = JSON.stringify({ ja: strip(ja), en: strip(en) });
     for (const code of codes) {
       expect(flat, `${code} が辞書に入っている`).not.toContain(code);
       // 2 文字以下の表示名は普通の日本語の部分文字列と衝突する

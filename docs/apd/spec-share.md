@@ -1,7 +1,7 @@
 ---
 spec_id: "SHARE-001"
 context: "share"
-version: 2
+version: 3
 issue_ref: "#1"
 title: "URL による起点リージョンと絞り込みの共有"
 decision_refs:
@@ -121,9 +121,10 @@ decision_refs:
 - 起点リージョンを URL で共有できることは Design FAQ Q13 で約束している。絞り込みの共有はその自然な拡張として同じ仕組みに載せる
 - 展開中の行（DETAIL-001）は URL に載せない。行数が増えると URL が長くなり、共有の主目的（起点と条件）がぼやけるため
 - GitHub Pages のサブパス（`/aws-bedrock-quick-reference/`）配下で動くこと。URL の組み立てで先頭スラッシュの絶対パスを使わない
-- `limit` の値の文法は `none` / `country:<code>` / `geo:<code>` / `custom` / `custom:<code>(+<code>)*`。固定リストの値は選択肢の一覧（FILTER-001 `buildLimitOptions()`）と突き合わせて検査し、カスタムはコードを 1 件ずつ `region-notes.json` のキーと突き合わせる。値の全体を弾かず、解釈できない部分だけを落とすのは AC-008 と同じ方針
+- `limit` の値の文法は `none` / `country:<code>` / `geo:<code>` / `custom` / `custom:<code>(+<code>)*`。固定リストの値は選択肢（FILTER-001 `buildLimitOptions()`）と突き合わせて検査し、集合が同じで畳まれた値（`geo:jp` など）は残った選択肢の値に読み替えて適用する（FILTER-001 v4 AC-019。「解釈できない指定」には数えない）。カスタムはコードを 1 件ずつ `region-notes.json` のキーと突き合わせる。値の全体を弾かず、解釈できない部分だけを落とすのは AC-008 と同じ方針
 
 ## 変更履歴
 
+- **version 3** (2026-09-15): `limit` の固定リストの値のうち、FILTER-001 v4 AC-018 で選択肢が畳まれた値（`geo:jp` など）を、無視せず残った選択肢の値に読み替えて適用するようにした（Notes）。値の文法・AC-001〜AC-010 は変更しない。理由: 既に共有されているリンクを壊さないため
 - **version 2** (2026-09-14): `limit` の値の文法に カスタム集合（`custom` / `custom:<code>+<code>...`）を足し、AC-010 を追加した。未知のリージョンコードはコードごとに落として通知し、URL を書き換える。AC-001〜AC-009 と他のパラメータは変更しない。理由: Issue #1（FILTER-001 v3 のカスタム経路）
 - **version 1** (2026-09-14): 初版
