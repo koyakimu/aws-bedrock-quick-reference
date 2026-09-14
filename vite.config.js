@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 import { viteSingleFile } from "vite-plugin-singlefile";
 
 // ビルド実行日 (JST) を index.html の %BUILD_DATE% に埋め込む
@@ -38,5 +38,8 @@ export default defineConfig({
   test: {
     root: ".",
     environment: "jsdom",
+    // worktree (.claude/worktrees/) やビルド生成物の中のテストを拾わない。
+    // vitest の既定 (node_modules / .git) に dist と .claude を足す。
+    exclude: [...configDefaults.exclude, "**/dist/**", "**/.claude/**"],
   },
 });
