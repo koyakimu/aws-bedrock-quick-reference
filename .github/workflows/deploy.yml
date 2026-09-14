@@ -1,0 +1,50 @@
+name: Deploy to GitHub Pages
+
+# データ取得 (DATA-001) は手元の SSO で手動実行する。
+# CI に AWS の認証情報・OIDC ロールは置かない (DEPLOY-001 AC-004 / D-002)。
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# GitHub Pages の deploy に必要な範囲のみ (DEPLOY-001 AC-005)
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      # テストが落ちたら以降のステップは走らず deploy ジョブも動かない (AC-006)
+      - run: npm test
+      # data/*.json はリポジトリのコミット済みファイルを import する。CI で fetch しない (AC-001 / AC-004)
+      - run: npm run build
+
+      # dist/index.html の 1 ファイルだけを成果物にする (AC-002 / AC-008)
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

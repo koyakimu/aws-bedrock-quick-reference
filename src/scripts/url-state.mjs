@@ -1,0 +1,145 @@
+// URL クエリと画面状態の相互変換 (SHARE-001)。純関数。DOM も history も触らない。
+// 言語は URL に載せない (AC-006)。展開中の行も載せない (Spec Notes)。
+
+import { DEFAULT_FILTERS, MODALITIES, NO_LIMIT } from "./filter-model.mjs";
+
+export const DEFAULT_REGION = "ap-northeast-1";
+
+// パラメータ名と並び順。URL の見た目を安定させるため配列で持つ。
+export const PARAM_ORDER = Object.freeze([
+  "region",
+  "provider",
+  "modality",
+  "q",
+  "callable",
+  "limit",
+]);
+
+export const DEFAULT_STATE = Object.freeze({
+  region: DEFAULT_REGION,
+  ...DEFAULT_FILTERS,
+});
+
+const CALLABLE_ON = "1";
+
+// モダリティの正当値は filter-model.mjs が正。
+const MODALITY_VALUES = MODALITIES;
+
+function splitList(value) {
+  return String(value)
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0);
+}
+
+/**
+ * location.search を状態に変換する (AC-002 / AC-004 / AC-007 / AC-008)。
+ * 例外は投げない。解釈できない値だけを落として ignored に積み、残りは適用する。
+ * region が未知のときは既定にフォールバックし、ignored に fallback: true で載せる。
+ */
+export function parseState(search, { regions = [], providers = [], limits = [] } = {}) {
+  const params = new URLSearchParams(String(search ?? "").replace(/^\?/, ""));
+  const state = { ...DEFAULT_STATE, provider: [], modality: [] };
+  const ignored = [];
+
+  const region = params.get("region");
+  if (region != null) {
+    if (regions.includes(region)) {
+      state.region = region;
+    } else {
+      ignored.push({ param: "region", value: region, fallback: true });
+    }
+  }
+
+  const provider = params.get("provider");
+  if (provider != null) {
+    const wanted = splitList(provider);
+    state.provider = wanted.filter((entry) => providers.includes(entry));
+    for (const entry of wanted) {
+      if (!providers.includes(entry)) ignored.push({ param: "provider", value: entry });
+    }
+  }
+
+  const modality = params.get("modality");
+  if (modality != null) {
+    const wanted = splitList(modality).map((entry) => entry.toUpperCase());
+    state.modality = wanted.filter((entry) => MODALITY_VALUES.includes(entry));
+    for (const entry of wanted) {
+      if (!MODALITY_VALUES.includes(entry)) ignored.push({ param: "modality", value: entry });
+    }
+  }
+
+  const q = params.get("q");
+  if (q != null && q.trim() !== "") state.q = q;
+
+  const callable = params.get("callable");
+  if (callable != null) {
+    if (callable === CALLABLE_ON || callable === "0") {
+      state.callable = callable === CALLABLE_ON;
+    } else {
+      ignored.push({ param: "callable", value: callable });
+    }
+  }
+
+  const limit = params.get("limit");
+  if (limit != null) {
+    if (limits.includes(limit)) {
+      state.limit = limit;
+    } else {
+      ignored.push({ param: "limit", value: limit });
+    }
+  }
+
+  return { state, ignored };
+}
+
+/**
+ * 状態をクエリ文字列にする (AC-003 / AC-006)。既定値と同じ項目は省く。
+ * 返り値は "?" を含まない。既定状態なら空文字列。
+ */
+export function serializeState(state = {}) {
+  const merged = { ...DEFAULT_STATE, ...state };
+  const params = new URLSearchParams();
+  for (const name of PARAM_ORDER) {
+    if (name === "region") {
+      if (merged.region && merged.region !== DEFAULT_STATE.region) params.set("region", merged.region);
+      continue;
+    }
+    if (name === "provider" || name === "modality") {
+      const list = merged[name] ?? [];
+      if (list.length > 0) params.set(name, [...list].join(","));
+      continue;
+    }
+    if (name === "q") {
+      if ((merged.q ?? "").trim() !== "") params.set("q", merged.q);
+      continue;
+    }
+    if (name === "callable") {
+      if (merged.callable === true) params.set("callable", CALLABLE_ON);
+      continue;
+    }
+    if (name === "limit") {
+      if (merged.limit && merged.limit !== NO_LIMIT) params.set("limit", merged.limit);
+    }
+  }
+  return params.toString();
+}
+
+/**
+ * 現在の URL にクエリだけを差し替えた絶対 URL (AC-005)。
+ * GitHub Pages のサブパス配下で動くよう、パスは href のものをそのまま使い、
+ * 先頭スラッシュの絶対パスを組み立てない (Spec Notes)。
+ */
+export function shareUrl(state, href) {
+  const url = new URL(String(href));
+  const query = serializeState(state);
+  url.search = query === "" ? "" : `?${query}`;
+  url.hash = "";
+  return url.toString();
+}
+
+/** history に積むためのパス + クエリ。相対のまま返す。 */
+export function searchString(state) {
+  const query = serializeState(state);
+  return query === "" ? "" : `?${query}`;
+}

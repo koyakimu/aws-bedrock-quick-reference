@@ -1,0 +1,387 @@
+{
+  "apac.amazon.nova-lite-v1:0": {
+    "prefix": "apac",
+    "modelId": "amazon.nova-lite-v1:0",
+    "name": "APAC Nova Lite",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ]
+    }
+  },
+  "apac.amazon.nova-micro-v1:0": {
+    "prefix": "apac",
+    "modelId": "amazon.nova-micro-v1:0",
+    "name": "APAC Nova Micro",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ]
+    }
+  },
+  "apac.amazon.nova-pro-v1:0": {
+    "prefix": "apac",
+    "modelId": "amazon.nova-pro-v1:0",
+    "name": "APAC Nova Pro",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ]
+    }
+  },
+  "apac.anthropic.claude-3-5-sonnet-20240620-v1:0": {
+    "prefix": "apac",
+    "modelId": "anthropic.claude-3-5-sonnet-20240620-v1:0",
+    "name": "APAC Anthropic Claude 3.5 Sonnet",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ]
+    }
+  },
+  "apac.anthropic.claude-3-5-sonnet-20241022-v2:0": {
+    "prefix": "apac",
+    "modelId": "anthropic.claude-3-5-sonnet-20241022-v2:0",
+    "name": "APAC Anthropic Claude 3.5 Sonnet v2",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ]
+    }
+  },
+  "apac.anthropic.claude-3-haiku-20240307-v1:0": {
+    "prefix": "apac",
+    "modelId": "anthropic.claude-3-haiku-20240307-v1:0",
+    "name": "APAC Anthropic Claude 3 Haiku",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ]
+    }
+  },
+  "apac.anthropic.claude-3-sonnet-20240229-v1:0": {
+    "prefix": "apac",
+    "modelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "name": "APAC Anthropic Claude 3 Sonnet",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2"
+      ]
+    }
+  },
+  "apac.anthropic.claude-sonnet-4-20250514-v1:0": {
+    "prefix": "apac",
+    "modelId": "anthropic.claude-sonnet-4-20250514-v1:0",
+    "name": "APAC Claude Sonnet 4",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-south-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-southeast-4"
+      ]
+    }
+  },
+  "global.amazon.nova-2-lite-v1:0": {
+    "prefix": "global",
+    "modelId": "amazon.nova-2-lite-v1:0",
+    "name": "GLOBAL Amazon Nova 2 Lite",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.anthropic.claude-fable-5": {
+    "prefix": "global",
+    "modelId": "anthropic.claude-fable-5",
+    "name": "Global Anthropic Claude Fable 5",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.anthropic.claude-fable-5-1": {
+    "prefix": "global",
+    "modelId": "anthropic.claude-fable-5-1",
+    "name": "Global Anthropic Claude Fable 5.1",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.anthropic.claude-haiku-4-5-20251001-v1:0": {
+    "prefix": "global",
+    "modelId": "anthropic.claude-haiku-4-5-20251001-v1:0",
+    "name": "Global Anthropic Claude Haiku 4.5",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.anthropic.claude-opus-4-5-20251101-v1:0": {
+    "prefix": "global",
+    "modelId": "anthropic.claude-opus-4-5-20251101-v1:0",
+    "name": "GLOBAL Anthropic Claude Opus 4.5",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.anthropic.claude-opus-4-6-v1": {
+    "prefix": "global",
+    "modelId": "anthropic.claude-opus-4-6-v1",
+    "name": "Global Anthropic Claude Opus 4.6",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.anthropic.claude-opus-4-7": {
+    "prefix": "global",
+    "modelId": "anthropic.claude-opus-4-7",
+    "name": "Global Anthropic Claude Opus 4.7",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.anthropic.claude-opus-4-8": {
+    "prefix": "global",
+    "modelId": "anthropic.claude-opus-4-8",
+    "name": "Global Anthropic Claude Opus 4.8",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.anthropic.claude-opus-5": {
+    "prefix": "global",
+    "modelId": "anthropic.claude-opus-5",
+    "name": "Global Anthropic Claude Opus 5",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.anthropic.claude-sonnet-4-20250514-v1:0": {
+    "prefix": "global",
+    "modelId": "anthropic.claude-sonnet-4-20250514-v1:0",
+    "name": "Global Claude Sonnet 4",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.anthropic.claude-sonnet-4-5-20250929-v1:0": {
+    "prefix": "global",
+    "modelId": "anthropic.claude-sonnet-4-5-20250929-v1:0",
+    "name": "Global Claude Sonnet 4.5",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.anthropic.claude-sonnet-4-6": {
+    "prefix": "global",
+    "modelId": "anthropic.claude-sonnet-4-6",
+    "name": "Global Anthropic Claude Sonnet 4.6",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.anthropic.claude-sonnet-5": {
+    "prefix": "global",
+    "modelId": "anthropic.claude-sonnet-5",
+    "name": "Global Anthropic Claude Sonnet 5",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.cohere.embed-v4:0": {
+    "prefix": "global",
+    "modelId": "cohere.embed-v4:0",
+    "name": "Global Cohere Embed v4",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.openai.gpt-5.6-luna": {
+    "prefix": "global",
+    "modelId": "openai.gpt-5.6-luna",
+    "name": "Global OpenAI GPT-5.6 Luna",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.openai.gpt-5.6-sol": {
+    "prefix": "global",
+    "modelId": "openai.gpt-5.6-sol",
+    "name": "Global OpenAI GPT-5.6 Sol",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.openai.gpt-5.6-terra": {
+    "prefix": "global",
+    "modelId": "openai.gpt-5.6-terra",
+    "name": "Global OpenAI GPT-5.6 Terra",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.openai.gpt-6-astra": {
+    "prefix": "global",
+    "modelId": "openai.gpt-6-astra",
+    "name": "Global OpenAI GPT-6 Astra",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.twelvelabs.pegasus-1-2-v1:0": {
+    "prefix": "global",
+    "modelId": "twelvelabs.pegasus-1-2-v1:0",
+    "name": "GLOBAL TwelveLabs Pegasus v1.2",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "global.xai.grok-4.6": {
+    "prefix": "global",
+    "modelId": "xai.grok-4.6",
+    "name": "Global xAI Grok 4.6",
+    "sources": {
+      "ap-northeast-1": [
+        "*"
+      ]
+    }
+  },
+  "jp.amazon.nova-2-lite-v1:0": {
+    "prefix": "jp",
+    "modelId": "amazon.nova-2-lite-v1:0",
+    "name": "JP Amazon Nova 2 Lite",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-3"
+      ]
+    }
+  },
+  "jp.anthropic.claude-haiku-4-5-20251001-v1:0": {
+    "prefix": "jp",
+    "modelId": "anthropic.claude-haiku-4-5-20251001-v1:0",
+    "name": "JP Anthropic Claude Haiku 4.5",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-3"
+      ]
+    }
+  },
+  "jp.anthropic.claude-opus-4-7": {
+    "prefix": "jp",
+    "modelId": "anthropic.claude-opus-4-7",
+    "name": "JP Anthropic Claude Opus 4.7",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-3"
+      ]
+    }
+  },
+  "jp.anthropic.claude-opus-4-8": {
+    "prefix": "jp",
+    "modelId": "anthropic.claude-opus-4-8",
+    "name": "JP Anthropic Claude Opus 4.8",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-3"
+      ]
+    }
+  },
+  "jp.anthropic.claude-sonnet-4-5-20250929-v1:0": {
+    "prefix": "jp",
+    "modelId": "anthropic.claude-sonnet-4-5-20250929-v1:0",
+    "name": "JP Anthropic Claude Sonnet 4.5",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-3"
+      ]
+    }
+  },
+  "jp.anthropic.claude-sonnet-4-6": {
+    "prefix": "jp",
+    "modelId": "anthropic.claude-sonnet-4-6",
+    "name": "JP Anthropic Claude Sonnet 4.6",
+    "sources": {
+      "ap-northeast-1": [
+        "ap-northeast-1",
+        "ap-northeast-3"
+      ]
+    }
+  }
+}

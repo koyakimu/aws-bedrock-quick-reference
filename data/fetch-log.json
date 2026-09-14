@@ -1,0 +1,139 @@
+{
+  "generatedAt": "2026-09-14T08:57:12.692Z",
+  "accountKind": "sandbox",
+  "regions": {
+    "af-south-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ap-east-2": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ap-northeast-1": {
+      "status": "ok",
+      "models": 68,
+      "profiles": 34
+    },
+    "ap-northeast-2": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ap-northeast-3": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ap-south-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ap-south-2": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ap-southeast-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ap-southeast-2": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ap-southeast-3": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ap-southeast-4": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ap-southeast-5": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ap-southeast-6": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ap-southeast-7": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ca-central-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "ca-west-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "eu-central-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "eu-central-2": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "eu-north-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "eu-south-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "eu-south-2": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "eu-west-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "eu-west-2": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "eu-west-3": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "il-central-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "me-central-1": {
+      "status": "denied",
+      "reason": "<removed>"https://bedrock.me-central-1.amazonaws.com/foundation-models\"\n"
+    },
+    "me-south-1": {
+      "status": "denied",
+      "reason": "<removed>"https://bedrock.me-south-1.amazonaws.com/foundation-models\"\n"
+    },
+    "mx-central-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "sa-east-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "us-east-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "us-east-2": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "us-west-1": {
+      "status": "denied",
+      "reason": "<removed>"
+    },
+    "us-west-2": {
+      "status": "denied",
+      "reason": "<removed>"
+    }
+  }
+}

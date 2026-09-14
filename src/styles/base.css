@@ -1,0 +1,213 @@
+/* リセット、body、脚注、そして 768px のメディアクエリ (サイト唯一の分岐点) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  /* ページ全体は横に伸ばさない。横スクロールは表の枠だけが持つ (AC-NFR-001) */
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+  line-height: 1.45;
+  background: var(--bg);
+  color: var(--fg);
+  min-height: 100vh;
+  padding: var(--sp-5);
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+a {
+  color: inherit;
+}
+a:hover {
+  color: var(--fg-strong);
+}
+
+/* キーボード操作にだけ輪郭を出す */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* データなしバナー (AC-009)。「提供なし」の空状態とは見た目を分ける */
+.banner {
+  margin: var(--sp-3) 0;
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--warn-line);
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+  font-size: var(--fs-sm);
+}
+
+.banner-title {
+  font-weight: 600;
+  color: var(--warn-fg);
+  margin-bottom: var(--sp-1);
+}
+
+.banner-body {
+  color: var(--fg-muted);
+  margin-bottom: var(--sp-2);
+}
+
+/* reason は AWS API のエラー原文。折り返して全文を見せる */
+.banner-reason {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--fg);
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--sp-2);
+}
+
+/* 「提供なし」の空状態 (AC-010)。バナーと違って警告色を使わない */
+.empty {
+  margin-top: var(--sp-3);
+  padding: var(--sp-5);
+  text-align: center;
+  color: var(--fg-muted);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-lg);
+}
+
+/* 脚注 */
+.notes {
+  margin-top: var(--sp-5);
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  color: var(--fg-muted);
+}
+
+.notes h3 {
+  color: var(--fg-strong);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  margin-bottom: var(--sp-2);
+}
+
+.notes h4 {
+  color: var(--fg);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  margin-top: var(--sp-3);
+  margin-bottom: var(--sp-1);
+}
+
+.notes ul {
+  margin-left: var(--sp-4);
+}
+.notes li {
+  margin-bottom: var(--sp-1);
+  word-break: break-word;
+}
+.notes a.doc-link {
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* サイト唯一のブレークポイント。モバイル調整はここに集約する */
+@media (max-width: 768px) {
+  body {
+    padding: var(--sp-3);
+  }
+
+  .app .top {
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+  .app .brand {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+  }
+  .app .top-controls {
+    flex: 0 0 auto;
+  }
+
+  .source-bar {
+    flex-wrap: wrap;
+    row-gap: var(--sp-2);
+  }
+  .source-bar #source-region {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .endpoint-line {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .endpoint-line .endpoint {
+    word-break: break-all;
+  }
+
+  .notes {
+    padding: var(--sp-3);
+  }
+
+  /* 固定列が画面を占め切らないよう、Model ID を折り返させる。
+     max-width だけだと表のレイアウト計算が「1 文字ぶん」まで縮めてしまうので、
+     幅を固定して折り返し先の行幅を確保する */
+  :root {
+    --col-provider-w: 64px;
+  }
+  .table-frame td.sticky-modelId,
+  .table-frame th.sticky-modelId {
+    width: 148px;
+    min-width: 148px;
+    max-width: 148px;
+    white-space: normal;
+  }
+  .table-frame td.sticky-modelId .copyable {
+    display: flex;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .table-frame td.sticky-modelId .id {
+    flex: 1 1 auto;
+    min-width: 0;
+    word-break: break-all;
+  }
+  .table-frame td.sticky-modelId .copy-btn {
+    flex: 0 0 auto;
+  }
+}

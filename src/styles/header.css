@@ -1,0 +1,162 @@
+/* ヘッダ、言語 / テーマ切替、起点リージョンのバー */
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-4);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+
+.brand h1 {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg-strong);
+}
+
+.brand .tagline,
+.brand #build-meta {
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
+
+.top-controls {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: stretch;
+  flex: 0 0 auto;
+}
+
+/* 汎用のコントロール */
+.ctl {
+  padding: var(--sp-1) 9px;
+  font: inherit;
+  font-size: var(--fs-sm);
+  color: var(--fg);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  white-space: nowrap;
+  flex: 0 0 auto;
+  transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+.ctl:hover {
+  color: var(--fg-strong);
+  border-color: var(--fg-dim);
+}
+.ctl.on {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: var(--accent-line);
+}
+
+select.ctl {
+  appearance: auto;
+}
+
+/* 言語切替。対応言語の配列からボタンが生成される */
+.lang-toggle {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--bg-inset);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+.lang-toggle .lang-btn {
+  background: none;
+  border-color: transparent;
+  color: var(--fg-muted);
+}
+.lang-toggle .lang-btn:hover {
+  color: var(--fg);
+}
+.lang-toggle .lang-btn.on {
+  background: var(--bg-active);
+  color: var(--fg-strong);
+  border-color: transparent;
+}
+
+/* 起点リージョンのバー */
+.source-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  font-size: var(--fs-sm);
+}
+
+.source-label {
+  color: var(--fg-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#source-region {
+  max-width: 22em;
+}
+
+#source-region option.denied {
+  color: var(--warn-fg);
+}
+
+.endpoint-line {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-left: var(--sp-3);
+  min-width: 0;
+}
+
+.endpoint-label {
+  color: var(--fg-muted);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+}
+
+.endpoint {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--fg-strong);
+}
+
+/* コピーボタン。ID の右に小さく添える */
+.copy-btn {
+  font: inherit;
+  font-size: var(--fs-xs);
+  line-height: 1;
+  padding: 2px 4px;
+  color: var(--fg-dim);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.copy-btn:hover {
+  color: var(--fg-strong);
+  border-color: var(--line);
+}
+.copy-btn.copied {
+  color: var(--yes-fg);
+  border-color: var(--yes-line);
+}
+
+/* FILTER-001 が入る場所。中身が入るまでは hidden */
+.filter-bar {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+  margin-bottom: var(--sp-3);
+}
