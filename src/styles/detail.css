@@ -1,0 +1,187 @@
+/* 行の展開と詳細パネル (DETAIL-001) */
+.detail-toggle {
+  font: inherit;
+  line-height: 1;
+  color: var(--fg-muted);
+  background: none;
+  border: 0;
+  padding: 0 var(--sp-1) 0 0;
+  cursor: pointer;
+}
+.detail-toggle::before {
+  content: "▸";
+}
+.detail-toggle[aria-expanded="true"]::before {
+  content: "▾";
+}
+.detail-toggle:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+tr.expanded > td {
+  background: var(--bg-hover);
+}
+
+.table-frame tr.detail-row > td {
+  padding: 0;
+  white-space: normal;
+  background: var(--bg-inset);
+  border-bottom: 1px solid var(--line);
+}
+
+.detail-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--sp-5);
+  padding: var(--sp-4);
+}
+
+.detail-panel h4 {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.detail-region-list,
+.detail-source-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail-region,
+.detail-source {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  padding: 2px var(--sp-2);
+  border-radius: var(--radius);
+}
+
+/* 現在の起点リージョン (AC-007) */
+.detail-region.is-current,
+.detail-source.is-current {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-line);
+}
+.current-marker {
+  font-size: var(--fs-xs);
+  color: var(--accent);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius);
+  padding: 0 4px;
+}
+
+.detail-types {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+}
+.badge {
+  padding: 0 4px;
+  border-radius: var(--radius);
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+}
+.badge-on_demand {
+  color: var(--yes-fg);
+  background: var(--yes-bg);
+  border-color: var(--yes-line);
+}
+
+/* 「提供なし」「提供あり・推論タイプの指定なし」「データなし」は別の見た目 (AC-003/004/008) */
+.state-none {
+  color: var(--fg-dim);
+}
+.state-empty {
+  color: var(--fg-muted);
+  font-style: italic;
+}
+.state-nodata {
+  color: var(--warn-fg);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-line);
+  border-radius: var(--radius);
+  padding: 0 4px;
+}
+.detail-reason-link {
+  color: var(--accent);
+}
+
+.detail-profile {
+  margin-bottom: var(--sp-3);
+}
+.detail-profile-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-1);
+}
+.prefix-badge {
+  padding: 0 5px;
+  border-radius: var(--radius);
+  font-size: var(--fs-xs);
+  color: var(--chip-fg);
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-line);
+}
+.detail-arrow {
+  color: var(--fg-dim);
+}
+.detail-all-regions {
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
+.detail-no-profiles {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--fg-muted);
+}
+
+/* denied の reason 原文 (AC-008)。翻訳も要約もしない */
+.detail-host {
+  margin-top: var(--sp-4);
+}
+.detail-reason-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.detail-reason-text {
+  margin: var(--sp-1) 0 var(--sp-3);
+  padding: var(--sp-2);
+  font-size: var(--fs-xs);
+  white-space: pre-wrap;
+  overflow-x: auto;
+  color: var(--fg-muted);
+  background: var(--bg-inset);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+/* 375px ではパネルを縦積みにし、推論先チップは折り返す */
+@media (max-width: 768px) {
+  .detail-panel {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-4);
+  }
+}
+
+.detail-reason > details > summary {
+  cursor: pointer;
+  color: var(--fg-muted);
+  font-size: var(--fs-xs);
+}

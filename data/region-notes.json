@@ -1,0 +1,274 @@
+{
+  "_source": {
+    "date": "2026-09-14",
+    "urls": [
+      "https://docs.aws.amazon.com/general/latest/gr/bedrock.html",
+      "https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-regions.html"
+    ],
+    "note": "リージョンの列挙は General Reference の Amazon Bedrock エンドポイント表 (コントロールプレーン) から転記した。optIn は Account Management の Regional availability reference の Opt-in Regions 表と照合した。GovCloud (us-gov-east-1 / us-gov-west-1) は aws-us-gov パーティションで商用アカウントからは呼べないため対象外にしてある。"
+  },
+  "af-south-1": {
+    "ja": "ケープタウン",
+    "en": "Africa (Cape Town)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.af-south-1.amazonaws.com",
+    "country": "za",
+    "geo": "other"
+  },
+  "ap-east-2": {
+    "ja": "台北",
+    "en": "Asia Pacific (Taipei)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.ap-east-2.amazonaws.com",
+    "country": "tw",
+    "geo": "apac"
+  },
+  "ap-northeast-1": {
+    "ja": "東京",
+    "en": "Asia Pacific (Tokyo)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.ap-northeast-1.amazonaws.com",
+    "country": "jp",
+    "geo": "jp"
+  },
+  "ap-northeast-2": {
+    "ja": "ソウル",
+    "en": "Asia Pacific (Seoul)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.ap-northeast-2.amazonaws.com",
+    "country": "kr",
+    "geo": "apac"
+  },
+  "ap-northeast-3": {
+    "ja": "大阪",
+    "en": "Asia Pacific (Osaka)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.ap-northeast-3.amazonaws.com",
+    "country": "jp",
+    "geo": "jp"
+  },
+  "ap-south-1": {
+    "ja": "ムンバイ",
+    "en": "Asia Pacific (Mumbai)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.ap-south-1.amazonaws.com",
+    "country": "in",
+    "geo": "apac"
+  },
+  "ap-south-2": {
+    "ja": "ハイデラバード",
+    "en": "Asia Pacific (Hyderabad)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.ap-south-2.amazonaws.com",
+    "country": "in",
+    "geo": "apac"
+  },
+  "ap-southeast-1": {
+    "ja": "シンガポール",
+    "en": "Asia Pacific (Singapore)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.ap-southeast-1.amazonaws.com",
+    "country": "sg",
+    "geo": "apac"
+  },
+  "ap-southeast-2": {
+    "ja": "シドニー",
+    "en": "Asia Pacific (Sydney)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.ap-southeast-2.amazonaws.com",
+    "country": "au",
+    "geo": "au"
+  },
+  "ap-southeast-3": {
+    "ja": "ジャカルタ",
+    "en": "Asia Pacific (Jakarta)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.ap-southeast-3.amazonaws.com",
+    "country": "id",
+    "geo": "apac"
+  },
+  "ap-southeast-4": {
+    "ja": "メルボルン",
+    "en": "Asia Pacific (Melbourne)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.ap-southeast-4.amazonaws.com",
+    "country": "au",
+    "geo": "au"
+  },
+  "ap-southeast-5": {
+    "ja": "マレーシア",
+    "en": "Asia Pacific (Malaysia)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.ap-southeast-5.amazonaws.com",
+    "country": "my",
+    "geo": "apac"
+  },
+  "ap-southeast-6": {
+    "ja": "ニュージーランド",
+    "en": "Asia Pacific (New Zealand)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.ap-southeast-6.amazonaws.com",
+    "country": "nz",
+    "geo": "au"
+  },
+  "ap-southeast-7": {
+    "ja": "タイ",
+    "en": "Asia Pacific (Thailand)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.ap-southeast-7.amazonaws.com",
+    "country": "th",
+    "geo": "apac"
+  },
+  "ca-central-1": {
+    "ja": "カナダ (中部)",
+    "en": "Canada (Central)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.ca-central-1.amazonaws.com",
+    "country": "ca",
+    "geo": "other"
+  },
+  "ca-west-1": {
+    "ja": "カナダ西部 (カルガリー)",
+    "en": "Canada West (Calgary)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.ca-west-1.amazonaws.com",
+    "country": "ca",
+    "geo": "other"
+  },
+  "eu-central-1": {
+    "ja": "フランクフルト",
+    "en": "Europe (Frankfurt)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.eu-central-1.amazonaws.com",
+    "country": "de",
+    "geo": "eu"
+  },
+  "eu-central-2": {
+    "ja": "チューリッヒ",
+    "en": "Europe (Zurich)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.eu-central-2.amazonaws.com",
+    "country": "ch",
+    "geo": "eu"
+  },
+  "eu-north-1": {
+    "ja": "ストックホルム",
+    "en": "Europe (Stockholm)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.eu-north-1.amazonaws.com",
+    "country": "se",
+    "geo": "eu"
+  },
+  "eu-south-1": {
+    "ja": "ミラノ",
+    "en": "Europe (Milan)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.eu-south-1.amazonaws.com",
+    "country": "it",
+    "geo": "eu"
+  },
+  "eu-south-2": {
+    "ja": "スペイン",
+    "en": "Europe (Spain)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.eu-south-2.amazonaws.com",
+    "country": "es",
+    "geo": "eu"
+  },
+  "eu-west-1": {
+    "ja": "アイルランド",
+    "en": "Europe (Ireland)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.eu-west-1.amazonaws.com",
+    "country": "ie",
+    "geo": "eu"
+  },
+  "eu-west-2": {
+    "ja": "ロンドン",
+    "en": "Europe (London)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.eu-west-2.amazonaws.com",
+    "country": "gb",
+    "geo": "eu"
+  },
+  "eu-west-3": {
+    "ja": "パリ",
+    "en": "Europe (Paris)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.eu-west-3.amazonaws.com",
+    "country": "fr",
+    "geo": "eu"
+  },
+  "il-central-1": {
+    "ja": "テルアビブ",
+    "en": "Israel (Tel Aviv)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.il-central-1.amazonaws.com",
+    "country": "il",
+    "geo": "other"
+  },
+  "me-central-1": {
+    "ja": "UAE",
+    "en": "Middle East (UAE)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.me-central-1.amazonaws.com",
+    "country": "ae",
+    "geo": "other"
+  },
+  "me-south-1": {
+    "ja": "バーレーン",
+    "en": "Middle East (Bahrain)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.me-south-1.amazonaws.com",
+    "country": "bh",
+    "geo": "other"
+  },
+  "mx-central-1": {
+    "ja": "メキシコ (中部)",
+    "en": "Mexico (Central)",
+    "optIn": true,
+    "endpoint": "bedrock-runtime.mx-central-1.amazonaws.com",
+    "country": "mx",
+    "geo": "other"
+  },
+  "sa-east-1": {
+    "ja": "サンパウロ",
+    "en": "South America (São Paulo)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.sa-east-1.amazonaws.com",
+    "country": "br",
+    "geo": "other"
+  },
+  "us-east-1": {
+    "ja": "バージニア北部",
+    "en": "US East (N. Virginia)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.us-east-1.amazonaws.com",
+    "country": "us",
+    "geo": "us"
+  },
+  "us-east-2": {
+    "ja": "オハイオ",
+    "en": "US East (Ohio)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.us-east-2.amazonaws.com",
+    "country": "us",
+    "geo": "us"
+  },
+  "us-west-1": {
+    "ja": "北カリフォルニア",
+    "en": "US West (N. California)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.us-west-1.amazonaws.com",
+    "country": "us",
+    "geo": "us"
+  },
+  "us-west-2": {
+    "ja": "オレゴン",
+    "en": "US West (Oregon)",
+    "optIn": false,
+    "endpoint": "bedrock-runtime.us-west-2.amazonaws.com",
+    "country": "us",
+    "geo": "us"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "inferenceProfileSummaries": [
+    {
+      "inferenceProfileName": "APAC Nova Lite",
+      "description": "Routes requests to Nova Lite in ap-southeast-2, ap-northeast-1, ap-south-1, ap-northeast-2, ap-southeast-1 and ap-northeast-3.",
+      "createdAt": "2025-02-22T10:00:00+00:00",
+      "updatedAt": "2025-07-02T23:25:36.529759+00:00",
+      "inferenceProfileArn": "arn:aws:bedrock:ap-northeast-1:123456789012:inference-profile/apac.amazon.nova-lite-v1:0",
+      "models": [
+        {
+          "modelArn": "arn:aws:bedrock:ap-southeast-2::foundation-model/amazon.nova-lite-v1:0"
+        },
+        {
+          "modelArn": "arn:aws:bedrock:ap-northeast-1::foundation-model/amazon.nova-lite-v1:0"
+        },
+        {
+          "modelArn": "arn:aws:bedrock:ap-south-1::foundation-model/amazon.nova-lite-v1:0"
+        },
+        {
+          "modelArn": "arn:aws:bedrock:ap-northeast-2::foundation-model/amazon.nova-lite-v1:0"
+        },
+        {
+          "modelArn": "arn:aws:bedrock:ap-southeast-1::foundation-model/amazon.nova-lite-v1:0"
+        },
+        {
+          "modelArn": "arn:aws:bedrock:ap-northeast-3::foundation-model/amazon.nova-lite-v1:0"
+        }
+      ],
+      "inferenceProfileId": "apac.amazon.nova-lite-v1:0",
+      "status": "ACTIVE",
+      "type": "SYSTEM_DEFINED"
+    },
+    {
+      "inferenceProfileName": "JP Anthropic Claude Sonnet 4.5",
+      "description": "Routes requests to Claude Sonnet 4.5 in ap-northeast-3, ap-northeast-1.",
+      "createdAt": "2025-09-27T02:18:20.378142+00:00",
+      "updatedAt": "2025-09-28T06:44:23.623205+00:00",
+      "inferenceProfileArn": "arn:aws:bedrock:ap-northeast-1:123456789012:inference-profile/jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
+      "models": [
+        {
+          "modelArn": "arn:aws:bedrock:ap-northeast-3::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0"
+        },
+        {
+          "modelArn": "arn:aws:bedrock:ap-northeast-1::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0"
+        }
+      ],
+      "inferenceProfileId": "jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
+      "status": "ACTIVE",
+      "type": "SYSTEM_DEFINED"
+    },
+    {
+      "inferenceProfileName": "Global Claude Sonnet 4.5",
+      "description": "Routes requests to Claude Sonnet 4.5 globally across all supported AWS Regions.",
+      "createdAt": "2025-09-27T02:31:14+00:00",
+      "updatedAt": "2026-04-21T20:25:24.882110+00:00",
+      "inferenceProfileArn": "arn:aws:bedrock:ap-northeast-1:123456789012:inference-profile/global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+      "models": [
+        {
+          "modelArn": "arn:aws:bedrock:::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0"
+        },
+        {
+          "modelArn": "arn:aws:bedrock:ap-northeast-1::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0"
+        }
+      ],
+      "inferenceProfileId": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+      "status": "ACTIVE",
+      "type": "SYSTEM_DEFINED"
+    },
+    {
+      "inferenceProfileName": "Global Cohere Embed v4",
+      "description": "Routes requests to Embed v4 globally across all supported AWS Regions.",
+      "createdAt": "2025-10-01T01:19:51+00:00",
+      "updatedAt": "2025-10-01T01:19:51+00:00",
+      "inferenceProfileArn": "arn:aws:bedrock:ap-northeast-1:123456789012:inference-profile/global.cohere.embed-v4:0",
+      "models": [
+        {
+          "modelArn": "arn:aws:bedrock:::foundation-model/cohere.embed-v4:0"
+        },
+        {
+          "modelArn": "arn:aws:bedrock:ap-northeast-1::foundation-model/cohere.embed-v4:0"
+        }
+      ],
+      "inferenceProfileId": "global.cohere.embed-v4:0",
+      "status": "ACTIVE",
+      "type": "SYSTEM_DEFINED"
+    }
+  ]
+}

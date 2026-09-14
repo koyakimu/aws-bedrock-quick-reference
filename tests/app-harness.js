@@ -1,0 +1,84 @@
+// 結合テスト (jsdom) 用の組み立てヘルパー。
+// 本物の window.location / history は書き換えられないので、偽物を差し込む。
+import { vi } from "vitest";
+import { mountApp } from "../src/scripts/app.js";
+import { initI18n } from "../src/scripts/i18n.js";
+import { buildSnapshot, buildOverrides, regionNotes } from "./fixtures/bedrock-fixture.js";
+
+export const BASE_URL = "https://koyakimu.github.io/aws-bedrock-quick-reference/";
+
+export function fakeLocation(search = "") {
+  return {
+    href: `${BASE_URL}${search}`,
+    pathname: "/aws-bedrock-quick-reference/",
+    search,
+  };
+}
+
+export function fakeHistory(loc) {
+  return {
+    state: null,
+    replaceState: vi.fn((state, _title, url) => {
+      loc.href = new URL(url, BASE_URL).toString();
+      loc.search = new URL(url, BASE_URL).search;
+    }),
+    pushState: vi.fn(),
+  };
+}
+
+/** fixture のスナップショットで画面一式を組み立てる。 */
+export function mountFixtureApp({ search = "", overrides, lang = "ja-JP" } = {}) {
+  Object.defineProperty(navigator, "language", { value: lang, configurable: true });
+  document.body.innerHTML = '<main id="main"></main>';
+  localStorage.clear();
+  initI18n();
+
+  const snapshot = buildSnapshot();
+  const loc = fakeLocation(search);
+  const hist = fakeHistory(loc);
+  const app = mountApp({
+    host: document.getElementById("main"),
+    models: snapshot.models,
+    profiles: snapshot.profiles,
+    fetchLog: snapshot.fetchLog,
+    regionNotes,
+    overrides: overrides ?? {},
+    location: loc,
+    history: hist,
+  });
+  return { ...app, location: loc, history: hist, snapshot };
+}
+
+export { buildOverrides, regionNotes };
+
+// --- DOM の取り回し ---
+export const bodyRows = () =>
+  [...document.querySelectorAll("tbody tr[data-model-id]")].filter(
+    (tr) => !tr.classList.contains("detail-row"),
+  );
+export const modelIds = () => bodyRows().map((tr) => tr.dataset.modelId);
+export const rowFor = (modelId) =>
+  bodyRows().find((tr) => tr.dataset.modelId === modelId) ?? null;
+export const cells = (tr) => [...tr.children];
+export const $ = (selector) => document.querySelector(selector);
+
+export function setSelect(id, values) {
+  const select = document.getElementById(id);
+  for (const option of select.options) option.selected = values.includes(option.value);
+  select.dispatchEvent(new Event("change"));
+  return select;
+}
+
+export function setSearch(value) {
+  const input = document.getElementById("filter-q");
+  input.value = value;
+  input.dispatchEvent(new Event("input"));
+  return input;
+}
+
+export function setCheckbox(id, checked) {
+  const box = document.getElementById(id);
+  box.checked = checked;
+  box.dispatchEvent(new Event("change"));
+  return box;
+}

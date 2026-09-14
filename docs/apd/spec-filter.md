@@ -1,7 +1,7 @@
 ---
 spec_id: "FILTER-001"
 context: "filter"
-version: 1
+version: 2
 issue_ref: null
 title: "絞り込みと推論先の限定"
 decision_refs:
@@ -132,7 +132,7 @@ decision_refs:
 
 ## Notes
 
-- 国 → リージョンの対応（日本 = ap-northeast-1 / ap-northeast-3、オーストラリア = ap-southeast-2 / ap-southeast-4 / ap-southeast-6、米国 = us-east-1 / us-east-2 / us-west-1 / us-west-2）は `region-notes.json` に `country` フィールドを足して持つ。オーストラリアの 3 リージョンは公式 docs の `au.` プロファイルの定義（geographic-cross-region-inference）と一致させた。日本・米国はリージョンコードの地理からの整理で、General Reference の表で確認する
+- 国 → リージョンの対応（日本 = ap-northeast-1 / ap-northeast-3、オーストラリア = ap-southeast-2 / ap-southeast-4、米国 = us-east-1 / us-east-2 / us-west-1 / us-west-2）は `region-notes.json` の `country` フィールドを正とする。ap-southeast-6 はニュージーランド（country = nz）なので国「オーストラリア」には含めない。一方、公式 docs の `au.` プロファイルは ap-southeast-2/4/6 に routing するため、地理圏「au」（`geo` フィールド）には 3 リージョンとも含まれる。国と地理圏の集合は一致しないことがある
 - 地理圏グループは `profiles.json` のプロファイル接頭辞（`us` / `eu` / `apac` / `au` / `jp`）ごとに destination の和集合を取って導出する。ハードコードした固定表は持たない
 - 限定を満たすかの判定は「行を消す」か「セルを淡色にする」かの 2 段構えにする。行ごと消すと「この使い方なら条件を満たす」という情報まで失われるため
 - 限定集合の指定方法は D-007 で C（固定リスト + カスタムのリージョン複数選択）に決定。今回のサイクルで実装するのは固定リストの経路だけで、本 Spec の AC もその範囲。カスタム経路は後続サイクル（backlog に記録）で、判定関数 `satisfiesLimit(destinations, L)` は変えずに `L` の作り方と URL の `limit` の表現を足す
