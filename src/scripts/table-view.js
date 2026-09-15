@@ -5,9 +5,15 @@ import {
   buildViewModel,
   formatPrice,
   geoPlaces,
+  orderRows,
   outsideCount,
   selectableRegions,
   regionStatus,
+  DEFAULT_SORT,
+  PINNED_PROVIDERS,
+  SORT_ALPHA,
+  SORT_PINNED,
+  SORT_VALUES,
 } from "./bedrock-view-model.mjs";
 import { copyText } from "./copy.js";
 import { geoAreaLabel } from "./geo-labels.js";
@@ -47,6 +53,12 @@ export const PRICE_INDEX_URL = "https://pricing.us-east-1.amazonaws.com/offers/v
 
 // 起点リージョンが変わったことを外に知らせるイベント (SHARE-001 / FILTER-001 の入口)。
 export const SOURCE_REGION_EVENT = "source-region-changed";
+
+// 行の並び順が変わったことを外に知らせるイベント (SHARE-001 AC-013 の入口)。
+export const SORT_CHANGED_EVENT = "row-sort-changed";
+
+// 並べ替えを切り替えるヘッダの列 (AC-014)。プロバイダ列のヘッダのクリックで pinned ⇄ alpha。
+const SORT_TOGGLE_KEY = "provider";
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -350,6 +362,8 @@ export function mountTableView({
   const regions = selectableRegions(regionNotes);
   let region = regions.includes(DEFAULT_REGION) ? DEFAULT_REGION : regions[0];
   let state = { sortKey: null, sortDir: null, hiddenGroups: [] };
+  // 行の並び順 (AC-014)。既定は pinned。列ヘッダでの並べ替え (table-engine) とは別物。
+  let sort = DEFAULT_SORT;
 
   // FILTER-001 が挿す「行を絞る関数」と、描画結果を聞きたい側 (FILTER-001 / DETAIL-001)。
   // 表自身は絞り込みの条件を知らない。
@@ -442,8 +456,14 @@ export function mountTableView({
     state,
     i18n: t,
     onStateChange(next) {
+      // プロバイダ列のヘッダは列の並べ替えではなく pinned ⇄ alpha の切り替えに使う (AC-014)。
+      if (next.sortKey === SORT_TOGGLE_KEY) {
+        setSort(sort === SORT_PINNED ? SORT_ALPHA : SORT_PINNED);
+        return;
+      }
       state = next;
       table.update(shownRows, state);
+      markSortHeader();
     },
     // DETAIL-001 が行を特定できるようにしておく。
     rowAttrs: (row) => ({ "data-model-id": row.modelId }),
@@ -536,6 +556,12 @@ export function mountTableView({
       item.appendChild(anchor);
       list.appendChild(item);
     }
+    // AC-015: 固定したプロバイダを隠さず脚注で明かす。alpha のときは出さない。
+    if (sort === SORT_PINNED) {
+      const pinned = PINNED_PROVIDERS.join(t("footnote.pinnedJoin"));
+      const line = el("li", "footnote-pinned", t("footnote.pinnedProviders", { providers: pinned }));
+      list.appendChild(line);
+    }
     footnote.appendChild(list);
 
     footnote.appendChild(el("h4", null, t("footnote.sources")));
@@ -591,9 +617,13 @@ export function mountTableView({
     emptyState.hidden = denied || model.rows.length > 0;
     emptyState.textContent = t("state.notOffered");
 
-    shownRows = typeof rowTransform === "function" ? rowTransform(model.rows, region) : model.rows;
+    const filtered =
+      typeof rowTransform === "function" ? rowTransform(model.rows, region) : model.rows;
+    // AC-014: プロバイダ → モデル名 の 2 段。pinned のときだけ 2 社を先頭に固定する。
+    shownRows = orderRows(filtered, { sort, lang: getLang() });
 
     table.update(shownRows, state);
+    markSortHeader();
     renderFootnote();
     applyTranslations(banner);
 
@@ -605,6 +635,27 @@ export function mountTableView({
   select.addEventListener("change", () => {
     setRegion(select.value);
   });
+
+  /**
+   * 現在の並び順をプロバイダ列のヘッダに出す (AC-014)。
+   * alpha は昇順なので aria-sort="ascending"、pinned は昇順ではないので "other"。
+   */
+  function markSortHeader() {
+    const th = table.el.querySelector(`thead th[data-key="${SORT_TOGGLE_KEY}"]`);
+    if (!th) return;
+    // 列ヘッダでの並べ替え (table-engine) が効いているときはそちらの表示を優先する。
+    if (state.sortKey === SORT_TOGGLE_KEY && state.sortDir) return;
+    th.setAttribute("aria-sort", sort === SORT_ALPHA ? "ascending" : "other");
+    th.dataset.sort = sort;
+  }
+
+  /** 行の並び順を変える (AC-014)。値が同じなら何もしない。 */
+  function setSort(next) {
+    if (!SORT_VALUES.includes(next) || next === sort) return;
+    sort = next;
+    render();
+    document.dispatchEvent(new CustomEvent(SORT_CHANGED_EVENT, { detail: { sort } }));
+  }
 
   function setRegion(next) {
     if (!regions.includes(next)) return;
@@ -629,6 +680,8 @@ export function mountTableView({
     table: table.el,
     getRegion: () => region,
     getRegions: () => [...regions],
+    getSort: () => sort,
+    setSort,
     getModel: () => model,
     getShownRows: () => shownRows,
     setRegion,

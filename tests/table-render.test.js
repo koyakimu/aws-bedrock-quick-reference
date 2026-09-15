@@ -149,16 +149,16 @@ describe("AC-006 列構成と 1 行の中身", () => {
     expect(cells(rowFor("cohere.embed-v4:0"))[1].textContent).toBe("Embed v4");
   });
 
-  it("行は プロバイダ → モデル名 の昇順", () => {
+  it("行は プロバイダ → モデル名 の 2 段で、既定は Anthropic を先頭に固定する (AC-014)", () => {
     mount();
     expect(bodyRows().map((tr) => [...tr.children][0].textContent)).toEqual([
-      "Amazon",
-      "Amazon",
       "Anthropic",
+      "Amazon",
+      "Amazon",
       "Cohere",
       "NVIDIA",
     ]);
-    expect(bodyRows().slice(0, 2).map((tr) => [...tr.children][1].textContent)).toEqual([
+    expect(bodyRows().slice(1, 3).map((tr) => [...tr.children][1].textContent)).toEqual([
       "Nova Lite",
       "Titan Embeddings G1 - Text",
     ]);

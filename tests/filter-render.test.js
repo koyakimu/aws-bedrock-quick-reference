@@ -74,9 +74,10 @@ describe("FILTER-001 AC-005 推論先の限定 (国) の画面表示", () => {
   it("「日本国内のみ」で 4 行が残り、限定を満たさないセルに「限定外」が付く", () => {
     mountFixtureApp();
     setSelect("filter-limit", ["country:jp"]);
+    // 既定の並びは pinned なので Anthropic が先頭 (TABLE-001 AC-014)
     expect(modelIds()).toEqual([
-      NOVA,
       CLAUDE,
+      NOVA,
       "cohere.embed-v4:0",
       "nvidia.nemotron-nano-12b-v2",
     ]);
@@ -314,9 +315,10 @@ describe("FILTER-001 AC-012 カスタムを選ぶとリージョンのピッカ�
     checkCustomRegion("ap-northeast-1");
     checkCustomRegion("ap-northeast-3");
 
+    // 既定の並びは pinned なので Anthropic が先頭 (TABLE-001 AC-014)
     expect(modelIds()).toEqual([
-      NOVA,
       CLAUDE,
+      NOVA,
       "cohere.embed-v4:0",
       "nvidia.nemotron-nano-12b-v2",
     ]);

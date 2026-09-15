@@ -201,6 +201,10 @@ export const en = {
     accountKind: "Account kind used for the snapshot: {kind}",
     deniedRegions: "Regions not fetched ({count}): {regions}",
     deniedNone: "Every Region has been fetched.",
+    // TABLE-001 AC-015: name the providers pinned to the top of the default order.
+    pinnedProviders:
+      "The default order pins {providers} to the top. Sorting by provider name removes the pinning.",
+    pinnedJoin: " and ",
     sources: "Sources",
     docListFoundationModels: "ListFoundationModels (API Reference)",
     docListInferenceProfiles: "ListInferenceProfiles (API Reference)",

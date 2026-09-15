@@ -200,6 +200,10 @@ export const ja = {
     accountKind: "取得に使ったアカウントの種別: {kind}",
     deniedRegions: "未取得のリージョン ({count} 件): {regions}",
     deniedNone: "未取得のリージョンはありません。",
+    // TABLE-001 AC-015: 既定の並びで先頭に固定しているプロバイダを隠さず明かす。
+    pinnedProviders:
+      "既定の並びでは {providers} を先頭に固定しています。プロバイダ名で並べ替えると固定は外れます。",
+    pinnedJoin: " と ",
     sources: "出典",
     docListFoundationModels: "ListFoundationModels (API Reference)",
     docListInferenceProfiles: "ListInferenceProfiles (API Reference)",
