@@ -4,11 +4,23 @@
  */
 
 /* --- ヘッダ直下のビュータブ (AC-001) --- */
+/* タブと「この表示の URL をコピー」を 1 行に並べる。どちらもビューに依らない */
+.tabs-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+  margin-bottom: var(--sp-4);
+}
+
+.tabs-row .share-copy {
+  margin-left: auto;
+}
+
 nav.tabs {
   display: inline-flex;
   gap: 2px;
   padding: 3px;
-  margin-bottom: var(--sp-4);
   background: var(--bg-inset);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);

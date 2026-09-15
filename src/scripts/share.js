@@ -28,11 +28,15 @@ function el(tag, className, text) {
  *
  * getView / setView は画面ビュー (REGIONS-001) の入口。タブの UI は REGIONS-001 が持つので、
  * まだ無い間は既定の "origin" を返す getter と何もしない setter で動く (SHARE-001 AC-011)。
+ *
+ * providers は provider の正当値。REGIONS-001 の行列は起点に依存しない母集団を持つので
+ * (AC-003)、全モデルの providerName を渡す。省くと今の起点で表示できる行から作る。
  */
 export function mountShare({
   view,
   filter,
   regionNotes,
+  providers = null,
   host = document.getElementById("main"),
   location: loc = window.location,
   history: hist = window.history,
@@ -132,9 +136,15 @@ export function mountShare({
 
   /** 初期化。URL を読み、起点と絞り込みに適用してから URL を現在の状態に揃える。 */
   function restore(search = loc.search) {
-    // provider の正当値は「今の起点で表示できる行」の実値 (FILTER-001 AC-001)。
-    const providers = providerOptions(view.getModel()?.rows ?? []);
-    const { state, ignored } = parseState(search, { regions, providers, limitOptions });
+    // provider の正当値。渡されていればそれが正 (= 全モデルの providerName)。
+    // 起点で絞った一覧で検査すると、行が 0 件の起点を指した URL で provider が
+    // 落ちて通知が出てしまい、SHARE-001 AC-012 に反する。
+    const validProviders = providers ?? providerOptions(view.getModel()?.rows ?? []);
+    const { state, ignored } = parseState(search, {
+      regions,
+      providers: validProviders,
+      limitOptions,
+    });
 
     if (state.region !== view.getRegion()) view.setRegion(state.region);
     // 並び順は表に、ビューは呼び出し側に当てる (AC-011 / AC-013)。
@@ -142,9 +152,9 @@ export function mountShare({
     setView(state.view);
 
     if (filter) {
-      // 起点が変わると provider の母集団も変わるので、判定し直してから当てる。
-      const validProviders = providerOptions(view.getModel()?.rows ?? []);
-      const kept = state.provider.filter((entry) => validProviders.includes(entry));
+      // 起点を当てた後の母集団で判定し直す。providers が渡されていれば起点に依らない。
+      const afterRegion = providers ?? providerOptions(view.getModel()?.rows ?? []);
+      const kept = state.provider.filter((entry) => afterRegion.includes(entry));
       for (const entry of state.provider) {
         if (!kept.includes(entry)) ignored.push({ param: "provider", value: entry });
       }

@@ -11,6 +11,8 @@ import { LANG_CHANGED_EVENT } from "./i18n.js";
 import { SORT_CHANGED_EVENT, SOURCE_REGION_EVENT } from "./table-view.js";
 import { FILTER_CHANGED_EVENT } from "./filter-bar.js";
 import { VIEW_REGIONS } from "./url-state.mjs";
+import { matrixSourceRows } from "./regions-model.mjs";
+import { providerOptions } from "./filter-model.mjs";
 
 export function mountApp({
   host,
@@ -85,6 +87,8 @@ export function mountApp({
     view,
     filter,
     regionNotes,
+    // provider の正当値は全モデルの providerName。行列は起点に依存しない (SHARE-001 AC-012)。
+    providers: providerOptions(matrixSourceRows(models)),
     host,
     location: loc,
     history: hist,
@@ -92,7 +96,9 @@ export function mountApp({
     setView: setView ?? tabs.setView,
   });
   // 通知はどちらのビューでも読めるよう、タブの上に置く (SHARE-001 AC-007 / AC-008)。
-  tabs.nav.insertAdjacentElement("beforebegin", share.notice);
+  tabs.row.insertAdjacentElement("beforebegin", share.notice);
+  // 「この表示の URL をコピー」もビューに依らないので、タブと同じ行に置く (AC-005)。
+  tabs.row.appendChild(share.copyButton);
   // URL の値は TABLE-001 の既定値より優先する (SHARE-001 AC-002)。
   share.restore();
   // 復元は絞り込みを黙って当てる (イベントを出さない) ので、行列にも当て直す。

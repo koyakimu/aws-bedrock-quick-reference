@@ -19,6 +19,11 @@ export function mountViewTabs({ host, initial = DEFAULT_VIEW } = {}) {
   let current = VIEW_VALUES.includes(initial) ? initial : DEFAULT_VIEW;
   const listeners = [];
 
+  // タブと、ビューに依らない操作 (URL のコピー) を並べる 1 行。
+  const row = document.createElement("div");
+  row.className = "tabs-row";
+  row.id = "view-tabs-row";
+
   const nav = document.createElement("nav");
   nav.className = "tabs";
   nav.id = "view-tabs";
@@ -97,10 +102,12 @@ export function mountViewTabs({ host, initial = DEFAULT_VIEW } = {}) {
     });
   });
 
-  host.replaceChildren(nav, panels[VIEW_ORIGIN], panels[VIEW_REGIONS]);
+  row.appendChild(nav);
+  host.replaceChildren(row, panels[VIEW_ORIGIN], panels[VIEW_REGIONS]);
   mark();
 
   return {
+    row,
     nav,
     tabs: buttons,
     panels,

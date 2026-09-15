@@ -51,6 +51,15 @@ describe("AC-001 ヘッダ直下のビュータブ", () => {
     expect($("#footnote").closest("[role=tabpanel]")).toBeNull();
   });
 
+  it("URL のコピーと通知はタブの外にあり、どちらのビューでも見える (SHARE-001 AC-005)", () => {
+    const app = mountFixtureApp();
+    expect($("#share-copy").closest("[role=tabpanel]")).toBeNull();
+    expect($("#share-copy").closest(".tabs-row")).not.toBeNull();
+    expect(app.share.notice.closest("[role=tabpanel]")).toBeNull();
+    showMatrix();
+    expect($("#share-copy").closest("[role=tabpanel]")).toBeNull();
+  });
+
   it("クリックで aria-selected と hidden が入れ替わり、リロードは起きない", () => {
     const app = mountFixtureApp();
     let reloaded = false;
@@ -107,7 +116,9 @@ describe("AC-002 ビューは URL に載る", () => {
 
   it("?view=regions&region=...&provider=... で行列が出て region は行列を変えない", () => {
     const app = mountFixtureApp({
-      search: "?view=regions&region=ap-northeast-3&provider=Anthropic&limit=country:jp",
+      // eu-central-1 は fixture の取得記録に無い = 行が 0 件の起点。
+      // それでも provider は行列に効き、通知は出ない (SHARE-001 AC-012)。
+      search: "?view=regions&region=eu-central-1&provider=Anthropic&limit=country:jp",
     });
     expect($("#vp-regions").hidden).toBe(false);
     expect(viewTab("regions").getAttribute("aria-selected")).toBe("true");
@@ -118,9 +129,11 @@ describe("AC-002 ビューは URL に載る", () => {
     );
     expect([...providers]).toEqual(["Anthropic"]);
     const origin = [...document.querySelectorAll("#regions-matrix thead th.is-origin")];
-    expect(origin.map((th) => th.querySelector(".rg-code").textContent)).toEqual(["ap-northeast-3"]);
-    // 解釈できない指定として通知してはいけない (SHARE-001 AC-012)。
+    expect(origin.map((th) => th.querySelector(".rg-code").textContent)).toEqual(["eu-central-1"]);
+    // 保持している値は「解釈できない指定」に数えない (SHARE-001 AC-012)。
     expect(app.share.notice.hidden).toBe(true);
+    expect(app.filter.getState().provider).toEqual(["Anthropic"]);
+    expect(app.filter.getState().limit).toBe("country:jp");
   });
 });
 
@@ -184,6 +197,24 @@ describe("AC-005 セルの 4 状態", () => {
     expect([...marks].every((mark) => ["●", "○", "—", ""].includes(mark))).toBe(true);
     for (const td of byClass("mx-yes")) expect(td.title).toBe("直接提供（On-Demand）");
     for (const td of byClass("mx-none")) expect(td.title).toBe("提供なし");
+  });
+
+  it("availability が [] の行は ○ で、ツールチップだけが変わる", () => {
+    mountFixtureApp();
+    showMatrix();
+    // fixture の Titan Embeddings G1 - Text は東京で inferenceTypesSupported: []。
+    const row = document.querySelector(
+      '#regions-matrix tbody tr[data-model-id="amazon.titan-embed-text-v1:2:8k"]',
+    );
+    expect(row).not.toBeNull();
+    const tokyo = row.querySelectorAll("td.mx")[
+      [...matrixHeadRows()[1].children].findIndex(
+        (th) => th.querySelector(".rg-code").textContent === TOKYO,
+      )
+    ];
+    expect(tokyo.classList.contains("mx-prof")).toBe(true);
+    expect(tokyo.textContent).toBe("○");
+    expect(tokyo.title).toBe("提供あり・推論タイプの指定なし");
   });
 });
 
