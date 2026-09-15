@@ -82,6 +82,9 @@ export function mountApp({
     document.addEventListener(event, () => regions.invalidate());
   }
 
+  // 復元されたビューは控えるだけにして、実際の切り替えは絞り込みを当て終わった後に行う。
+  // restore() の途中で切り替えると、まだ当たっていない絞り込みで行列を 1 度描いてしまう。
+  let restoredView = null;
   const share = mountShare({
     view,
     filter,
@@ -92,7 +95,11 @@ export function mountApp({
     location: loc,
     history: hist,
     getView: getView ?? tabs.getView,
-    setView: setView ?? tabs.setView,
+    setView:
+      setView ??
+      ((next) => {
+        restoredView = next;
+      }),
   });
   // 通知はどちらのビューでも読めるよう、タブの上に置く (SHARE-001 AC-007 / AC-008)。
   tabs.row.insertAdjacentElement("beforebegin", share.notice);
@@ -101,8 +108,12 @@ export function mountApp({
   // URL の値は TABLE-001 の既定値より優先する (SHARE-001 AC-002)。
   share.restore();
   // 復元は絞り込みを黙って当てる (イベントを出さない) ので、行列にも当て直す。
+  // 伏せたままの行列はここでは描かれず、印だけが付く。
   regions.invalidate();
+  // 絞り込みを当て終えてからビューを切り替える。
+  if (restoredView) tabs.setView(restoredView);
   // 復元で「リージョン」が選ばれていたら、ここで描く (SHARE-001 AC-011)。
+  // tabs.setView からの onChange で描き終えていれば、ここは何もしない。
   if (tabs.getView() === VIEW_REGIONS) regions.activate();
 
   // 言語が変わってもリロードしない (I18N-001 AC-003)。

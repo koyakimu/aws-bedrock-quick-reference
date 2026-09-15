@@ -104,6 +104,44 @@ describe("AC-001 ヘッダ直下のビュータブ", () => {
   });
 });
 
+describe("AC-NFR-002 無駄な描き直しをしない", () => {
+  it("伏せている行列は起点側の変更で描き直さず、次に開いたときに追いつく", () => {
+    const app = mountFixtureApp();
+    // タブを開くまでは 1 度も描かない。
+    expect(app.regions.getRenderCount()).toBe(0);
+    showMatrix();
+    expect(app.regions.getRenderCount()).toBe(1);
+
+    // 伏せた状態で起点・並び順・絞り込みを動かしても描き直さない。
+    viewTab("origin").click();
+    const other = app.view.getRegions().find((code) => code !== app.view.getRegion());
+    app.view.setRegion(other);
+    app.view.setSort("alpha");
+    app.filter.setState({ ...app.filter.getState(), provider: ["Anthropic"] });
+    expect(app.regions.getRenderCount()).toBe(1);
+
+    // 次に開いたときに 1 度だけ追いつく。
+    showMatrix();
+    expect(app.regions.getRenderCount()).toBe(2);
+    const providers = new Set(
+      matrixBodyRows().map((tr) => tr.querySelector("td.prov").textContent).filter(Boolean),
+    );
+    expect([...providers]).toEqual(["Anthropic"]);
+  });
+
+  it("?view=regions の URL でも行列を描くのは 1 度だけ", () => {
+    const app = mountFixtureApp({ search: "?view=regions&provider=Anthropic" });
+    expect($("#vp-regions").hidden).toBe(false);
+    expect(app.regions.getRenderCount()).toBe(1);
+    expect(matrixBodyRows().length).toBeGreaterThan(0);
+    // 1 度きりでも絞り込みは当たっている (復元の後に描いている)。
+    const providers = new Set(
+      matrixBodyRows().map((tr) => tr.querySelector("td.prov").textContent).filter(Boolean),
+    );
+    expect([...providers]).toEqual(["Anthropic"]);
+  });
+});
+
 describe("AC-002 ビューは URL に載る", () => {
   it("タブを選ぶと view=regions が載り、既定では省かれる", () => {
     const app = mountFixtureApp();

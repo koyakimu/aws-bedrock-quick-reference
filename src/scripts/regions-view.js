@@ -77,6 +77,8 @@ export function mountRegionsView({
   let geoFilter = ALL_GEO;
   let started = false;
   let dirty = true;
+  // 描いた回数。無駄な描き直しが無いことをテストから確かめるための数え上げ (AC-NFR-002)。
+  let renders = 0;
 
   // --- 上のバー: 地域チップ + 提供元 / モダリティ + 件数 (UI Description) ---
   const bar = el("div", "bar regions-bar");
@@ -296,6 +298,7 @@ export function mountRegionsView({
   }
 
   function render() {
+    renders += 1;
     const filters = currentFilters();
     // 行を絞るのは FILTER-001 と同じ関数 (AC-010)。起点も限定も渡さない。
     const result = applyFilters(baseRows, { ...DEFAULT_FILTERS, ...filters });
@@ -332,10 +335,13 @@ export function mountRegionsView({
     render();
   }
 
-  /** まだ描いていないビューは印だけ付けておき、activate() で追いつく。 */
+  /**
+   * まだ描いていない・今は伏せてあるビューは印だけ付けておき、activate() で追いつく。
+   * 表示中なら提供元・モダリティの選択を追随させたいのでその場で描き直す。
+   */
   function invalidate() {
     dirty = true;
-    if (started) rebuild();
+    if (started && !host.hidden) rebuild();
   }
 
   for (const control of [providerSelect, modalitySelect]) {
@@ -370,6 +376,7 @@ export function mountRegionsView({
     },
     invalidate,
     isStarted: () => started,
+    getRenderCount: () => renders,
     getGeoFilter: () => geoFilter,
   };
 }
