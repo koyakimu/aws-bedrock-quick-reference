@@ -288,8 +288,10 @@ export function buildFlowFigure(lane, ctx = {}) {
   for (const box of description.enclosures) enclosure(svg, box);
   youNode(svg, uid, t("flow.you"));
 
-  // 起点・推論先・記録。In-Region で使えないときはまとめて淡色にする (AC-003)。
-  const inner = description.lane === "inRegion" && !description.available ? node("g", { class: "s-off" }) : svg;
+  // 起点・推論先・記録。そのレーンで呼べないときは境界の内側をまとめて淡色にする
+  // (AC-003。DETAIL-001 v8 AC-016 により Geo / Global でも同じ扱い)。
+  const off = !description.available;
+  const inner = off ? node("g", { class: "s-off" }) : svg;
   originNode(inner, { name: originName, code: region, endpoint: endpointOf(regionNotes, region) });
 
   if (lane === "inRegion") {
@@ -310,7 +312,7 @@ export function buildFlowFigure(lane, ctx = {}) {
       labelY: 150,
       tagX: 420,
     });
-    if (inner !== svg) svg.appendChild(inner);
+    if (off) svg.appendChild(inner);
     // 壁の外の注記 (AC-003)。図そのものは消さない。
     if (!description.available) {
       svg.appendChild(
@@ -343,7 +345,7 @@ export function buildFlowFigure(lane, ctx = {}) {
         }),
       );
     }
-    recordNode(svg, uid, {
+    recordNode(inner, uid, {
       y: description.recordY,
       originName,
       arrowX: 390,
@@ -352,6 +354,7 @@ export function buildFlowFigure(lane, ctx = {}) {
       labelY: description.recordY - 18,
       tagX: 412,
     });
+    if (off) svg.appendChild(inner);
     // 2 つの境界のあいだ (国外)、または国が分からないときの中立のチップ (AC-004 / AC-010)。
     const outside = description.countryKnown ? description.foreign : description.rest;
     if (outside.length > 0) {
@@ -412,8 +415,8 @@ export function buildFlowFigure(lane, ctx = {}) {
       height: 22,
     };
     chip(faint, originChip);
-    svg.appendChild(faint);
-    recordNode(svg, uid, {
+    inner.appendChild(faint);
+    recordNode(inner, uid, {
       y: description.recordY,
       originName,
       arrowX: 390,
@@ -422,6 +425,7 @@ export function buildFlowFigure(lane, ctx = {}) {
       labelY: description.recordY - 18,
       tagX: 412,
     });
+    if (off) svg.appendChild(inner);
     svg.appendChild(
       node("path", {
         d: "M406,110 C436,110 448,110 472,110",

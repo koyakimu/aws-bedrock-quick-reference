@@ -228,7 +228,6 @@ export const ja = {
     destGlobalScope: "全商用リージョン（国外を含む・限定できない）",
     destGeoNote: "起点が{place}のときの推論先。起点が変わると推論先も変わる",
     destGlobalNote: "個別のリージョン名は API から取得できないため、図の地名は例示",
-    laneUnavailable: "このモデルは{place}で直接提供なし",
     noLane: "この起点リージョンからは呼べません",
   },
   share: {

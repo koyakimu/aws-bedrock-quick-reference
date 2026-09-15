@@ -141,6 +141,15 @@ describe("AC-005 詳細パネルの接続先 (DETAIL-001 v8 AC-010 の見出し�
     expect(head.textContent).toContain("bedrock-mantle.ap-northeast-1.api.aws");
   });
 
+  it("bedrock-runtime の項目にも呼べる API が書かれている (AC-005 項目 2)", () => {
+    const item = headOf(MANTLE_MODEL).querySelector('[data-item="detail.runtimeEndpoint"]');
+    const apis = item.querySelector(".detail-endpoint-apis").textContent;
+    expect(apis).toContain("InvokeModel");
+    expect(apis).toContain("Converse");
+    expect(apis).toContain("OpenAI Responses");
+    expect(apis).toContain("Anthropic Messages");
+  });
+
   it("mantle の項目には呼べる API が書かれている (InvokeModel / Converse は無い)", () => {
     const item = mantleItem(headOf(MANTLE_MODEL));
     const apis = item.querySelector(".detail-endpoint-apis").textContent;
@@ -170,10 +179,11 @@ describe("AC-005 詳細パネルの接続先 (DETAIL-001 v8 AC-010 の見出し�
     const head = headOf(MANTLE_MODEL);
     expect(mantleItem(head)).toBeNull();
     expect(head.textContent).not.toContain(".api.aws");
-    // bedrock-runtime の項目は残る。
+    // bedrock-runtime の項目は残る（FQDN と呼べる API の両方）。
     expect(head.querySelector(".detail-endpoint-value").textContent).toBe(
       "bedrock-runtime.ap-northeast-3.amazonaws.com",
     );
+    expect(head.querySelector(".detail-endpoint-apis").textContent).toContain("InvokeModel");
   });
 
   it("cross-region inference が使えないことも書かれている", () => {

@@ -95,12 +95,11 @@ function headGrid(detail) {
   grid.appendChild(
     headItem("detail.modelId", createCopyable(detail.modelId, { labelKey: "copy.modelId" })),
   );
-  grid.appendChild(
-    headItem(
-      "detail.runtimeEndpoint",
-      el("span", "endpoint-value detail-endpoint-value mono", detail.endpoint),
-    ),
-  );
+  const runtime = el("div", "head-runtime");
+  runtime.appendChild(el("span", "endpoint-value detail-endpoint-value mono", detail.endpoint));
+  // MANTLE-001 v2 AC-005 項目 2: FQDN と、そこで呼べる API。
+  runtime.appendChild(el("span", "detail-endpoint-apis", t("mantle.runtimeApis")));
+  grid.appendChild(headItem("detail.runtimeEndpoint", runtime));
   // 起点に mantle が無いときはこの項目ごと出さない (AC-010)。
   if (detail.mantleEndpoint) grid.appendChild(headItem("detail.mantleEndpoint", mantleItem(detail)));
   return grid;
@@ -159,7 +158,10 @@ function destinationSection(lane, { destinations, region, regionNotes, available
   for (const line of lines) {
     const item = el("li", `dest-line dest-${line.kind}`);
     item.dataset.kind = line.kind;
-    if (line.kind === "notOffered") {
+    if (line.kind === "unavailable") {
+      // AC-016: 使えないレーン。タブの要約と同じ語 (AC-014) を 1 行だけ出す。
+      item.appendChild(el("span", "state-none", t("detail.sumUnavailable")));
+    } else if (line.kind === "notOffered") {
       item.appendChild(el("span", "state-none", t("detail.destNotOffered", { place: line.place })));
     } else if (line.kind === "globalScope") {
       item.appendChild(el("span", "k", t("detail.destScopeLabel")));
@@ -261,7 +263,14 @@ function laneBlock(lane, { modelId, detail, regionNotes, profile, available, hea
       prefix: profile?.prefix ?? null,
     }),
   );
-  block.appendChild(idSection(profile ? profile.profileId : modelId, { profile: Boolean(profile) }));
+  // AC-016: 使えない Geo / Global のレーンでは「指定する ID」を出さない。
+  // 対応するプロファイルが無いので指定できる ID がそもそも無い。
+  // In-Region はモデル ID がそのまま指定する ID なので、不可でも出す。
+  if (available || lane === LANE_IN_REGION) {
+    block.appendChild(
+      idSection(profile ? profile.profileId : modelId, { profile: Boolean(profile) }),
+    );
+  }
   block.appendChild(
     destinationSection(lane, {
       destinations: profile?.destinations ?? [],
@@ -283,7 +292,8 @@ function lanePanel(lane, { modelId, detail, regionNotes, prices }) {
   panel.dataset.lane = lane;
 
   // AC-021: どのレーンも使えないときは無言の空パネルを出さない。
-  if (!detail.anyLane) {
+  // 開いた状態になるのは In-Region のパネルなので、説明文はそこにだけ置く。
+  if (!detail.anyLane && lane === LANE_IN_REGION) {
     panel.appendChild(el("p", "detail-no-lane", t("detail.noLane")));
   }
 

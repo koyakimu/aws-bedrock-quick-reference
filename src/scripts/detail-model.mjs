@@ -160,6 +160,10 @@ export function buildDestinationLines(
     };
   }
 
+  // 使えない Geo / Global のレーンは推論先が無い。タブの要約と同じ「提供なし」だけを出し、
+  // 呼べるかのような行（「国内 0」「範囲: 全商用リージョン…」）を出さない (AC-016)。
+  if (!available) return { lines: [{ kind: "unavailable" }], note: null };
+
   if (lane === LANE_GLOBAL) {
     return {
       lines: [{ kind: "globalScope", places: [], warn: true }],

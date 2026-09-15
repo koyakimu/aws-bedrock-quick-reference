@@ -179,6 +179,55 @@ describe("AC-016 使えないレーンも開ける", () => {
   });
 });
 
+describe("AC-016 使えない Geo / Global のレーン", () => {
+  // NOVA は Global 不可、NVIDIA を除く In-Region 専用モデルは Geo 不可。
+  const NO_GEO = "cohere.embed-v4:0"; // 東京起点で Geo プロファイルが無い
+
+  it("Geo 不可のレーンは「指定する ID」を出さない", () => {
+    const lane = laneOf(open(NO_GEO), "geo");
+    expect(lane.querySelector(".detail-id")).toBeNull();
+    // モデル ID を指定する ID のように見せない。
+    expect(lane.querySelector(".lane-block").textContent).not.toContain(NO_GEO);
+  });
+
+  it("Geo 不可のレーンの推論先は「提供なし」の 1 行だけ", () => {
+    const lines = [...laneOf(open(NO_GEO), "geo").querySelectorAll(".dest-list li")];
+    expect(lines.map((line) => line.dataset.kind)).toEqual(["unavailable"]);
+    expect(lines[0].textContent).toBe("提供なし");
+    // 「国内 0」も出さない。
+    expect(laneOf(panelOf(NO_GEO), "geo").textContent).not.toContain("国内 0");
+  });
+
+  it("Global 不可のレーンも同じ形になる（範囲の行を出さない）", () => {
+    const lane = laneOf(open(NOVA), "global");
+    expect(lane.querySelector(".detail-id")).toBeNull();
+    const lines = [...lane.querySelectorAll(".dest-list li")];
+    expect(lines.map((line) => line.dataset.kind)).toEqual(["unavailable"]);
+    // 「範囲: 全商用リージョン（国外を含む・限定できない）」の行を出さない。
+    // 図の見出し（「全商用リージョン ・ 境界なし」）は AC-016 の指示どおり残す。
+    expect(lane.querySelector(".detail-dest").textContent).not.toContain("全商用リージョン");
+  });
+
+  it("使えない Geo / Global の図は内側が淡色で、推論先のチップを描かない", () => {
+    for (const [modelId, lane] of [
+      [NO_GEO, "geo"],
+      [NOVA, "global"],
+    ]) {
+      const svg = laneOf(open(modelId), lane).querySelector("svg");
+      expect(svg.querySelector("g.s-off"), `${modelId}/${lane}`).not.toBeNull();
+      expect(
+        svg.querySelectorAll("rect.s-chip-warn, rect.s-chip-accent"),
+        `${modelId}/${lane}`,
+      ).toHaveLength(0);
+    }
+  });
+
+  it("In-Region が不可でも「指定する ID」（モデル ID）は残る", () => {
+    const lane = laneOf(open(CLAUDE_45), "inRegion");
+    expect(lane.querySelector(".detail-id .id").textContent).toBe(CLAUDE_45);
+  });
+});
+
 describe("AC-017 レーンのパネルの中身の順番", () => {
   it("図 → 指定する ID → 推論先 → 価格", () => {
     const lane = visibleLane(open(CLAUDE_45));
@@ -259,7 +308,15 @@ describe("AC-019 推論先の表示", () => {
   });
 
   it("国外 0 件の Geo は国外の行を出さない", () => {
-    const block = laneOf(open(NOVA), "geo").querySelector(".lane-block");
+    // CLAUDE_45 の 1 ブロック目は jp.（東京・大阪 = 国内 2 / 国外 0）。
+    const block = [...laneOf(open(CLAUDE_45), "geo").querySelectorAll(".lane-block")][0];
+    expect(block.dataset.profileId).toBe(`jp.${CLAUDE_45}`);
+    const kinds = [...block.querySelectorAll(".dest-list li")].map((line) => line.dataset.kind);
+    expect(kinds).toEqual(["domestic"]);
+  });
+
+  it("国外があるプロファイルでは 2 行になる", () => {
+    const block = [...laneOf(open(NOVA), "geo").querySelectorAll(".lane-block")][0];
     const kinds = [...block.querySelectorAll(".dest-list li")].map((line) => line.dataset.kind);
     expect(kinds).toEqual(["domestic", "foreign"]);
   });
@@ -366,6 +423,15 @@ describe("AC-021 どのレーンも使えない", () => {
     expect(visibleLane(panel).querySelector(".detail-no-lane").textContent).toBe(
       "この起点リージョンからは呼べません",
     );
+  });
+
+  it("説明文は開く In-Region のパネルにだけ置く（3 枚に重複させない）", () => {
+    const panel = open(NO_LANE_MODEL);
+    expect(panel.querySelectorAll(".detail-no-lane")).toHaveLength(1);
+    expect(laneOf(panel, "inRegion").querySelector(".detail-no-lane")).not.toBeNull();
+    for (const lane of ["geo", "global"]) {
+      expect(laneOf(panel, lane).querySelector(".detail-no-lane"), lane).toBeNull();
+    }
   });
 });
 

@@ -231,7 +231,6 @@ export const en = {
       "Destinations when the source is {place}. Change the source and the destinations change too",
     destGlobalNote:
       "Individual Region names cannot be fetched from the API, so the place names in the figure are examples",
-    laneUnavailable: "This model is not offered directly in {place}",
     noLane: "This source Region cannot call this model",
   },
   share: {

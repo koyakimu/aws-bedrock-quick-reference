@@ -208,9 +208,9 @@ export function describeFlow(lane, ctx = {}) {
 
   if (lane === "inRegion") return describeInRegion({ available, originName, labels });
   if (lane === "global") {
-    return describeGlobal({ originName, labels, regionNotes, lang });
+    return describeGlobal({ available, originName, labels, regionNotes, lang });
   }
-  return describeGeo({ destinations, origin, regionNotes, lang, originName, labels });
+  return describeGeo({ available, destinations, origin, regionNotes, lang, originName, labels });
 }
 
 function describeInRegion({ available, originName, labels }) {
@@ -256,7 +256,7 @@ function describeInRegion({ available, originName, labels }) {
   };
 }
 
-function describeGeo({ destinations, origin, regionNotes, lang, originName, labels }) {
+function describeGeo({ available, destinations, origin, regionNotes, lang, originName, labels }) {
   const split = splitDestinations(destinations, { origin, regionNotes, lang });
   // 国が分からないときは内側の境界を描かず、全チップを中立に置く (AC-004)。
   const insideItems = split.countryKnown ? split.domestic : [];
@@ -299,7 +299,7 @@ function describeGeo({ destinations, origin, regionNotes, lang, originName, labe
 
   return {
     lane: "geo",
-    available: true,
+    available,
     width: FLOW_WIDTH,
     height: outerBottom + 30,
     enclosures,
@@ -319,7 +319,7 @@ function describeGeo({ destinations, origin, regionNotes, lang, originName, labe
   };
 }
 
-function describeGlobal({ originName, labels, regionNotes, lang }) {
+function describeGlobal({ available, originName, labels, regionNotes, lang }) {
   const innerBottom = 240;
   const recordY = 178;
   const samples = GLOBAL_SAMPLE_REGIONS.map((code) => ({
@@ -335,7 +335,7 @@ function describeGlobal({ originName, labels, regionNotes, lang }) {
 
   return {
     lane: "global",
-    available: true,
+    available,
     width: FLOW_WIDTH,
     height: outerBottom + 30,
     enclosures: [

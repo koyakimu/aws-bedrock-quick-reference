@@ -8,6 +8,7 @@ import {
   CLAUDE_45,
   EXTRA_PROFILES,
   NVIDIA,
+  regionNotes,
   regionNotesWithoutCountry,
 } from "./fixtures/bedrock-fixture.js";
 
@@ -246,6 +247,65 @@ describe("AC-008 主張と根拠の対応", () => {
     );
     expect(claims.length).toBeGreaterThan(0);
     for (const claim of claims) expect(CLAIM_IDS).toContain(claim);
+  });
+
+  // AC-008 の本体: 図に出る文は「辞書の flow.* を描いたもの」だけで構成される。
+  // data-claim の検査だけだと、属性を付け忘れた根拠の無い文が素通りしてしまう。
+  const flowTemplates = (lang) => {
+    const out = [];
+    const walk = (value) => {
+      if (typeof value === "string") out.push(value);
+      else if (value && typeof value === "object") Object.values(value).forEach(walk);
+    };
+    walk(dictionaries[lang].flow);
+    return out;
+  };
+  // "{place}" のような置換子は任意の文字列に当たる。
+  const templateMatchers = (lang) =>
+    flowTemplates(lang).map(
+      (template) =>
+        new RegExp(
+          `^${template.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\\\{[a-zA-Z]+\\\}/g, ".+")}$`,
+        ),
+    );
+
+  // flow.* 以外で図に出てよいのは、翻訳しない識別子・region-notes.json の地名・
+  // 内側の境界の見出しに使う国名 (country.*) だけ (AC-004 / AC-009)。
+  const untranslated = (lang) => {
+    const codes = Object.keys(regionNotes).filter((key) => key !== "_source");
+    return new Set([
+      ...codes,
+      ...codes.map((code) => regionNotes[code].endpoint),
+      ...codes.map((code) => regionNotes[code][lang]),
+      ...Object.values(dictionaries[lang].country),
+    ]);
+  };
+
+  const assertVocabulary = (lang) => {
+    const matchers = templateMatchers(lang);
+    const allowed = untranslated(lang);
+    const panel = open(CLAUDE_45);
+    const texts = [...panel.querySelectorAll("svg text, figcaption, p.flow-sources")].map(
+      (element) => element.textContent,
+    );
+    expect(texts.length).toBeGreaterThan(20);
+    for (const text of texts) {
+      if (allowed.has(text)) continue;
+      expect(
+        matchers.some((matcher) => matcher.test(text)),
+        `${lang}: 図の文「${text}」が flow.* の辞書に無い`,
+      ).toBe(true);
+    }
+  };
+
+  it("図に出る文はすべて flow.* の辞書を描いたもの (ja)", () => {
+    assertVocabulary("ja");
+  });
+
+  it("図に出る文はすべて flow.* の辞書を描いたもの (en)", () => {
+    mountFixtureApp({ extraProfiles: EXTRA_PROFILES, lang: "en-US" });
+    setLang("en");
+    assertVocabulary("en");
   });
 
   it("辞書は C-1 〜 C-8 をちょうど持つ", () => {
