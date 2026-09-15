@@ -49,7 +49,7 @@ export const DOC_LINKS = Object.freeze([
 const GLOBAL_CRIS_DOC = DOC_LINKS.find((link) => link.labelKey === "footnote.docGlobalCris").href;
 
 // 価格の出典 (PRICE-001 / D-009)。prices.json に source が無いときの控え。
-export const PRICE_INDEX_URL = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/index.json";
+const PRICE_INDEX_URL = "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/index.json";
 
 // 起点リージョンが変わったことを外に知らせるイベント (SHARE-001 / FILTER-001 の入口)。
 export const SOURCE_REGION_EVENT = "source-region-changed";
@@ -106,7 +106,7 @@ function destinationPlace(place) {
 
 // AC-011: TEXT / IMAGE / VIDEO / SPEECH / EMBEDDING を辞書で平易な語に置き換える。
 // 辞書に無い未知の値は列挙子のまま素通しする (DATA-001 と同じ方針)。
-export function modalityWords(values) {
+function modalityWords(values) {
   const separator = t("value.modalitySeparator");
   return (values ?? [])
     .map((value) => {
@@ -193,7 +193,7 @@ function geoCell(row, notes) {
 }
 
 // PRICE-001 AC-007 / AC-008: 単価は $ 付きで右寄せ。値が無ければ「—」。
-export function priceCell(value) {
+function priceCell(value) {
   const text = formatPrice(value);
   if (text == null) return EMPTY;
   return el("span", "price-value", `$${text}`);

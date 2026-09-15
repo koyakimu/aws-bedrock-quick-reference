@@ -21,7 +21,7 @@ export const LANE_GLOBAL = "global";
 export const LANE_ORDER = Object.freeze([LANE_IN_REGION, LANE_GEO, LANE_GLOBAL]);
 
 // レーンごとの価格の種別 (AC-013)。In-Region / Geo は標準系、Global は global 行のみ。
-export const LANE_PRICE_KINDS = Object.freeze({
+const LANE_PRICE_KINDS = Object.freeze({
   [LANE_IN_REGION]: Object.freeze(["standard", "batch", "cacheRead", "cacheWrite"]),
   [LANE_GEO]: Object.freeze(["standard", "batch", "cacheRead", "cacheWrite"]),
   [LANE_GLOBAL]: Object.freeze(["global"]),

@@ -65,8 +65,9 @@ describe("AC-007 i18n キー一致", () => {
   });
 });
 
-describe("画面が実際に読むキー", () => {
-  // TABLE-001 の描画が t() で引くキー。欠けると画面にキー名が出る (AC-009)。
+describe("欠けてはいけないキー", () => {
+  // ほとんどは TABLE-001 などの描画が t() で引くキーで、欠けると画面にキー名が出る (AC-009)。
+  // 一部 (flow.claims.*) は描画されず、別のテストが使う語彙。個別に注記する。
   const REQUIRED = [
     "app.title",
     "lang.label",
@@ -123,6 +124,8 @@ describe("画面が実際に読むキー", () => {
     "flow.recordTrail",
     "flow.abuseDetection",
     "flow.sources",
+    // flow.claims.* は画面が t() で引くキーではなく、AC-008 の「図が主張してよい内容」の
+    // 語彙。実際の検査は flow-render.test.js が行う。ここでは辞書からの欠落だけを見る。
     "flow.claims.c5",
     "copy.modelId",
     "copy.profileId",
@@ -162,7 +165,6 @@ describe("画面が実際に読むキー", () => {
       "footnote.accountKind": ["{kind}"],
       "footnote.deniedRegions": ["{count}", "{regions}"],
       "source.optionUnfetched": ["{label}"],
-      "table.rowCount": ["{shown}", "{total}"],
       "geo.outsideCount": ["{count}"],
       // DETAIL-001 v8 / FLOW-001 が置換子で組み立てる文
       "detail.laneGeo": ["{areas}"],

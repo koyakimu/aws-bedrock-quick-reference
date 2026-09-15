@@ -131,8 +131,17 @@ function chip(root, item, { fill = "s-chip", text = "s-chip-t", fade = null } = 
   root.appendChild(label);
 }
 
-function youNode(root, uid, label) {
-  root.appendChild(node("rect", { x: 8, y: 74, width: 68, height: 76, rx: 7, class: "s-node" }));
+/**
+ * 図の記述からノードの矩形を引く。座標は flow-model.mjs だけが持ち、
+ * 描画側では書き写さない (AC-002 の「あなたは境界の外」を単体テストで担保するため)。
+ */
+function rectOf(description, id) {
+  const found = description.nodes.find((entry) => entry.id === id);
+  return { x: found.x, y: found.y, width: found.width, height: found.height };
+}
+
+function youNode(root, uid, label, box) {
+  root.appendChild(node("rect", { ...box, rx: 7, class: "s-node" }));
   root.appendChild(node("circle", { cx: 42, cy: 98, r: 9, class: "s-glyph" }));
   root.appendChild(node("path", { d: "M24,122 a18,18 0 0 1 36,0 z", class: "s-glyph" }));
   const text = node(
@@ -162,10 +171,8 @@ function youNode(root, uid, label) {
   );
 }
 
-function originNode(root, { name, code, endpoint }) {
-  root.appendChild(
-    node("rect", { x: 162, y: 70, width: 244, height: 64, rx: 7, class: "s-node-origin" }),
-  );
+function originNode(root, { name, code, endpoint, box }) {
+  root.appendChild(node("rect", { ...box, rx: 7, class: "s-node-origin" }));
   const label = node("text", { x: 176, y: 92, class: "s-t-strong" }, name);
   label.dataset.node = "origin";
   root.appendChild(label);
@@ -204,7 +211,7 @@ function recordNode(root, uid, { y, originName, arrowX, arrowTop, labelX, labelY
  * レーン 1 つぶんの図の記述。i18n で引いた文言を載せた上で flow-model に渡す。
  * 純粋な座標計算は flow-model.mjs 側。
  */
-export function flowDescription(lane, ctx = {}) {
+function flowDescription(lane, ctx = {}) {
   const { region, regionNotes, prefix = null, available = true, destinations = [] } = ctx;
   const lang = getLang();
   const originName = regionName(region, lang, regionNotes);
@@ -286,19 +293,26 @@ export function buildFlowFigure(lane, ctx = {}) {
   svg.appendChild(markerDefs(uid));
 
   for (const box of description.enclosures) enclosure(svg, box);
-  youNode(svg, uid, t("flow.you"));
+  youNode(svg, uid, t("flow.you"), rectOf(description, "you"));
 
   // 起点・推論先・記録。そのレーンで呼べないときは境界の内側をまとめて淡色にする
   // (AC-003。DETAIL-001 v8 AC-016 により Geo / Global でも同じ扱い)。
   const off = !description.available;
   const inner = off ? node("g", { class: "s-off" }) : svg;
-  originNode(inner, { name: originName, code: region, endpoint: endpointOf(regionNotes, region) });
+  originNode(inner, {
+    name: originName,
+    code: region,
+    endpoint: endpointOf(regionNotes, region),
+    box: rectOf(description, "origin"),
+  });
 
   if (lane === "inRegion") {
     inner.appendChild(
       node("path", { d: "M406,102 L422,102", class: "s-arrow", "marker-end": `url(#hd-${uid})` }),
     );
-    inner.appendChild(node("rect", { x: 430, y: 70, width: 116, height: 64, rx: 7, class: "s-node" }));
+    inner.appendChild(
+      node("rect", { ...rectOf(description, "process"), rx: 7, class: "s-node" }),
+    );
     inner.appendChild(
       node("text", { x: 488, y: 92, "text-anchor": "middle", class: "s-t" }, t("flow.processedHere")),
     );

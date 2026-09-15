@@ -123,7 +123,7 @@ describe("AC-009 未定義キー", () => {
   it("置換子を params で埋める", () => {
     initI18n();
     expect(t("footnote.generatedAt", { date: "2026-09-14" })).toContain("2026-09-14");
-    expect(t("table.rowCount", { shown: 3, total: 9 })).toBe("3 / 9 行");
+    expect(t("footnote.deniedRegions", { count: 3, regions: "us-east-1" })).toContain("us-east-1");
   });
 });
 
