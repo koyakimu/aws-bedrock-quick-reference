@@ -36,6 +36,54 @@ export function buildSnapshot() {
   });
 }
 
+// --- DETAIL-001 v8 / FLOW-001 が使う追加のプロファイル ---------------------
+// 素の fixture (ip-ap-northeast-1.json) には東京起点の Geo が 1 モデル 1 件しか無いので、
+// レーンの組み合わせを作れるだけの最小限をここで足す。`extraProfiles` として渡した
+// ときだけ効くので、既存の表のテストの行数・並びは変わらない。
+
+// AC-018: 東京起点で jp. と apac. の 2 つを持つモデル (In-Region は不可)。
+export const CLAUDE_45 = "anthropic.claude-sonnet-4-5-20250929-v1:0";
+// Geo 0 件のプロファイルを持つモデル (FLOW-001 AC-010)。
+export const NVIDIA = "nvidia.nemotron-nano-12b-v2";
+// どのレーンも使えないモデル (AC-021)。availability が空配列でプロファイルも無い。
+export const NO_LANE_MODEL = "amazon.titan-embed-text-v1:2:8k";
+
+export const EXTRA_PROFILES = Object.freeze({
+  // 8 件 = 国内 2 (東京・大阪) + 国外 6。jp. (2 件) より広いので AC-018 の並びは jp → apac。
+  [`apac.${CLAUDE_45}`]: {
+    prefix: "apac",
+    modelId: CLAUDE_45,
+    sources: {
+      [TOKYO]: [
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-northeast-3",
+        "ap-south-1",
+        "ap-south-2",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "ap-southeast-4",
+      ],
+    },
+  },
+  // FLOW-001 AC-010: sources[R] が空配列のプロファイル。
+  [`au.${NVIDIA}`]: {
+    prefix: "au",
+    modelId: NVIDIA,
+    sources: { [TOKYO]: [] },
+  },
+});
+
+/**
+ * 起点の country が分からない region-notes (TABLE-001 AC-004 / FLOW-001 AC-004)。
+ * 手書きの data/region-notes.json には全リージョンに country があるので、
+ * テストの中でだけ 1 件落として「判断材料が無い」状態を作る。
+ */
+export function regionNotesWithoutCountry(region = TOKYO) {
+  const { country, ...rest } = regionNotes[region];
+  return { ...regionNotes, [region]: rest };
+}
+
 // 分類のもとになる原文。公開データには載らないが、テストが分類の前提を確かめるのに使う。
 export const DENIED_ERROR_SOURCE = fmDenied;
 export const DENIED_CAUSE = "scp-deny";

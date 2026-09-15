@@ -123,67 +123,67 @@ describe("AC-004 cross-region inference が使えない注記", () => {
   });
 });
 
-describe("AC-005 詳細パネルの接続先", () => {
-  const panelFor = (modelId) => {
+describe("AC-005 詳細パネルの接続先 (DETAIL-001 v8 AC-010 の見出し行)", () => {
+  const headOf = (modelId) => {
     app.detail.openRow(modelId);
-    return document.querySelector(`tr.detail-row[data-model-id="${modelId}"] .detail-endpoint`);
+    return document.querySelector(`tr.detail-row[data-model-id="${modelId}"] .head-grid`);
   };
+  const mantleItem = (head) => head.querySelector('[data-item="detail.mantleEndpoint"]');
 
-  it("bedrock-runtime と bedrock-mantle の 2 つの URL が並ぶ", () => {
-    const panel = panelFor(MANTLE_MODEL);
-    const rows = [...panel.querySelectorAll(".detail-endpoint-row")];
-    expect(rows.map((row) => row.dataset.endpoint)).toEqual(["bedrock-runtime", "bedrock-mantle"]);
-    expect(panel.textContent).toContain("bedrock-runtime.ap-northeast-1.amazonaws.com");
-    expect(panel.textContent).toContain("bedrock-mantle.ap-northeast-1.api.aws");
+  it("見出し行の 2 項目目が bedrock-runtime、3 項目目が bedrock-mantle", () => {
+    const head = headOf(MANTLE_MODEL);
+    expect([...head.children].map((item) => item.dataset.item)).toEqual([
+      "detail.modelId",
+      "detail.runtimeEndpoint",
+      "detail.mantleEndpoint",
+    ]);
+    expect(head.textContent).toContain("bedrock-runtime.ap-northeast-1.amazonaws.com");
+    expect(head.textContent).toContain("bedrock-mantle.ap-northeast-1.api.aws");
   });
 
-  it("それぞれで呼べる API が書かれている", () => {
-    const panel = panelFor(MANTLE_MODEL);
-    const runtime = panel.querySelector(".detail-endpoint-row.is-runtime");
-    const mantle = panel.querySelector(".detail-endpoint-row.is-mantle");
-    expect(runtime.textContent).toContain("InvokeModel");
-    expect(runtime.textContent).toContain("Converse");
-    expect(mantle.textContent).toContain("OpenAI Responses");
-    expect(mantle.textContent).toContain("Chat Completions");
-    expect(mantle.textContent).toContain("Anthropic Messages");
-    // mantle では InvokeModel / Converse は使えない。
-    expect(mantle.textContent).not.toContain("InvokeModel");
-    expect(mantle.textContent).not.toContain("Converse");
+  it("mantle の項目には呼べる API が書かれている (InvokeModel / Converse は無い)", () => {
+    const item = mantleItem(headOf(MANTLE_MODEL));
+    const apis = item.querySelector(".detail-endpoint-apis").textContent;
+    expect(apis).toContain("OpenAI Responses");
+    expect(apis).toContain("Chat Completions");
+    expect(apis).toContain("Anthropic Messages");
+    expect(apis).not.toContain("InvokeModel");
+    expect(apis).not.toContain("Converse");
   });
 
   it("Mantle で指定するモデル ID がコピーボタン付きで出る", () => {
-    const panel = panelFor(MANTLE_MODEL);
-    const line = panel.querySelector(".detail-mantle-model-id");
+    const line = mantleItem(headOf(MANTLE_MODEL)).querySelector(".detail-mantle-model-id");
     expect(line.textContent).toContain(MANTLE_MODEL);
-    expect(line.querySelector(".copy-btn")).not.toBeNull();
     expect(line.querySelector(".copy-btn").dataset.copy).toBe(MANTLE_MODEL);
   });
 
   it("mantle 非対応モデルでは ID の代わりに理由を出す", () => {
-    const panel = panelFor(RUNTIME_ONLY);
-    expect(panel.querySelector(".detail-mantle-none").textContent).toBe(
+    const item = mantleItem(headOf(RUNTIME_ONLY));
+    expect(item.querySelector(".detail-mantle-none").textContent).toBe(
       "このモデルは bedrock-mantle では提供されていません",
     );
-    expect(panel.querySelector(".detail-mantle-model-id .copy-btn")).toBeNull();
+    expect(item.querySelector(".detail-mantle-model-id .copy-btn")).toBeNull();
   });
 
-  it("Mantle 提供外のリージョンでは mantle の行が「提供なし」になる", () => {
+  it("Mantle 提供外のリージョンでは 3 項目目ごと出さない", () => {
     app.view.setRegion(NON_MANTLE_REGION);
-    const panel = panelFor(MANTLE_MODEL);
-    const mantle = panel.querySelector(".detail-endpoint-row.is-mantle");
-    expect(mantle.textContent).toBe("Mantle: このリージョンでは提供なし");
-    expect(panel.textContent).not.toContain(".api.aws");
+    const head = headOf(MANTLE_MODEL);
+    expect(mantleItem(head)).toBeNull();
+    expect(head.textContent).not.toContain(".api.aws");
+    // bedrock-runtime の項目は残る。
+    expect(head.querySelector(".detail-endpoint-value").textContent).toBe(
+      "bedrock-runtime.ap-northeast-3.amazonaws.com",
+    );
   });
 
   it("cross-region inference が使えないことも書かれている", () => {
-    expect(panelFor(MANTLE_MODEL).querySelector(".detail-mantle-no-cris").textContent).toContain(
-      "cross-region inference",
-    );
+    expect(
+      mantleItem(headOf(MANTLE_MODEL)).querySelector(".detail-mantle-no-cris").textContent,
+    ).toContain("cross-region inference");
   });
 
-  it("DETAIL-001 AC-012 の起点エンドポイントは残る", () => {
-    const panel = panelFor(UNLISTED);
-    expect(panel.querySelector(".detail-endpoint-value").textContent).toBe(
+  it("DETAIL-001 v8 AC-010 の起点エンドポイントはどのモデルでも残る", () => {
+    expect(headOf(UNLISTED).querySelector(".detail-endpoint-value").textContent).toBe(
       "bedrock-runtime.ap-northeast-1.amazonaws.com",
     );
   });
@@ -192,7 +192,7 @@ describe("AC-005 詳細パネルの接続先", () => {
 describe("AC-006 出典リンク", () => {
   it("詳細パネルの接続先節に転記元 docs へのリンクがある", () => {
     app.detail.openRow(MANTLE_MODEL);
-    const link = document.querySelector(".detail-mantle-source .doc-link");
+    const link = document.querySelector(".head-grid .detail-mantle-source .doc-link");
     expect(link.href).toBe(
       "https://docs.aws.amazon.com/bedrock/latest/userguide/models-endpoint-availability.html",
     );

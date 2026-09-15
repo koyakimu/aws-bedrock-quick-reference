@@ -44,7 +44,6 @@ export function mountApp({
     view,
     models,
     profiles,
-    fetchLog,
     regionNotes,
     mantle,
     prices,

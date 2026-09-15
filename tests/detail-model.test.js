@@ -1,232 +1,282 @@
-// DETAIL-001 v2 の単体テスト。AC-002 / 003 / 004 / 005 / 006 / 008 / 009 / 011 / 012。
+// DETAIL-001 v8 の純関数側 (レーンの要約・既定のレーン・並び・推論先・価格)。
 import { describe, it, expect } from "vitest";
 import {
-  buildAvailabilityRows,
+  LANE_GEO,
+  LANE_GLOBAL,
+  LANE_IN_REGION,
+  LANE_ORDER,
+  buildDestinationLines,
   buildDetail,
-  buildProfileRows,
-  buildUsageRows,
+  buildLaneSummaries,
+  buildPriceRows,
+  defaultLane,
+  globalExtrasMissing,
+  resolveLane,
+  sortGeoProfiles,
 } from "../src/scripts/detail-model.mjs";
-import { selectableRegions } from "../src/scripts/bedrock-view-model.mjs";
 import {
   buildSnapshot,
+  buildPrices,
   regionNotes,
-  DENIED_REGION,
+  regionNotesWithoutCountry,
+  CLAUDE_45,
+  EXTRA_PROFILES,
+  NO_LANE_MODEL,
+  NVIDIA,
   TOKYO,
 } from "./fixtures/bedrock-fixture.js";
+import mantle from "../data/mantle.json";
 
 const snapshot = buildSnapshot();
-const CLAUDE = "anthropic.claude-sonnet-4-5-20250929-v1:0";
-const TITAN = "amazon.titan-embed-text-v1:2:8k";
-const NVIDIA = "nvidia.nemotron-nano-12b-v2";
+const prices = buildPrices(snapshot.models);
+const profiles = { ...snapshot.profiles, ...EXTRA_PROFILES };
+const NOVA = "amazon.nova-lite-v1:0";
+const COHERE = "cohere.embed-v4:0";
 
-const availability = (modelId) =>
-  buildAvailabilityRows(modelId, {
+const summarize = (modelId, options = {}) =>
+  buildLaneSummaries(modelId, {
     models: snapshot.models,
+    profiles,
+    region: TOKYO,
     regionNotes,
-    fetchLog: snapshot.fetchLog,
-  });
-const rowFor = (modelId, region) => availability(modelId).find((row) => row.region === region);
-
-// --- AC-002 全リージョン横断の availability ---
-describe("DETAIL-001 AC-002 全リージョン横断の availability", () => {
-  it("region-notes.json のキー全件について 1 行返す", () => {
-    const rows = availability(CLAUDE);
-    expect(rows).toHaveLength(selectableRegions(regionNotes).length);
-    expect(rows.map((row) => row.region)).toEqual(selectableRegions(regionNotes));
+    ...options,
   });
 
-  it("推論タイプはそのままの名前で並べ、PROVISIONED も落とさない", () => {
-    const models = {
-      "vendor.model": {
-        availability: { [TOKYO]: ["ON_DEMAND", "INFERENCE_PROFILE", "PROVISIONED"] },
-      },
+describe("AC-014 レーンの要約", () => {
+  it("3 レーン分を必ず返す", () => {
+    const summaries = summarize(CLAUDE_45);
+    expect(Object.keys(summaries)).toEqual([...LANE_ORDER]);
+  });
+
+  it("In-Region は availability[R] に ON_DEMAND があるかで決まる", () => {
+    // Claude Sonnet 4.5 は東京で INFERENCE_PROFILE のみ = 不可。
+    expect(summarize(CLAUDE_45)[LANE_IN_REGION].available).toBe(false);
+    expect(summarize(NOVA)[LANE_IN_REGION].available).toBe(true);
+  });
+
+  it("Geo は全プロファイルの推論先の和集合を国内 / 国外に分けて数える", () => {
+    const geo = summarize(CLAUDE_45)[LANE_GEO];
+    expect(geo.available).toBe(true);
+    // jp. (東京・大阪) ∪ apac. (8 件) = 8 件。国内 2 (東京・大阪)、国外 6。
+    expect(geo.countryKnown).toBe(true);
+    expect(geo.domesticCount).toBe(2);
+    expect(geo.foreignCount).toBe(6);
+    expect(geo.totalCount).toBe(8);
+  });
+
+  it("国外 0 件のプロファイルでは foreignCount が 0 になる", () => {
+    // jp. だけのモデルを作る (apac. を外す)。
+    const geo = buildLaneSummaries(CLAUDE_45, {
+      models: snapshot.models,
+      profiles: snapshot.profiles,
+      region: TOKYO,
+      regionNotes,
+    })[LANE_GEO];
+    expect(geo.domesticCount).toBe(2);
+    expect(geo.foreignCount).toBe(0);
+  });
+
+  it("起点の country が分からないときは件数を切り分けず総数だけ返す", () => {
+    const geo = summarize(CLAUDE_45, { regionNotes: regionNotesWithoutCountry() })[LANE_GEO];
+    expect(geo.countryKnown).toBe(false);
+    expect(geo.domesticCount).toBe(0);
+    expect(geo.foreignCount).toBe(0);
+    expect(geo.totalCount).toBe(8);
+  });
+
+  it("Global は global. プロファイルの有無で決まり ID を返す", () => {
+    expect(summarize(CLAUDE_45)[LANE_GLOBAL].available).toBe(true);
+    expect(summarize(CLAUDE_45)[LANE_GLOBAL].id).toBe(`global.${CLAUDE_45}`);
+    expect(summarize(NOVA)[LANE_GLOBAL].available).toBe(false);
+  });
+
+  it("全不可のモデルでは 3 レーンとも available が false", () => {
+    const summaries = summarize(NO_LANE_MODEL);
+    expect(LANE_ORDER.map((lane) => summaries[lane].available)).toEqual([false, false, false]);
+  });
+
+  it("sources[R] が空配列でも Geo は「使える」(推論先 0 件)", () => {
+    const geo = summarize(NVIDIA)[LANE_GEO];
+    expect(geo.available).toBe(true);
+    expect(geo.totalCount).toBe(0);
+  });
+});
+
+describe("AC-015 既定で選ばれるレーン", () => {
+  it("In-Region → Geo → Global の順で最初の可を返す", () => {
+    expect(defaultLane(summarize(NOVA))).toBe(LANE_IN_REGION);
+    expect(defaultLane(summarize(CLAUDE_45))).toBe(LANE_GEO);
+    expect(defaultLane(summarize(COHERE))).toBe(LANE_IN_REGION);
+  });
+
+  it("Geo が無く Global だけあるモデルは Global", () => {
+    const summaries = {
+      inRegion: { available: false },
+      geo: { available: false },
+      global: { available: true },
     };
-    const row = buildAvailabilityRows("vendor.model", {
-      models,
-      regionNotes,
-      fetchLog: snapshot.fetchLog,
-    }).find((entry) => entry.region === TOKYO);
-    expect(row.kind).toBe("types");
-    expect(row.types).toEqual(["ON_DEMAND", "INFERENCE_PROFILE", "PROVISIONED"]);
+    expect(defaultLane(summaries)).toBe(LANE_GLOBAL);
+  });
+
+  it("3 つとも不可なら In-Region", () => {
+    expect(defaultLane(summarize(NO_LANE_MODEL))).toBe(LANE_IN_REGION);
   });
 });
 
-// --- AC-003 提供なし ---
-describe("DETAIL-001 AC-003 提供なしの表示", () => {
-  it("status: ok かつ availability にキーが無いリージョンは「提供なし」種別", () => {
-    // eu-west-1 は取得できているがモデルが 1 件も無い
-    const row = rowFor(CLAUDE, "eu-west-1");
-    expect(row.kind).toBe("none");
-    expect(row.types).toEqual([]);
-    expect(row.cause).toBeNull();
+describe("AC-020 セッション内で覚えたレーン", () => {
+  it("覚えたレーンが使えるならそれを返す", () => {
+    expect(resolveLane(LANE_GLOBAL, summarize(CLAUDE_45))).toBe(LANE_GLOBAL);
+  });
+
+  it("使えないなら既定に戻る", () => {
+    expect(resolveLane(LANE_GLOBAL, summarize(NOVA))).toBe(LANE_IN_REGION);
+    expect(resolveLane(null, summarize(CLAUDE_45))).toBe(LANE_GEO);
   });
 });
 
-// --- AC-004 空配列 ---
-describe("DETAIL-001 AC-004 空配列の表示", () => {
-  it("availability[R] が [] なら「提供あり・推論タイプの指定なし」種別", () => {
-    const row = rowFor(TITAN, TOKYO);
-    expect(row.kind).toBe("empty");
+describe("AC-018 Geo のプロファイルの並び", () => {
+  it("sources[R] の件数の昇順、同数なら接頭辞の昇順", () => {
+    const sorted = sortGeoProfiles(profiles, TOKYO).filter(
+      (entry) => entry.profileId.endsWith(CLAUDE_45),
+    );
+    expect(sorted.map((entry) => entry.prefix)).toEqual(["jp", "apac"]);
   });
 
-  it("提供なし / データなし とは別種別", () => {
-    expect(rowFor(TITAN, TOKYO).kind).not.toBe(rowFor(TITAN, "eu-west-1").kind);
-    expect(rowFor(TITAN, TOKYO).kind).not.toBe(rowFor(TITAN, DENIED_REGION).kind);
-    expect(rowFor(TITAN, "eu-west-1").kind).not.toBe(rowFor(TITAN, DENIED_REGION).kind);
-  });
-});
-
-// --- AC-005 プロファイルの起点 → 推論先 ---
-describe("DETAIL-001 AC-005 プロファイルの起点 → 推論先", () => {
-  it("jp. プロファイルは起点ごとに 1 行、destination は昇順", () => {
-    const profiles = {
-      "jp.anthropic.claude-sonnet-4-5-20250929-v1:0": {
-        prefix: "jp",
-        modelId: CLAUDE,
-        name: "JP",
-        sources: {
-          "ap-northeast-3": ["ap-northeast-3", "ap-northeast-1"],
-          "ap-northeast-1": ["ap-northeast-3", "ap-northeast-1"],
-        },
-      },
-    };
-    const rows = buildProfileRows(CLAUDE, profiles);
-    expect(rows).toHaveLength(1);
-    expect(rows[0].prefix).toBe("jp");
-    expect(rows[0].sources).toEqual([
-      { source: "ap-northeast-1", allRegions: false, destinations: ["ap-northeast-1", "ap-northeast-3"] },
-      { source: "ap-northeast-3", allRegions: false, destinations: ["ap-northeast-1", "ap-northeast-3"] },
-    ]);
+  it("同数のときは接頭辞で決まる", () => {
+    const list = [
+      { profileId: "zz.m", prefix: "zz", destinations: ["a", "b"] },
+      { profileId: "aa.m", prefix: "aa", destinations: ["a", "b"] },
+      { profileId: "mm.m", prefix: "mm", destinations: ["a"] },
+    ];
+    expect(sortGeoProfiles(list, TOKYO).map((entry) => entry.prefix)).toEqual(["mm", "aa", "zz"]);
   });
 
-  it("複数プロファイルは profileId 昇順で並ぶ", () => {
-    const rows = buildProfileRows(CLAUDE, snapshot.profiles);
-    expect(rows.map((row) => row.profileId)).toEqual([
-      "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
-      "jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
-    ]);
+  it("要約のプロファイルも同じ並びになる", () => {
+    expect(summarize(CLAUDE_45)[LANE_GEO].prefixes).toEqual(["jp", "apac"]);
   });
 });
 
-// --- AC-006 Global の推論先 ---
-describe("DETAIL-001 AC-006 Global の推論先", () => {
-  it("['*'] は注記種別に変換され、返り値に '*' の文字が含まれない", () => {
-    const rows = buildProfileRows(CLAUDE, snapshot.profiles);
-    const global = rows.find((row) => row.prefix === "global");
-    expect(global.isGlobal).toBe(true);
-    expect(global.sources[0].allRegions).toBe(true);
-    expect(global.sources[0].destinations).toEqual([]);
-    expect(JSON.stringify(rows)).not.toContain("*");
-  });
-});
+describe("AC-019 推論先の行", () => {
+  const lines = (lane, options = {}) =>
+    buildDestinationLines(lane, { region: TOKYO, regionNotes, ...options });
 
-// --- AC-008 denied は「データなし」 ---
-describe("DETAIL-001 AC-008 denied リージョンは「データなし」", () => {
-  it("denied のリージョンは nodata 種別で、分類 (cause) だけを持つ", () => {
-    const row = rowFor(CLAUDE, DENIED_REGION);
-    expect(row.kind).toBe("nodata");
-    expect(row.cause).toBe("scp-deny");
-    expect(JSON.stringify(row)).not.toContain("AccessDenied");
+  it("In-Region は起点の地名 1 件、リージョンコードを含まない", () => {
+    const { lines: rows } = lines(LANE_IN_REGION, { available: true });
+    expect(rows).toEqual([{ kind: "inRegion", places: ["東京"], warn: false }]);
+    expect(JSON.stringify(rows)).not.toContain(TOKYO);
   });
 
-  it("「提供なし」と種別が異なる (取得できていないだけのリージョンを提供なしにしない)", () => {
-    expect(rowFor(CLAUDE, DENIED_REGION).kind).toBe("nodata");
-    expect(rowFor(CLAUDE, "eu-west-1").kind).toBe("none");
+  it("In-Region 不可のときは説明文の材料を返す", () => {
+    const { lines: rows } = lines(LANE_IN_REGION, { available: false });
+    expect(rows).toEqual([{ kind: "notOffered", place: "東京" }]);
   });
 
-  it("buildDetail の返り値にエラー原文が一切含まれない (D-008)", () => {
-    const detail = buildDetail(CLAUDE, {
-      models: snapshot.models,
-      profiles: snapshot.profiles,
-      fetchLog: snapshot.fetchLog,
-      regionNotes,
-      region: TOKYO,
+  it("Geo は 国内 / 国外 の 2 行。国外は warn", () => {
+    const { lines: rows, note } = lines(LANE_GEO, {
+      destinations: EXTRA_PROFILES[`apac.${CLAUDE_45}`].sources[TOKYO],
     });
-    const text = JSON.stringify(detail);
-    expect(text).not.toContain("AccessDenied");
-    expect(text).not.toContain("service control policy");
-    expect(text).not.toContain("arn:");
-    expect(detail.availability.find((row) => row.region === DENIED_REGION).cause).toBe("scp-deny");
+    expect(rows.map((row) => row.kind)).toEqual(["domestic", "foreign"]);
+    expect(rows[0].places).toEqual(["東京", "大阪"]);
+    expect(rows[0].warn).toBe(false);
+    expect(rows[1].count).toBe(6);
+    expect(rows[1].warn).toBe(true);
+    expect(note).toBe("geo");
+    expect(JSON.stringify(rows)).not.toContain("ap-northeast");
   });
-});
 
-// --- AC-009 対象プロファイルが 1 件も無い ---
-describe("DETAIL-001 AC-009 対象プロファイルが 1 件も無い", () => {
-  it("hasProfiles: false で空の配列を返す", () => {
-    const detail = buildDetail(NVIDIA, {
-      models: snapshot.models,
-      profiles: snapshot.profiles,
-      fetchLog: snapshot.fetchLog,
-      regionNotes,
-      region: TOKYO,
+  it("国外が 0 件ならその行を出さない", () => {
+    const { lines: rows } = lines(LANE_GEO, { destinations: ["ap-northeast-1", "ap-northeast-3"] });
+    expect(rows.map((row) => row.kind)).toEqual(["domestic"]);
+  });
+
+  it("起点の country が分からないときは 1 行にまとめる", () => {
+    const { lines: rows } = lines(LANE_GEO, {
+      destinations: ["ap-northeast-1", "ap-northeast-3"],
+      regionNotes: regionNotesWithoutCountry(),
     });
-    expect(detail.profiles).toEqual([]);
-    expect(detail.hasProfiles).toBe(false);
-  });
-});
-
-// --- AC-011 使い方ごとの「指定する ID」 ---
-describe("DETAIL-001 AC-011 使い方ごとの指定する ID", () => {
-  const usage = (modelId, region = TOKYO) =>
-    buildUsageRows(modelId, { models: snapshot.models, profiles: snapshot.profiles, region });
-
-  it("In-Region だけのモデルはモデル ID と起点リージョンを返す", () => {
-    expect(usage(NVIDIA)).toEqual([
-      {
-        kind: "inRegion",
-        id: NVIDIA,
-        idKind: "modelId",
-        destinations: [TOKYO],
-        allRegions: false,
-      },
-    ]);
+    expect(rows.map((row) => row.kind)).toEqual(["any"]);
+    expect(rows[0].count).toBe(2);
   });
 
-  it("Geo と Global を持つモデルは Geo → Global の順で返す (In-Region 不可なので先頭は geo)", () => {
-    const rows = usage(CLAUDE);
-    expect(rows.map((row) => row.kind)).toEqual(["geo", "global"]);
-    const jp = rows.find((row) => row.prefix === "jp");
-    expect(jp.id).toBe("jp.anthropic.claude-sonnet-4-5-20250929-v1:0");
-    expect(jp.idKind).toBe("profileId");
-    expect(jp.destinations).toEqual(["ap-northeast-1", "ap-northeast-3"]);
+  it("Global は 1 行だけで個別のリージョンを列挙しない", () => {
+    const { lines: rows, note } = lines(LANE_GLOBAL);
+    expect(rows).toEqual([{ kind: "globalScope", places: [], warn: true }]);
+    expect(note).toBe("global");
   });
 
-  it("Global の推論先は列挙せず、'*' を返さない (AC-006)", () => {
-    const global = usage(CLAUDE).find((row) => row.kind === "global");
-    expect(global.allRegions).toBe(true);
-    expect(global.destinations).toEqual([]);
-    expect(JSON.stringify(usage(CLAUDE))).not.toContain("*");
-  });
-
-  it("起点から呼べる使い方が無ければ空配列", () => {
-    expect(usage(CLAUDE, "eu-west-1")).toEqual([]);
-  });
-
-  it("buildDetail は usage と hasUsage を持つ", () => {
-    const detail = buildDetail(NVIDIA, {
-      models: snapshot.models,
-      profiles: snapshot.profiles,
-      fetchLog: snapshot.fetchLog,
-      regionNotes,
-      region: TOKYO,
+  it("英語でも地名だけを返す", () => {
+    const { lines: rows } = lines(LANE_GEO, {
+      destinations: ["ap-northeast-1", "ap-northeast-2"],
+      lang: "en",
     });
-    expect(detail.hasUsage).toBe(true);
-    expect(detail.usage).toHaveLength(1);
+    expect(rows[0].places).toEqual(["Asia Pacific (Tokyo)"]);
+    expect(rows[1].places).toEqual(["Asia Pacific (Seoul)"]);
+    expect(JSON.stringify(rows)).not.toContain("ap-northeast");
   });
 });
 
-// --- AC-012 起点のエンドポイント ---
-describe("DETAIL-001 AC-012 起点のエンドポイント", () => {
-  it("buildDetail が起点リージョンの bedrock-runtime FQDN を返す", () => {
-    const detail = (region) =>
-      buildDetail(CLAUDE, {
-        models: snapshot.models,
-        profiles: snapshot.profiles,
-        fetchLog: snapshot.fetchLog,
-        regionNotes,
-        region,
-      });
-    expect(detail(TOKYO).endpoint).toBe("bedrock-runtime.ap-northeast-1.amazonaws.com");
-    expect(detail("eu-west-1").endpoint).toBe("bedrock-runtime.eu-west-1.amazonaws.com");
+describe("AC-013 レーンごとの価格", () => {
+  it("In-Region / Geo は 標準 → バッチ → キャッシュ読み → キャッシュ書き", () => {
+    expect(
+      buildPriceRows(CLAUDE_45, { prices, region: TOKYO, lane: LANE_IN_REGION }).map((r) => r.kind),
+    ).toEqual(["standard", "batch", "cacheRead"]);
+    expect(
+      buildPriceRows(CLAUDE_45, { prices, region: TOKYO, lane: LANE_GEO }).map((r) => r.kind),
+    ).toEqual(["standard", "batch", "cacheRead"]);
+  });
+
+  it("Global は global の行だけ", () => {
+    expect(
+      buildPriceRows(CLAUDE_45, { prices, region: TOKYO, lane: LANE_GLOBAL }).map((r) => r.kind),
+    ).toEqual(["global"]);
+  });
+
+  it("単価が 1 つも無ければ空配列", () => {
+    expect(buildPriceRows("no-such-model", { prices, region: TOKYO, lane: LANE_GEO })).toEqual([]);
+    expect(buildPriceRows(NOVA, { prices, region: TOKYO, lane: LANE_GLOBAL })).toEqual([]);
+  });
+
+  it("出力の単価が無い種別は output が null", () => {
+    const rows = buildPriceRows(CLAUDE_45, { prices, region: TOKYO, lane: LANE_IN_REGION });
+    expect(rows.find((row) => row.kind === "cacheRead").output).toBeNull();
+  });
+
+  it("Global にバッチ・キャッシュが無いことを判定できる", () => {
+    expect(globalExtrasMissing(CLAUDE_45, { prices, region: TOKYO })).toBe(false);
+    expect(globalExtrasMissing("no-such-model", { prices, region: TOKYO })).toBe(false);
+  });
+});
+
+describe("AC-010 / AC-022 パネル 1 枚ぶん", () => {
+  const detailOf = (modelId, region = TOKYO) =>
+    buildDetail(modelId, {
+      models: snapshot.models,
+      profiles,
+      regionNotes,
+      prices,
+      mantle,
+      region,
+    });
+
+  it("起点の bedrock-runtime の FQDN を持つ", () => {
+    expect(detailOf(CLAUDE_45).endpoint).toBe("bedrock-runtime.ap-northeast-1.amazonaws.com");
+  });
+
+  it("mantle があるリージョンでだけ mantle の FQDN を持つ", () => {
+    expect(detailOf(CLAUDE_45).mantleEndpoint).toBe("bedrock-mantle.ap-northeast-1.api.aws");
+    expect(detailOf(CLAUDE_45, "ap-northeast-3").mantleEndpoint).toBeNull();
+  });
+
+  it("cause も availability も profiles も持たない (D-013 / D-008)", () => {
+    const detail = detailOf(CLAUDE_45);
+    expect(detail).not.toHaveProperty("cause");
+    expect(detail).not.toHaveProperty("availability");
+    expect(detail).not.toHaveProperty("profiles");
+    expect(JSON.stringify({ ...detail, prices: null })).not.toContain("scp-deny");
+  });
+
+  it("anyLane で「どのレーンも使えない」が分かる", () => {
+    expect(detailOf(CLAUDE_45).anyLane).toBe(true);
+    expect(detailOf(NO_LANE_MODEL).anyLane).toBe(false);
   });
 });
