@@ -1,4 +1,6 @@
-/* 行の展開と詳細パネル (DETAIL-001) */
+/* 行の展開と詳細パネル (DETAIL-001 v8)。
+   パネルは 共通の見出し行 → レーンのタブ → タブごとの 図 / ID / 推論先 / 価格 の 3 段。
+   図そのものの見た目は flow.css が持つ。 */
 .detail-toggle {
   font: inherit;
   line-height: 1;
@@ -32,9 +34,6 @@ tr.expanded > td {
 }
 
 .detail-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--sp-5);
   padding: var(--sp-4);
 }
 
@@ -47,205 +46,135 @@ tr.expanded > td {
   letter-spacing: 0.04em;
 }
 
-/* 一覧から外した識別子と接続先 (AC-010 / AC-011 / AC-012)。
-   提供状況と推論プロファイルの 2 段組をまたいで全幅に置く */
-.detail-model-id,
-.detail-usage,
-.detail-endpoint {
-  grid-column: 1 / -1;
+.detail-panel section + section {
+  margin-top: var(--sp-5);
 }
 
-.detail-usage-table {
-  border-collapse: collapse;
-  width: auto;
-  max-width: 100%;
-  font-size: var(--fs-sm);
+/* --- AC-010 共通の見出し行 --- */
+.head-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--sp-3) var(--sp-5);
+  padding-bottom: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--line);
 }
-.detail-usage-table th,
-.detail-usage-table td {
-  text-align: left;
-  vertical-align: top;
-  padding: var(--sp-1) var(--sp-3) var(--sp-1) 0;
-  border-bottom: 1px solid var(--line-soft);
-}
-.detail-usage-table th {
-  font-size: var(--fs-xs);
-  font-weight: 500;
-  color: var(--fg-muted);
-}
-.usage-badge {
-  display: inline-block;
-  padding: 0 6px;
-  border-radius: var(--radius);
-  font-size: var(--fs-xs);
-  line-height: 1.6;
-  color: var(--chip-fg);
-  background: var(--chip-bg);
-  border: 1px solid var(--chip-line);
-  white-space: nowrap;
-}
-.detail-no-usage {
-  margin: 0;
-  font-size: var(--fs-sm);
-  color: var(--fg-muted);
-}
-
-.detail-endpoint {
-  /* 接続先が 2 つに増えたので 1 行 1 接続先の縦積みにする (MANTLE-001 AC-005) */
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--sp-1);
-  font-size: var(--fs-sm);
-}
-.detail-endpoint-label {
+.head-grid .k {
+  display: block;
   font-size: var(--fs-xs);
   color: var(--fg-muted);
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
 }
-.detail-endpoint-value {
+.endpoint-value {
   color: var(--fg-strong);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
   word-break: break-all;
 }
 
-.detail-region-list,
-.detail-source-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* --- AC-014 レーンのタブ (見出し + 常に見える 1 行の要約) --- */
+.lane-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.detail-region,
-.detail-source {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--sp-2);
-  font-size: var(--fs-sm);
-  padding: 2px var(--sp-2);
-  border-radius: var(--radius);
-}
-
-/* 現在の起点リージョン (AC-007) */
-.detail-region.is-current,
-.detail-source.is-current {
-  background: var(--accent-bg);
-  border: 1px solid var(--accent-line);
-}
-.current-marker {
-  font-size: var(--fs-xs);
-  color: var(--accent);
-  border: 1px solid var(--accent-line);
-  border-radius: var(--radius);
-  padding: 0 4px;
-}
-
-.detail-types {
-  display: inline-flex;
   flex-wrap: wrap;
   gap: var(--sp-1);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: var(--sp-4);
 }
-.badge {
-  padding: 0 4px;
-  border-radius: var(--radius);
+.lane-tabs [role="tab"] {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  font: inherit;
+  text-align: left;
+  color: var(--fg-muted);
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: var(--sp-2) var(--sp-3);
+  margin-bottom: -1px;
+  cursor: pointer;
+}
+.lane-tabs [role="tab"]:hover .lane-title {
+  color: var(--fg-strong);
+}
+.lane-tabs [role="tab"][aria-selected="true"] {
+  border-bottom-color: var(--accent);
+}
+.lane-tabs [role="tab"][aria-selected="true"] .lane-title {
+  color: var(--fg-strong);
+}
+.lane-tabs [role="tab"]:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+.lane-title {
+  font-size: var(--fs-sm);
+  color: var(--fg-muted);
+  font-weight: 600;
+}
+.lane-sum {
   font-size: var(--fs-xs);
   color: var(--fg-muted);
-  background: var(--bg-raised);
-  border: 1px solid var(--line);
 }
-.badge-on_demand {
-  color: var(--yes-fg);
-  background: var(--yes-bg);
-  border-color: var(--yes-line);
+/* AC-014: 国外が 1 件でもあれば要約を warn 色にする。 */
+.lane-sum.is-warn {
+  color: var(--warn-fg);
+}
+/* AC-016: 使えないレーンは淡色。disabled にはしない。 */
+.lane-tabs [role="tab"].is-dim .lane-title,
+.lane-tabs [role="tab"].is-dim .lane-sum {
+  color: var(--fg-dim);
 }
 
-/* 「提供なし」「提供あり・推論タイプの指定なし」「データなし」は別の見た目 (AC-003/004/008) */
+.lane-block + .lane-block {
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--line-soft);
+}
+.lane-block-head {
+  margin: 0 0 var(--sp-2);
+}
+
+/* --- AC-019 推論先 --- */
+.dest-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+}
+.dest-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  padding: 1px 0;
+}
+.dest-list .k {
+  color: var(--fg-muted);
+  font-size: var(--fs-xs);
+  min-width: 3em;
+}
+.dest-list .v-warn {
+  color: var(--warn-fg);
+}
 .state-none {
   color: var(--fg-dim);
 }
-.state-empty {
-  color: var(--fg-muted);
-  font-style: italic;
-}
-.state-nodata {
-  color: var(--warn-fg);
-  background: var(--warn-bg);
-  border: 1px solid var(--warn-line);
-  border-radius: var(--radius);
-  padding: 0 4px;
-}
-.detail-profile {
-  margin-bottom: var(--sp-3);
-}
-.detail-profile-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-2);
-  margin-bottom: var(--sp-1);
-}
-.prefix-badge {
-  padding: 0 5px;
-  border-radius: var(--radius);
-  font-size: var(--fs-xs);
-  color: var(--chip-fg);
-  background: var(--chip-bg);
-  border: 1px solid var(--chip-line);
-}
-.detail-arrow {
-  color: var(--fg-dim);
-}
-.detail-all-regions {
+.dest-note,
+.note-muted {
+  margin: var(--sp-2) 0 0;
   font-size: var(--fs-xs);
   color: var(--fg-muted);
 }
-.detail-no-profiles {
-  margin: 0;
+
+.detail-no-lane {
+  margin: 0 0 var(--sp-4);
+  color: var(--fg-muted);
   font-size: var(--fs-sm);
-  color: var(--fg-muted);
 }
 
-.detail-host {
-  margin-top: var(--sp-4);
-}
-
-/* 375px ではパネルを縦積みにし、推論先チップは折り返す */
-@media (max-width: 768px) {
-  .detail-panel {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--sp-4);
-  }
-  /* 3 列の小表は 375px でも枠内で横スクロールさせる (ページ本体は伸ばさない) */
-  .detail-usage {
-    overflow-x: auto;
-  }
-  .detail-model-id .copyable {
-    display: flex;
-    align-items: flex-start;
-    gap: 2px;
-  }
-  .detail-model-id .id {
-    min-width: 0;
-    word-break: break-all;
-  }
-}
-
-
-/* MANTLE-001 AC-005: 接続先の節 (bedrock-runtime / bedrock-mantle) */
-.detail-endpoint-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-1) 0;
-}
-
-.detail-endpoint-name {
-  color: var(--fg-strong);
-}
-
+/* MANTLE-001 AC-005: 見出し行の 3 項目目 (接続先 bedrock-mantle) */
 .detail-endpoint-apis,
 .detail-mantle-no-cris,
 .detail-mantle-source,
@@ -253,11 +182,9 @@ tr.expanded > td {
   color: var(--fg-muted);
   font-size: var(--fs-xs);
 }
-
-.detail-endpoint-row.mantle-none {
-  color: var(--fg-muted);
+.head-mantle .detail-endpoint-apis {
+  display: block;
 }
-
 .detail-mantle-model-id {
   display: flex;
   flex-wrap: wrap;
@@ -265,33 +192,58 @@ tr.expanded > td {
   gap: var(--sp-2);
   padding: var(--sp-1) 0;
 }
-
 .detail-mantle-no-cris,
 .detail-mantle-source {
   margin: var(--sp-1) 0 0;
 }
 
-/* --- 価格 (PRICE-001 AC-010) --- */
+/* --- 価格 (AC-013 / PRICE-001 AC-010) --- */
+.price-wrap {
+  overflow-x: auto;
+}
 .detail-price-table {
   border-collapse: collapse;
   margin-top: 6px;
+  max-width: 100%;
 }
-
 .detail-price-table th,
 .detail-price-table td {
-  padding: 3px 10px 3px 0;
+  padding: 3px 14px 3px 0;
   text-align: left;
   white-space: nowrap;
 }
-
+.detail-price-table th {
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--fg-muted);
+}
 .detail-price-table td.detail-price-value {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-
 .detail-price-unit,
 .detail-no-price {
   margin: 6px 0 0;
-  font-size: 0.85em;
-  color: var(--fg-muted, #8a8f98);
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
+
+/* 375px では見出し行を 1 列に積み、表は枠内で横スクロールさせる */
+@media (max-width: 768px) {
+  .head-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .price-wrap {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  .head-grid .copyable {
+    display: flex;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .head-grid .id {
+    min-width: 0;
+    word-break: break-all;
+  }
 }

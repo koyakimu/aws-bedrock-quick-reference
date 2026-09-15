@@ -10,6 +10,7 @@ import {
   regionNotes,
 } from "./fixtures/bedrock-fixture.js";
 import mantle from "../data/mantle.json";
+import { resetRememberedLane } from "../src/scripts/detail-view.js";
 
 export const BASE_URL = "https://koyakimu.github.io/aws-bedrock-quick-reference/";
 
@@ -43,6 +44,7 @@ export function mountFixtureApp({
   prices,
   lang = "ja-JP",
   extraProfiles = null,
+  regionNotes: notes = regionNotes,
   getView,
   setView,
   // 取得の記録の差し替え (REGIONS-001 AC-007 / AC-014)。関数なら snapshot のものを渡す。
@@ -51,6 +53,8 @@ export function mountFixtureApp({
   Object.defineProperty(navigator, "language", { value: lang, configurable: true });
   document.body.innerHTML = '<main id="main"></main>';
   localStorage.clear();
+  // DETAIL-001 AC-020 のレーンの記憶はモジュールのメモリなので、組み立てのたびに戻す。
+  resetRememberedLane();
   initI18n();
 
   const snapshot = buildSnapshot();
@@ -64,7 +68,7 @@ export function mountFixtureApp({
       typeof fetchLog === "function"
         ? fetchLog(snapshot.fetchLog)
         : (fetchLog ?? snapshot.fetchLog),
-    regionNotes,
+    regionNotes: notes,
     overrides: overrides ?? {},
     mantle,
     prices: prices ?? buildPrices(),

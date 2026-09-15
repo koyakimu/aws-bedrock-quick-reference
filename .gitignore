@@ -10,7 +10,6 @@ __pycache__/
 .playwright-cli/
 .playwright-mcp/
 node_modules
-node_modules/
 dist/
 .serena/
 

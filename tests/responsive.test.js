@@ -39,10 +39,41 @@ describe("AC-NFR-001 スマートフォン幅", () => {
     expect(mobile).toMatch(/sticky-name[\s\S]*?white-space:\s*normal/);
   });
 
-  it("詳細パネルの使い方の表も枠内で横スクロールする (DETAIL-001 v2 AC-011)", () => {
+  it("詳細パネルの価格の小表も枠内で横スクロールする (DETAIL-001 v8 AC-013)", () => {
     const detail = read("styles/detail.css");
     const mobile = detail.slice(detail.indexOf("@media (max-width: 768px)"));
-    expect(mobile).toMatch(/\.detail-usage\s*\{[^}]*overflow-x:\s*auto/);
+    expect(mobile).toMatch(/\.price-wrap\s*\{[^}]*overflow-x:\s*auto/);
+    // 見出し行は 375px で 1 列に積む (DETAIL-001 v8 AC-010)。
+    expect(mobile).toMatch(/\.head-grid\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/);
+  });
+});
+
+// FLOW-001 AC-NFR-001 / AC-NFR-002。図そのものの CSS はここで固定する。
+describe("FLOW-001 データの流れ図", () => {
+  const flow = read("styles/flow.css");
+
+  it("横スクロールするのは図の入れ物だけ", () => {
+    expect(flow).toMatch(/\.flow-scroll\s*\{[^}]*overflow-x:\s*auto/);
+  });
+
+  it("svg は幅 820px・min-width 780px・高さ auto (AC-NFR-001)", () => {
+    const rule = flow.slice(flow.indexOf(".flow-scroll > svg"));
+    expect(rule).toMatch(/width:\s*820px/);
+    expect(rule).toMatch(/min-width:\s*780px/);
+    expect(rule).toMatch(/height:\s*auto/);
+  });
+
+  it("prefers-reduced-motion: reduce でタブパネルのフェードを止める (AC-NFR-002)", () => {
+    const reduced = flow.slice(flow.indexOf("@media (prefers-reduced-motion: reduce)"));
+    expect(reduced).toContain('[role="tabpanel"]');
+    expect(reduced).toMatch(/animation:\s*none/);
+  });
+
+  it("SVG の色は tokens.css の変数から取り、テーマ分岐を持たない (AC-001)", () => {
+    expect(flow).toContain("var(--yes-line)");
+    expect(flow).toContain("var(--warn-line)");
+    expect(flow).toContain("var(--accent)");
+    expect(flow).not.toContain("data-theme");
   });
 });
 

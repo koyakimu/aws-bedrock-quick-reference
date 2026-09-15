@@ -1,0 +1,271 @@
+/* データの流れ図 (FLOW-001)。
+   SVG の中に <style> も style 属性も置かない。色・線幅・書体はここの .s-* が持ち、
+   値は tokens.css の変数から取るのでライト / ダークの両方で読める (AC-001)。 */
+
+figure.flow {
+  margin: 0 0 var(--sp-5);
+}
+
+/* AC-NFR-001: 横スクロールするのは図の入れ物だけ。ページ本体は横に伸びない。 */
+.flow-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: var(--bg-panel);
+  padding: var(--sp-3) var(--sp-2);
+}
+.flow-scroll > svg {
+  display: block;
+  width: 820px;
+  min-width: 780px;
+  height: auto;
+}
+
+figure.flow figcaption {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
+
+/* AC-NFR-002: reduced motion ではレーンのタブパネルのフェードを走らせない。 */
+.detail-panel [role="tabpanel"] {
+  animation: flow-fade 140ms ease-out;
+}
+@keyframes flow-fade {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .detail-panel [role="tabpanel"] {
+    animation: none;
+  }
+}
+
+/* --- SVG の中のクラス --- */
+.s-node {
+  fill: var(--bg-raised);
+  stroke: var(--line);
+}
+.s-node-origin {
+  fill: var(--accent-bg);
+  stroke: var(--accent-line);
+}
+.s-node-log {
+  fill: var(--bg-raised);
+  stroke: var(--accent-line);
+}
+.s-glyph {
+  fill: var(--fg-muted);
+}
+
+.s-t {
+  fill: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 11px;
+}
+.s-t-strong {
+  fill: var(--fg-strong);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+}
+.s-t-accent {
+  fill: var(--accent);
+  font-family: var(--font-sans);
+  font-size: 11px;
+}
+.s-t-accent-sm {
+  fill: var(--accent);
+  font-family: var(--font-sans);
+  font-size: 10px;
+}
+.s-t-muted {
+  fill: var(--fg-muted);
+  font-family: var(--font-sans);
+  font-size: 10px;
+}
+.s-t-dim {
+  fill: var(--fg-dim);
+  font-family: var(--font-sans);
+  font-size: 10px;
+}
+.s-t-warn {
+  fill: var(--warn-fg);
+  font-family: var(--font-sans);
+  font-size: 10px;
+}
+.s-t-yes {
+  fill: var(--yes-fg);
+  font-family: var(--font-sans);
+  font-size: 10px;
+}
+.s-t-log {
+  fill: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 9.5px;
+}
+.s-mono {
+  fill: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+}
+.s-mono-strong {
+  fill: var(--fg-strong);
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+}
+
+.s-arrow {
+  fill: none;
+  stroke: var(--fg-muted);
+  stroke-width: 1.4;
+}
+/* アクセント色は起点まわりだけ (AC-002)。 */
+.s-arrow-accent {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+}
+.s-arrow-back {
+  fill: none;
+  stroke: var(--fg-dim);
+  stroke-width: 1.2;
+  stroke-dasharray: 4 4;
+}
+.s-head {
+  fill: var(--fg-muted);
+}
+.s-head-accent {
+  fill: var(--accent);
+}
+.s-head-dim {
+  fill: var(--fg-dim);
+}
+
+.s-chip {
+  fill: var(--bg-inset);
+  stroke: var(--line);
+}
+.s-chip-t {
+  fill: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+}
+.s-chip-yes {
+  fill: var(--yes-bg);
+  stroke: var(--yes-line);
+}
+.s-chip-yes-t {
+  fill: var(--yes-fg);
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+}
+.s-chip-accent {
+  fill: var(--accent-bg);
+  stroke: var(--accent-line);
+}
+.s-chip-accent-t {
+  fill: var(--accent);
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+}
+/* warn は「国の外に出るもの」だけ (AC-002)。 */
+.s-chip-warn {
+  fill: var(--warn-bg);
+  stroke: var(--warn-line);
+}
+.s-chip-warn-t {
+  fill: var(--warn-fg);
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+}
+.s-chip-faint {
+  fill: none;
+  stroke: var(--line);
+  opacity: 0.8;
+}
+.s-chip-faint-t {
+  fill: var(--fg-dim);
+  font-family: var(--font-sans);
+  font-size: 10px;
+}
+
+/* 境界 (enclosure) */
+.s-encl-yes-fill {
+  fill: var(--yes-bg);
+  stroke: none;
+  opacity: 0.5;
+}
+.s-encl-plain-fill {
+  fill: var(--bg-inset);
+  stroke: none;
+  opacity: 0.65;
+}
+.s-wall {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 2;
+}
+.s-wall-yes {
+  fill: none;
+  stroke: var(--yes-line);
+  stroke-width: 1.8;
+}
+/* AC-005: 右の壁が無い境界。破線 + warn 色で「限定できない」ことを表す。 */
+.s-wall-open {
+  fill: none;
+  stroke: var(--warn-line);
+  stroke-width: 1.8;
+  stroke-dasharray: 6 5;
+}
+.s-tab {
+  fill: var(--bg-raised);
+  stroke: var(--line);
+}
+.s-tab-yes {
+  fill: var(--yes-bg);
+  stroke: var(--yes-line);
+}
+.s-tab-warn {
+  fill: var(--warn-bg);
+  stroke: var(--warn-line);
+}
+.s-t-tab {
+  fill: var(--fg-strong);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+}
+.s-t-tab-yes {
+  fill: var(--yes-fg);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+}
+.s-t-tab-warn {
+  fill: var(--warn-fg);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* AC-003: In-Region 不可のときに境界の内側をまとめて淡色にする。 */
+.s-off {
+  opacity: 0.45;
+}
+.s-fade-1 {
+  opacity: 0.85;
+}
+.s-fade-2 {
+  opacity: 0.6;
+}
+.s-fade-3 {
+  opacity: 0.4;
+}
+.s-fade-4 {
+  opacity: 0.22;
+}

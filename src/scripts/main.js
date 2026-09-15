@@ -17,6 +17,7 @@ import "../styles/header.css";
 import "../styles/table.css";
 import "../styles/filter.css";
 import "../styles/detail.css";
+import "../styles/flow.css";
 import "../styles/regions.css";
 
 function boot() {

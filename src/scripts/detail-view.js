@@ -1,18 +1,34 @@
-// 行の展開と詳細パネル (DETAIL-001)。データの組み立ては detail-model.mjs が持ち、
-// このファイルは DOM とイベントだけを扱う。
-import { buildDetail } from "./detail-model.mjs";
+// 行の展開と詳細パネル (DETAIL-001 v8)。
+// パネルは 共通の見出し行 → レーンのタブ → タブごとの 図 / 指定する ID / 推論先 / 価格。
+// データの組み立ては detail-model.mjs、図は flow-figure.js が持ち、ここは DOM とイベントだけ。
+import {
+  LANE_GEO,
+  LANE_GLOBAL,
+  LANE_IN_REGION,
+  LANE_ORDER,
+  buildDestinationLines,
+  buildDetail,
+  buildPriceRows,
+  globalExtrasMissing,
+  resolveLane,
+} from "./detail-model.mjs";
 import { formatPrice } from "./bedrock-view-model.mjs";
+import { buildFlowFigure } from "./flow-figure.js";
 import { createCopyable } from "./copy.js";
+import { geoAreaLabel } from "./geo-labels.js";
 import { t, getLang, LANG_CHANGED_EVENT } from "./i18n.js";
 import { regionName } from "./region-names.js";
 
-// availability の種別 → 表示ラベルのキー。「提供なし」と「未取得」は
-// 別のクラス名・別の文言で描く (AC-003 / AC-008)。
-const KIND_LABEL = Object.freeze({
-  none: "detail.notOffered",
-  empty: "detail.noTypes",
-  nodata: "detail.noData",
-});
+// 出典: bedrock-mantle の対応モデル表 (MANTLE-001 AC-006)。
+const MANTLE_AVAILABILITY_DOC =
+  "https://docs.aws.amazon.com/bedrock/latest/userguide/models-endpoint-availability.html";
+
+// 選んだレーンはセッション内のメモリにだけ持つ。URL にも localStorage にも保存しない (AC-020)。
+let rememberedLane = null;
+
+export function resetRememberedLane() {
+  rememberedLane = null;
+}
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -26,191 +42,25 @@ export function panelId(modelId) {
   return `detail-${String(modelId).replace(/[^A-Za-z0-9_-]/g, "_")}`;
 }
 
-function regionLabel(code, notes) {
-  return `${code} — ${regionName(code, getLang(), notes)}`;
+const laneId = (modelId, lane) => `${panelId(modelId)}-${lane}`;
+const tabId = (modelId, lane) => `${panelId(modelId)}-tab-${lane}`;
+
+// --- AC-010 共通の見出し行 -------------------------------------------------
+
+function headItem(labelKey, body) {
+  const item = el("div", "head-item");
+  item.dataset.item = labelKey;
+  item.appendChild(el("span", "k", t(labelKey)));
+  item.appendChild(body);
+  return item;
 }
 
-// 推論先のチップ。一覧 (TABLE-001 v4 AC-004) が地名だけにしたぶん、
-// 詳細パネルは地名とリージョンコードを併記する。例: 東京 (ap-northeast-1)
-function destinationChip(code, notes) {
-  const chip = el("span", "chip chip-dest", `${regionName(code, getLang(), notes)} (${code})`);
-  chip.dataset.region = code;
-  return chip;
-}
+function mantleItem(detail) {
+  const body = el("div", "head-mantle");
+  body.appendChild(el("span", "endpoint-value mono", detail.mantleEndpoint));
+  body.appendChild(el("span", "detail-endpoint-apis", t("mantle.mantleApis")));
 
-// AC-010: 一覧から外したモデル ID はパネルの先頭に置く。
-function modelIdSection(detail) {
-  const section = el("section", "detail-model-id");
-  section.appendChild(el("h4", null, t("detail.modelId")));
-  section.appendChild(createCopyable(detail.modelId, { labelKey: "copy.modelId" }));
-  return section;
-}
-
-// AC-011: 種別 / 指定する ID / 推論先リージョン の 3 列。
-const USAGE_LABEL = Object.freeze({
-  inRegion: "table.inRegion",
-  geo: "table.geo",
-  global: "table.global",
-});
-
-function usageSection(detail, regionNotes) {
-  const section = el("section", "detail-usage");
-  section.appendChild(el("h4", null, t("detail.usage")));
-
-  if (!detail.hasUsage) {
-    // 起点から呼べない組み合わせでも空欄にしない。
-    section.appendChild(el("p", "detail-no-usage", t("detail.usageNone")));
-    return section;
-  }
-
-  const table = el("table", "detail-usage-table");
-  const thead = document.createElement("thead");
-  const headRow = document.createElement("tr");
-  for (const key of ["detail.usageKind", "detail.usageId", "detail.usageDestinations"]) {
-    const th = el("th", null, t(key));
-    th.setAttribute("scope", "col");
-    headRow.appendChild(th);
-  }
-  thead.appendChild(headRow);
-
-  const tbody = document.createElement("tbody");
-  for (const row of detail.usage) {
-    const tr = el("tr", `detail-usage-row detail-usage-${row.kind}`);
-    tr.dataset.kind = row.kind;
-    tr.dataset.id = row.id;
-
-    const kindCell = document.createElement("td");
-    kindCell.className = "detail-usage-kind";
-    kindCell.appendChild(el("span", `usage-badge usage-${row.kind}`, t(USAGE_LABEL[row.kind])));
-    tr.appendChild(kindCell);
-
-    const idCell = document.createElement("td");
-    idCell.className = "detail-usage-id";
-    idCell.appendChild(
-      createCopyable(row.id, {
-        labelKey: row.idKind === "modelId" ? "copy.modelId" : "copy.profileId",
-      }),
-    );
-    tr.appendChild(idCell);
-
-    const destCell = document.createElement("td");
-    destCell.className = "detail-usage-dest";
-    if (row.allRegions) {
-      // "*" は出さず注記にする (AC-011 / AC-006)。
-      destCell.appendChild(el("span", "detail-all-regions", t("detail.allRegions")));
-    } else {
-      const chips = el("span", "chips");
-      for (const destination of row.destinations) {
-        chips.appendChild(destinationChip(destination, regionNotes));
-      }
-      destCell.appendChild(chips);
-    }
-    tr.appendChild(destCell);
-    tbody.appendChild(tr);
-  }
-
-  table.append(thead, tbody);
-  section.appendChild(table);
-  return section;
-}
-
-// 出典: bedrock-mantle の対応モデル表 (MANTLE-001 AC-006)。
-const MANTLE_AVAILABILITY_DOC =
-  "https://docs.aws.amazon.com/bedrock/latest/userguide/models-endpoint-availability.html";
-
-// 接続先 1 つぶん。FQDN と、そこで呼べる API を並べる (MANTLE-001 AC-005)。
-// hostClass は DETAIL-001 AC-012 が探す .detail-endpoint-value を runtime 行に付けるため。
-function endpointRow({ name, host, apisKey, className, hostClass = "" }) {
-  const row = el("div", `detail-endpoint-row ${className}`);
-  row.dataset.endpoint = name;
-  row.appendChild(el("span", "detail-endpoint-name mono", name));
-  if (host) {
-    const copyable = createCopyable(host, {
-      labelKey: "copy.endpoint",
-      className: "endpoint-host",
-    });
-    if (hostClass) copyable.querySelector("code").classList.add(hostClass);
-    row.appendChild(copyable);
-  }
-  row.appendChild(el("span", "detail-endpoint-apis", t(apisKey)));
-  return row;
-}
-
-// PRICE-001 AC-010: 起点リージョンの単価を 種別 × 入力 / 出力 の小さな表にする。
-function priceSection(detail) {
-  const section = el("section", "detail-price");
-  section.appendChild(el("h4", null, t("price.heading")));
-
-  if (!detail.hasPrices) {
-    section.appendChild(el("p", "detail-no-price", t("price.none")));
-    return section;
-  }
-
-  const table = el("table", "detail-price-table");
-  const thead = document.createElement("thead");
-  const headRow = document.createElement("tr");
-  for (const key of ["price.kindColumn", "price.input", "price.output"]) {
-    const th = el("th", null, t(key));
-    th.setAttribute("scope", "col");
-    headRow.appendChild(th);
-  }
-  thead.appendChild(headRow);
-
-  const tbody = document.createElement("tbody");
-  for (const row of detail.prices) {
-    const tr = el("tr", `detail-price-row detail-price-${row.kind}`);
-    tr.dataset.kind = row.kind;
-    const kindCell = document.createElement("td");
-    kindCell.className = "detail-price-kind";
-    kindCell.textContent = t(`price.kind.${row.kind}`);
-    tr.appendChild(kindCell);
-    for (const value of [row.input, row.output]) {
-      const td = document.createElement("td");
-      td.className = "detail-price-value num mono";
-      const text = formatPrice(value);
-      td.textContent = text == null ? "—" : `$${text}`;
-      tr.appendChild(td);
-    }
-    tbody.appendChild(tr);
-  }
-  table.append(thead, tbody);
-  section.appendChild(table);
-  section.appendChild(el("p", "detail-price-unit", t("price.unit")));
-  return section;
-}
-
-// DETAIL-001 AC-012 + MANTLE-001 AC-005: 起点リージョンの 2 つの接続先。
-function endpointSection(detail) {
-  const section = el("section", "detail-endpoint");
-  section.appendChild(el("h4", null, t("mantle.endpoints")));
-
-  // DETAIL-001 AC-012 の「起点の bedrock-runtime エンドポイント」はこの行の値。
-  section.appendChild(
-    endpointRow({
-      name: t("mantle.runtimeName"),
-      host: detail.endpoint,
-      apisKey: "mantle.runtimeApis",
-      className: "is-runtime",
-      hostClass: "detail-endpoint-value",
-    }),
-  );
-
-  if (detail.mantleEndpoint) {
-    section.appendChild(
-      endpointRow({
-        name: t("mantle.mantleName"),
-        host: detail.mantleEndpoint,
-        apisKey: "mantle.mantleApis",
-        className: "is-mantle",
-      }),
-    );
-  } else {
-    const none = el("div", "detail-endpoint-row is-mantle mantle-none", t("mantle.notAvailable"));
-    none.dataset.endpoint = t("mantle.mantleName");
-    section.appendChild(none);
-  }
-
-  // AC-005: Mantle で指定するモデル ID。✓ が出る組み合わせのときだけ ID を出す。
+  // AC-005 項目 3: Mantle で指定するモデル ID。✓ の組み合わせのときだけ ID を出す。
   const idLine = el("div", "detail-mantle-model-id");
   if (detail.mantle?.available === true) {
     idLine.appendChild(el("span", "detail-mantle-model-id-label", t("mantle.mantleModelId")));
@@ -224,10 +74,10 @@ function endpointSection(detail) {
   } else {
     idLine.appendChild(el("span", "detail-mantle-none", t("mantle.notAvailable")));
   }
-  section.appendChild(idLine);
+  body.appendChild(idLine);
 
   // AC-004: Mantle では cross-region inference が使えない。
-  section.appendChild(el("p", "detail-mantle-no-cris", t("mantle.noCris")));
+  body.appendChild(el("p", "detail-mantle-no-cris", t("mantle.noCris")));
 
   // AC-006: 転記元への脚注リンク。
   const footnote = el("p", "detail-mantle-source");
@@ -236,98 +86,301 @@ function endpointSection(detail) {
   link.target = "_blank";
   link.rel = "noreferrer";
   footnote.appendChild(link);
-  section.appendChild(footnote);
+  body.appendChild(footnote);
+  return body;
+}
 
+function headGrid(detail) {
+  const grid = el("div", "head-grid");
+  grid.appendChild(
+    headItem("detail.modelId", createCopyable(detail.modelId, { labelKey: "copy.modelId" })),
+  );
+  grid.appendChild(
+    headItem(
+      "detail.runtimeEndpoint",
+      el("span", "endpoint-value detail-endpoint-value mono", detail.endpoint),
+    ),
+  );
+  // 起点に mantle が無いときはこの項目ごと出さない (AC-010)。
+  if (detail.mantleEndpoint) grid.appendChild(headItem("detail.mantleEndpoint", mantleItem(detail)));
+  return grid;
+}
+
+// --- AC-014 レーンのタブと要約 ---------------------------------------------
+
+function laneTitle(lane, summary) {
+  if (lane === LANE_IN_REGION) return t("detail.laneInRegion");
+  if (lane === LANE_GLOBAL) return t("detail.laneGlobal");
+  const areas = [...new Set(summary.prefixes ?? [])].map(geoAreaLabel);
+  if (areas.length === 0) return t("detail.laneGeoPlain");
+  return t("detail.laneGeo", { areas: areas.join(t("detail.laneJoin")) });
+}
+
+function laneSummaryText(lane, summary) {
+  if (!summary.available) return { text: t("detail.sumUnavailable"), warn: false };
+  if (lane === LANE_IN_REGION) return { text: t("detail.sumInRegion"), warn: false };
+  if (lane === LANE_GLOBAL) return { text: t("detail.sumGlobal"), warn: true };
+  // 起点の country が分からないときは件数を切り分けず「推論先 K」(AC-014)。
+  if (!summary.countryKnown) {
+    return { text: t("detail.sumGeoUnknown", { count: summary.totalCount }), warn: false };
+  }
+  return {
+    text: t("detail.sumGeo", { domestic: summary.domesticCount, foreign: summary.foreignCount }),
+    // 国外が 1 件でもあれば warn 色 (AC-014)。
+    warn: summary.foreignCount >= 1,
+  };
+}
+
+// --- AC-017 各レーンのパネルの中身 -----------------------------------------
+
+function idSection(id, { profile }) {
+  const section = el("section", "detail-id");
+  section.appendChild(el("h4", null, t("detail.specifiedId")));
+  section.appendChild(
+    createCopyable(id, { labelKey: profile ? "copy.profileId" : "copy.modelId" }),
+  );
   return section;
 }
 
-function availabilitySection(detail, regionNotes) {
-  const section = el("section", "detail-availability");
-  const heading = el("h4", null, t("detail.availability"));
-  section.appendChild(heading);
-  const list = el("ul", "detail-region-list");
-  for (const row of detail.availability) {
-    const item = el("li", `detail-region detail-region-${row.kind}`);
-    item.dataset.region = row.region;
-    item.dataset.kind = row.kind;
-    // 現在の起点リージョンを視覚的に区別する (AC-007)。
-    if (row.region === detail.region) {
-      item.classList.add("is-current");
-      item.appendChild(el("span", "current-marker", t("detail.currentSource")));
-    }
-    item.appendChild(el("span", "detail-region-name", regionLabel(row.region, regionNotes)));
-
-    if (row.kind === "types") {
-      const badges = el("span", "detail-types");
-      // ON_DEMAND / INFERENCE_PROFILE / PROVISIONED はそのままの名前で並べる (AC-002)。
-      for (const type of row.types) {
-        badges.appendChild(el("span", `badge badge-${type.toLowerCase()} mono`, type));
-      }
-      item.appendChild(badges);
+// AC-019: 地名だけを出す。リージョンコードは出さない。
+function destinationSection(lane, { destinations, region, regionNotes, available }) {
+  const section = el("section", "detail-dest");
+  section.appendChild(el("h4", null, t("detail.destinations")));
+  const lang = getLang();
+  const { lines, note } = buildDestinationLines(lane, {
+    destinations,
+    region,
+    regionNotes,
+    lang,
+    available,
+  });
+  const separator = t("detail.destSeparator");
+  const list = el("ul", "dest-list");
+  for (const line of lines) {
+    const item = el("li", `dest-line dest-${line.kind}`);
+    item.dataset.kind = line.kind;
+    if (line.kind === "notOffered") {
+      item.appendChild(el("span", "state-none", t("detail.destNotOffered", { place: line.place })));
+    } else if (line.kind === "globalScope") {
+      item.appendChild(el("span", "k", t("detail.destScopeLabel")));
+      item.appendChild(el("span", "v-warn", t("detail.destGlobalScope")));
     } else {
-      // 未取得は「未取得」とだけ出す。理由 (cause) はメンテナ向けの情報 (AC-008 / D-008)。
-      item.appendChild(el("span", `detail-region-state state-${row.kind}`, t(KIND_LABEL[row.kind])));
+      const labelKey =
+        line.kind === "domestic"
+          ? "detail.destDomestic"
+          : line.kind === "foreign"
+            ? "detail.destForeign"
+            : "detail.destAny";
+      if (line.kind === "inRegion") {
+        item.appendChild(el("span", "v", line.places.join(separator)));
+      } else {
+        item.appendChild(el("span", "k", t(labelKey, { count: line.count })));
+        item.appendChild(
+          el("span", line.warn ? "v-warn" : "v", line.places.join(separator)),
+        );
+      }
     }
     list.appendChild(item);
   }
   section.appendChild(list);
+
+  if (note === "geo") {
+    section.appendChild(
+      el(
+        "p",
+        "note-muted dest-note",
+        t("detail.destGeoNote", { place: regionName(region, lang, regionNotes) }),
+      ),
+    );
+  } else if (note === "global") {
+    section.appendChild(el("p", "note-muted dest-note", t("detail.destGlobalNote")));
+  }
   return section;
 }
 
-function profileSection(detail, regionNotes) {
-  const section = el("section", "detail-profiles");
-  section.appendChild(el("h4", null, t("detail.profiles")));
+// AC-013: レーンごとの価格。
+function priceSection(modelId, { prices, region, regionNotes, lane, available }) {
+  const section = el("section", "detail-price");
+  section.appendChild(el("h4", null, t("price.heading")));
+  const rows = buildPriceRows(modelId, { prices, region, lane });
 
-  if (!detail.hasProfiles) {
-    // プロファイル 0 件のモデルは空欄にしない (AC-009)。
-    section.appendChild(el("p", "detail-no-profiles", t("detail.noProfiles")));
+  if (rows.length === 0) {
+    section.appendChild(el("p", "detail-no-price", t("price.none")));
     return section;
   }
 
-  for (const profile of detail.profiles) {
-    const block = el("div", "detail-profile");
-    block.dataset.profileId = profile.profileId;
-    block.dataset.prefix = profile.prefix;
-    const head = el("div", "detail-profile-head");
-    head.append(
-      el("span", `prefix-badge prefix-${profile.prefix}`, profile.prefix),
-      createCopyable(profile.profileId, { labelKey: "copy.profileId" }),
-    );
-    block.appendChild(head);
-
-    const list = el("ul", "detail-source-list");
-    for (const source of profile.sources) {
-      const item = el("li", "detail-source");
-      item.dataset.source = source.source;
-      if (source.source === detail.region) {
-        item.classList.add("is-current");
-        item.appendChild(el("span", "current-marker", t("detail.currentSource")));
-      }
-      item.appendChild(el("span", "detail-source-region mono", source.source));
-      item.appendChild(el("span", "detail-arrow", t("detail.arrow")));
-      if (source.allRegions) {
-        // "*" は出さず注記にし、公式 docs へのリンクを添える (AC-006)。
-        const note = el("span", "detail-all-regions", t("detail.allRegions"));
-        const link = el("a", "global-note-link", t("value.globalDocs"));
-        link.href =
-          "https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-region-inference.html";
-        link.target = "_blank";
-        link.rel = "noreferrer";
-        note.append(" ", link);
-        item.appendChild(note);
-      } else {
-        const chips = el("span", "chips");
-        for (const destination of source.destinations) {
-          chips.appendChild(destinationChip(destination, regionNotes));
-        }
-        item.appendChild(chips);
-      }
-      list.appendChild(item);
-    }
-    block.appendChild(list);
-    section.appendChild(block);
+  const wrap = el("div", "price-wrap");
+  const table = el("table", "detail-price-table price-table");
+  const thead = document.createElement("thead");
+  const headRow = document.createElement("tr");
+  for (const key of ["price.kindColumn", "price.input", "price.output"]) {
+    const th = el("th", null, t(key));
+    th.setAttribute("scope", "col");
+    headRow.appendChild(th);
   }
+  thead.appendChild(headRow);
+
+  const tbody = document.createElement("tbody");
+  for (const row of rows) {
+    const tr = el("tr", `detail-price-row detail-price-${row.kind}`);
+    tr.dataset.kind = row.kind;
+    tr.appendChild(el("td", "detail-price-kind", t(`price.kind.${row.kind}`)));
+    for (const value of [row.input, row.output]) {
+      const text = formatPrice(value);
+      // 出力側の単価が無い種別は「—」(AC-013)。
+      tr.appendChild(el("td", "detail-price-value v num mono", text == null ? "—" : `$${text}`));
+    }
+    tbody.appendChild(tr);
+  }
+  table.append(thead, tbody);
+  wrap.appendChild(table);
+  section.appendChild(wrap);
+
+  const notes = [t("price.unit", { place: regionName(region, getLang(), regionNotes) })];
+  if (lane === LANE_GEO) notes.push(t("price.geoSame"));
+  if (lane === LANE_GLOBAL && globalExtrasMissing(modelId, { prices, region })) {
+    notes.push(t("price.globalMissing"));
+  }
+  // AC-016: 使えないレーンでも単価があれば表は出す。呼べないことを注記で足す。
+  if (!available) notes.push(t("price.unavailableLane"));
+  section.appendChild(el("p", "detail-price-unit price-unit", notes.join(" ")));
   return section;
+}
+
+/** 図 + 指定する ID + 推論先 の 3 点セット (AC-017 / AC-018 の 1 ブロック)。 */
+function laneBlock(lane, { modelId, detail, regionNotes, profile, available, heading }) {
+  const block = el("div", "lane-block");
+  if (profile) block.dataset.profileId = profile.profileId;
+  if (heading) block.appendChild(el("h4", "lane-block-head", heading));
+  block.appendChild(
+    buildFlowFigure(lane, {
+      available,
+      destinations: profile?.destinations ?? (available ? [detail.region] : []),
+      region: detail.region,
+      regionNotes,
+      prefix: profile?.prefix ?? null,
+    }),
+  );
+  block.appendChild(idSection(profile ? profile.profileId : modelId, { profile: Boolean(profile) }));
+  block.appendChild(
+    destinationSection(lane, {
+      destinations: profile?.destinations ?? [],
+      region: detail.region,
+      regionNotes,
+      available,
+    }),
+  );
+  return block;
+}
+
+function lanePanel(lane, { modelId, detail, regionNotes, prices }) {
+  const summary = detail.summaries[lane];
+  const panel = el("div", "lane-panel");
+  panel.id = laneId(modelId, lane);
+  panel.setAttribute("role", "tabpanel");
+  panel.setAttribute("aria-labelledby", tabId(modelId, lane));
+  panel.tabIndex = 0;
+  panel.dataset.lane = lane;
+
+  // AC-021: どのレーンも使えないときは無言の空パネルを出さない。
+  if (!detail.anyLane) {
+    panel.appendChild(el("p", "detail-no-lane", t("detail.noLane")));
+  }
+
+  if (lane === LANE_GEO && summary.available) {
+    // AC-018: プロファイルごとに 図 + ID + 推論先 を 1 ブロックとして縦に積む。
+    for (const profile of summary.profiles) {
+      panel.appendChild(
+        laneBlock(lane, {
+          modelId,
+          detail,
+          regionNotes,
+          profile,
+          available: true,
+          heading: geoAreaLabel(profile.prefix),
+        }),
+      );
+    }
+  } else if (lane === LANE_GEO) {
+    panel.appendChild(
+      laneBlock(lane, { modelId, detail, regionNotes, profile: null, available: false }),
+    );
+  } else if (lane === LANE_GLOBAL) {
+    panel.appendChild(
+      laneBlock(lane, {
+        modelId,
+        detail,
+        regionNotes,
+        profile: summary.available ? { profileId: summary.id, prefix: "global", destinations: [] } : null,
+        available: summary.available,
+      }),
+    );
+  } else {
+    panel.appendChild(
+      laneBlock(lane, { modelId, detail, regionNotes, profile: null, available: summary.available }),
+    );
+  }
+
+  // AC-018: 価格の節はブロックごとに繰り返さず、パネルの末尾に 1 つだけ。
+  panel.appendChild(
+    priceSection(modelId, {
+      prices,
+      region: detail.region,
+      regionNotes,
+      lane,
+      available: summary.available,
+    }),
+  );
+  return panel;
+}
+
+function laneTabs(modelId, detail, { onSelect }) {
+  const tablist = el("div", "lane-tabs");
+  tablist.setAttribute("role", "tablist");
+  tablist.setAttribute("aria-label", t("detail.laneTabs"));
+  const buttons = [];
+
+  for (const lane of LANE_ORDER) {
+    const summary = detail.summaries[lane];
+    const button = el("button", "lane-tab");
+    button.type = "button";
+    button.id = tabId(modelId, lane);
+    button.dataset.lane = lane;
+    button.setAttribute("role", "tab");
+    button.setAttribute("aria-controls", laneId(modelId, lane));
+    // AC-016: 使えないレーンは淡色にするが disabled にはしない。
+    if (!summary.available) button.classList.add("is-dim");
+    button.appendChild(el("span", "lane-title", laneTitle(lane, summary)));
+    const { text, warn } = laneSummaryText(lane, summary);
+    const sum = el("span", "lane-sum", text);
+    if (warn) sum.classList.add("is-warn");
+    button.appendChild(sum);
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      onSelect(lane);
+    });
+    buttons.push(button);
+    tablist.appendChild(button);
+  }
+
+  // roving tabindex + 矢印キー。
+  tablist.addEventListener("keydown", (event) => {
+    const index = buttons.indexOf(document.activeElement);
+    if (index < 0) return;
+    let next = null;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % buttons.length;
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      next = (index - 1 + buttons.length) % buttons.length;
+    }
+    if (event.key === "Home") next = 0;
+    if (event.key === "End") next = buttons.length - 1;
+    if (next == null) return;
+    event.preventDefault();
+    buttons[next].focus();
+    onSelect(buttons[next].dataset.lane);
+  });
+
+  return { tablist, buttons };
 }
 
 /**
@@ -339,7 +392,6 @@ export function mountDetailView({
   view,
   models,
   profiles,
-  fetchLog,
   regionNotes,
   mantle = null,
   prices = {},
@@ -350,11 +402,11 @@ export function mountDetailView({
     const detail = buildDetail(modelId, {
       models,
       profiles,
-      fetchLog,
       regionNotes,
       mantle,
       prices,
       region: view.getRegion(),
+      lang: getLang(),
     });
     const tr = el("tr", "detail-row");
     tr.id = panelId(modelId);
@@ -362,15 +414,32 @@ export function mountDetailView({
     const td = document.createElement("td");
     td.colSpan = columnCount;
     const panel = el("div", "detail-panel");
-    // 上から 技術的な識別子 → 横断の事実 → 接続先 の順 (AC-010 〜 AC-012)。
-    panel.append(
-      modelIdSection(detail),
-      usageSection(detail, regionNotes),
-      priceSection(detail),
-      availabilitySection(detail, regionNotes),
-      profileSection(detail, regionNotes),
-      endpointSection(detail),
-    );
+
+    let selected = resolveLane(rememberedLane, detail.summaries);
+    const panels = new Map();
+
+    function select(lane) {
+      selected = lane;
+      // AC-020: セッション内のメモリだけ。URL にも localStorage にも書かない。
+      rememberedLane = lane;
+      for (const [key, element] of panels) element.hidden = key !== lane;
+      for (const button of tabs.buttons) {
+        const on = button.dataset.lane === lane;
+        button.setAttribute("aria-selected", String(on));
+        button.tabIndex = on ? 0 : -1;
+      }
+    }
+
+    panel.appendChild(headGrid(detail));
+    const tabs = laneTabs(modelId, detail, { onSelect: select });
+    panel.appendChild(tabs.tablist);
+    for (const lane of LANE_ORDER) {
+      const element = lanePanel(lane, { modelId, detail, regionNotes, prices });
+      panels.set(lane, element);
+      panel.appendChild(element);
+    }
+    select(selected);
+
     td.appendChild(panel);
     tr.appendChild(td);
     return { tr, detail };

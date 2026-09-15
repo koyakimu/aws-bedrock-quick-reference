@@ -24,3 +24,8 @@ export function geoLimitLabel(code) {
 export function countryLimitLabel(code) {
   return labelOr(`filter.country.${code}`, code);
 }
+
+/** 国そのものの名前 (FLOW-001 AC-004 の内側の境界の見出し)。無ければコードをそのまま。 */
+export function countryLabel(code) {
+  return labelOr(`country.${code}`, code);
+}

@@ -1,7 +1,7 @@
 ---
 spec_id: "MANTLE-001"
 context: "mantle"
-version: 1
+version: 2
 issue_ref: null
 title: "もう一つの接続先 bedrock-mantle と対応モデルの表示"
 decision_refs:
@@ -59,18 +59,21 @@ decision_refs:
 - **When**: エンドポイント行の近くを見る
 - **Then**: 「**Mantle では地理圏・全世界への振り分け（cross-region inference）は使えません**」の 1 行が表示される。文言は I18N-001 の辞書（`mantle.noCris`）に置き、ja / en の両方を持つ。Mantle 提供外のリージョンでもこの注記は消えない
 
-### AC-005 (詳細パネルの「接続先」節)
-- **Given**: モデル M の行を開く（DETAIL-001 AC-001）
-- **When**: 詳細パネルの末尾の「接続先」節を見る
-- **Then**: 次の 3 つが出る
-  1. `bedrock-runtime` の FQDN と、そこで呼べる API（InvokeModel / Converse / OpenAI Responses / Chat Completions / Anthropic Messages）
-  2. `bedrock-mantle` の FQDN と、そこで呼べる API（**OpenAI Responses / Chat Completions / Anthropic Messages** のみ）。提供外のリージョンでは FQDN の代わりに AC-002 と同じ「提供なし」の文言
-  3. **Mantle で指定するモデル ID**（コピーボタン付き）。✓ にならない組み合わせでは ID の代わりに AC-003 と同じ理由の文言を出す
-- **And**: AC-004 の注記がこの節にも 1 行で出る。DETAIL-001 AC-012 の「起点の `bedrock-runtime` エンドポイント」はこの節の中に残る
+### AC-005 (詳細パネルの見出し行に出す接続先)
+- **Given**: 起点リージョン R でモデル M の行を開く（DETAIL-001 v8 AC-001）
+- **When**: パネル先頭の**共通の見出し行**（DETAIL-001 v8 AC-010 の `div.head-grid`）を見る
+- **Then**: 見出し行の項目 2 と項目 3 が接続先になる。**末尾に独立した「接続先」節は置かない**
+  - **項目 2「接続先 (bedrock-runtime)」**: R の FQDN と、そこで呼べる API（InvokeModel / Converse / OpenAI Responses / Chat Completions / Anthropic Messages）。どの起点でも必ず出る
+  - **項目 3「接続先 (bedrock-mantle)」**: **R に mantle があるときだけ出る**。中身は次の 3 つ
+    1. `bedrock-mantle` の FQDN
+    2. そこで呼べる API（**OpenAI Responses / Chat Completions / Anthropic Messages** のみ）
+    3. **Mantle で指定するモデル ID**（コピーボタン付き）。✓ にならない組み合わせでは ID の代わりに AC-003 と同じ理由の文言を出す
+  - R に mantle が無いときは**この項目ごと出さない**。「提供なし」の行も置かない（呼べない宛先を見せないため。起点バーの AC-002 の表示は変わらない）
+- **And**: AC-004 の注記が項目 3 の中に 1 行で出る。DETAIL-001 v8 AC-010 の「起点の `bedrock-runtime` エンドポイント」は項目 2 そのもの
 
 ### AC-006 (出典リンク)
-- **Given**: 詳細パネルの「接続先」節
-- **When**: 節の末尾を見る
+- **Given**: 詳細パネルの見出し行の「接続先 (bedrock-mantle)」の項目
+- **When**: 項目の末尾を見る
 - **Then**: 転記元の公式 docs（Endpoint availability）へのリンクが脚注として出る。`target="_blank"` と `rel="noreferrer"` を持つ
 
 ### AC-007 (Error Case: mantle のデータが無い / モデルの記載が無い)
@@ -85,9 +88,10 @@ decision_refs:
   その下に AC-004 の注記を淡色・小サイズで 1 行
 - **本体（表）**: 備考の 1 つ手前に「Mantle」列。✓ / 「—」だけの狭い列で、ID はセルに出さない
   （TABLE-001 AC-007 の「表の中に ID とコピーボタンを置かない」を守る。ID はツールチップと詳細パネル）
-- **詳細パネル**: 既存の「エンドポイント」節を「接続先」節に広げ、2 つの接続先を縦に並べる。
-  各行は `接続先名 / FQDN（コピー可能） / 呼べる API` の 3 つ。その下に Mantle のモデル ID、
-  AC-004 の注記、出典リンク
+- **詳細パネル**: パネル先頭の共通の見出し行（`div.head-grid`）の 2 列目が
+  `接続先 (bedrock-runtime)`、3 列目が `接続先 (bedrock-mantle)`。3 列目は起点に mantle が
+  あるときだけ出て、FQDN / 呼べる API / Mantle のモデル ID / AC-004 の注記 / 出典リンクを
+  この順に縦に積む。**パネル末尾の「接続先」節は無い**（DETAIL-001 v8）
 
 ## Context Boundary
 
@@ -138,7 +142,7 @@ decision_refs:
 | AC-002 | integration (jsdom, vitest) | 提供外リージョン（`ap-northeast-3`）で「提供なし」の文言だけが出て、FQDN もコピーボタンも出ないことを検証 |
 | AC-003 | unit + integration (vitest, jsdom) | `judgeMantle` を 4 ケース（対応 × 提供 / 対応 × 提供外 / 非対応 × 提供 / 記載なし）で検証。描画側で列位置（備考の 1 つ手前）、✓ と「—」、ツールチップの 3 通りの文言、素のモデル ID を検証 |
 | AC-004 | integration (jsdom, vitest) | 注記が起点バーの中に 1 行で出て、提供外リージョンでも消えないことを検証 |
-| AC-005 | integration (jsdom, vitest) | 接続先節に 2 行が並び、mantle の行に `InvokeModel` / `Converse` が現れないこと、Mantle のモデル ID がコピーボタン付きで出ること、非対応モデルでは理由が出ることを検証 |
+| AC-005 | integration (jsdom, vitest) | 見出し行の項目が モデル ID / bedrock-runtime / bedrock-mantle の順に並び、mantle の項目に `InvokeModel` / `Converse` が現れないこと、Mantle のモデル ID がコピーボタン付きで出ること、非対応モデルでは理由が出ること、mantle が無い起点では項目ごと消えて `bedrock-runtime` の項目は残ることを検証 |
 | AC-006 | integration (jsdom, vitest) | 脚注リンクの `href` と `rel` を検証 |
 | AC-007 | unit + integration (vitest, jsdom) | `judgeMantle(null, ...)` / `isMantleRegion(null, ...)` が落ちないこと、mantle を渡さずに組み立てた表で全行が「—」になることを検証 |
 | データの形 | unit (vitest, node) | `data/mantle.json` の `_source`（URL 3 本・日付）、`regions` が docs の 14 件と一致、`models` のキーが `models.json` に実在、`_unmatched` / `mantleOnly` の性質を検証 |
@@ -166,4 +170,12 @@ decision_refs:
 
 ## 変更履歴
 
+- **version 2** (2026-09-15): 詳細パネルの接続先の置き場所を、パネル末尾の独立した「接続先」節から
+  **DETAIL-001 v8 AC-010 の共通の見出し行**へ移した（AC-005 を改訂、UI Description と AC Coverage を追随）。
+  `bedrock-runtime` の FQDN は見出し行の項目 2、`bedrock-mantle` は項目 3 で、**起点に mantle が
+  あるときだけ**出る（無いときは項目ごと出さない）。3 つの中身（FQDN / 呼べる API / Mantle の
+  モデル ID）・AC-004 の注記・AC-006 の出典リンクは変えていない。AC-001 〜 AC-004 / AC-007 も変更なし。
+  理由: DETAIL-001 v8 がパネルを「レーンごとのデータの流れ」に作り替え、レーンによらない共通の情報を
+  先頭の見出し行に集めたため。末尾の節のままだと、レーンのタブパネルの下に接続先が続いて
+  「どのレーンにも属さない情報」が読み取れなくなる（D-013）
 - **version 1** (2026-09-14): 初版

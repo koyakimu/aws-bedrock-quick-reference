@@ -148,7 +148,14 @@ describe("AC-005 リージョン表示名", () => {
     // filter.geo は地理圏 (推論先の限定の選択肢) の表示名で、FILTER-001 AC-018 により
     // 辞書が正。「オーストラリア＋ニュージーランド」のように国名を含むので、
     // リージョン表示名の二重持ちの検査からは外す。
-    const strip = (dict) => ({ ...dict, filter: { ...dict.filter, geo: undefined } });
+    // country は国名 (FLOW-001 AC-004 の内側の境界の見出し)。国と同名のリージョン
+    // 表示名 (スペイン / シンガポール / マレーシア / ニュージーランド) と綴りが一致
+    // するが、別の語彙なので二重持ちではない。同じ理由でこの検査から外す。
+    const strip = (dict) => ({
+      ...dict,
+      filter: { ...dict.filter, geo: undefined },
+      country: undefined,
+    });
     const flat = JSON.stringify({ ja: strip(ja), en: strip(en) });
     for (const code of codes) {
       expect(flat, `${code} が辞書に入っている`).not.toContain(code);
