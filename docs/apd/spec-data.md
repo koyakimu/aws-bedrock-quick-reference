@@ -1,7 +1,7 @@
 ---
 spec_id: "DATA-001"
 context: "data"
-version: 2
+version: 3
 issue_ref: null
 title: "スナップショット取得スクリプトと正規化"
 decision_refs:
@@ -11,6 +11,7 @@ decision_refs:
   - D-004
   - D-005
   - D-008
+  - D-012
 ---
 
 ## User Story
@@ -81,6 +82,18 @@ decision_refs:
 - **When**: `node scripts/fetch-bedrock-snapshot.mjs --from-raw <日付> --account-kind <種別>` を実行する
 - **Then**: `aws` を一度も起動せずに生データだけを読み直し、`models.json` / `profiles.json` / `fetch-log.json` を書き直す。既存の `fetch-log.json` があれば `generatedAt` を引き継ぐ（取得し直していないため）。`--profile` は不要、`--account-kind` は必須
 
+### AC-013 (地理圏は `global` 以外の全接頭辞)
+- **Given**: `ListInferenceProfiles` の応答に `ca.amazon.nova-lite-v1:0` や `in.openai.gpt-5.6-luna` のような、`us` / `eu` / `apac` / `au` / `jp` 以外の接頭辞のプロファイルが含まれる
+- **When**: 正規化する
+- **Then**: 接頭辞を弾かずそのまま `prefix` に入れる。**`global` 以外の接頭辞はすべて地理圏（Geo）として扱う**（D-012）。接頭辞の閉じた一覧をコードにもデータにも持たない
+- **And**: 画面側（TABLE-001 AC-004 / FILTER-001 AC-020 / FLOW-001 AC-004）は同じ規則で地理圏を導き、ラベルが辞書に無い接頭辞は接頭辞そのものを表示する
+
+### AC-014 (`region-notes.json` の `geo` は接頭辞に合わせる)
+- **Given**: 接頭辞 `ca` / `in` のプロファイルが実在する
+- **When**: 手書きの `data/region-notes.json` を直す
+- **Then**: `ca-central-1` / `ca-west-1` の `geo` が `"ca"` に、`ap-south-1` / `ap-south-2` の `geo` が `"in"` になる。`geo` の値はプロファイルの接頭辞の地理圏に合わせる規則（CLAUDE.md / D-004）のままで、どの接頭辞にも属さないリージョンだけが `"other"` に残る
+- **And**: この変更で REGIONS-001 の列グループ、FILTER-001 のカスタムのピッカーのグループと推論先の限定の選択肢、FLOW-001 の Geo の国の環がそろって追随する。**どれも固定リストを持たないので、コードの変更は要らない**
+
 ### AC-NFR-001 (正規化の純粋性)
 - **Given**: 同じ生 JSON を入力する
 - **When**: `scripts/lib/normalize.mjs` を 2 回呼ぶ
@@ -123,6 +136,8 @@ decision_refs:
 | AC-010 | integration (vitest, `aws` をスタブ) | 1 リージョンだけ非ゼロ終了＋`AccessDeniedException` 文字列を返すスタブで、`fetch-log.json` に `cause` だけが残ること・生成物から除外されることを検証。分類関数 `classifyFetchError` は `.err` fixture（SCP 拒否 / opt-in 未有効化 / timeout）で単体検証 |
 | AC-011 | unit (vitest) | 生成した JSON 全体を文字列化し、12 桁の数字列・`arn:`・`AccessDenied`・`Exception`・組織 ID・ポリシー ID・`AWSReservedSSO` のいずれにも一致しないことを検証。リージョンコード（`ap-northeast-1` の `p-northeast` など）は誤検出しないことも検証 |
 | AC-012 | integration (vitest) | 偽 runner で取得した生データを `--from-raw` 経路で読み直し、同じ生成物になること・`aws` 相当の runner が呼ばれないこと・`generatedAt` を引き継ぐことを検証 |
+| AC-013 | unit (vitest) | `ca.` / `in.` を含む fixture で `prefix` がそのまま入り、`global` 以外が Geo として扱われることを検証。接頭辞の固定リストが `scripts/lib/` にも `src/scripts/` にも無いことを検証 |
+| AC-014 | unit (vitest, node 環境) | `region-notes.json` を読み、`ca-central-1` / `ca-west-1` の `geo` が `ca`、`ap-south-1` / `ap-south-2` の `geo` が `in` であること、`profiles.json` に現れる `global` 以外の全接頭辞が `geo` の値としても存在することを検証 |
 | AC-NFR-001 | unit (vitest) | 同一入力で 2 回呼び、`generatedAt` を除いて `toEqual` かつ `JSON.stringify` が一致することを検証 |
 
 ## Deliverable Previews
@@ -139,10 +154,11 @@ decision_refs:
 
 - `PROVISIONED` は `availability` にそのまま保持するが、In-Region / Geo / Global の 3 列判定には使わない（技術設計 §3）
 - `inferenceTypesSupported` に API Reference の enum に無い `INFERENCE_PROFILE` が返る。enum で弾かず未知の値も素通しする
-- spike で観測したプロファイル接頭辞は `apac` / `jp` / `global` の 3 種のみだが、`us` / `eu` / `au` も同じ規則で扱う
+- プロファイル接頭辞の閉じた一覧は持たない。2026-09-15 のスナップショットでは `apac`（11）/ `au`（8）/ `ca`（1）/ `eu`（23）/ `global`（20）/ `in`（2）/ `jp`（6）/ `us`（56）が観測されている。**`global` 以外はすべて地理圏**として同じ規則で扱う（D-012）。AWS docs も地理圏の閉じた一覧を公開していないので、API のスナップショットが正
 - 取得アカウントは手元の SSO で手動実行する。CI に AWS 認証情報は置かない（DEPLOY-001 参照）
 
 ## 変更履歴
 
+- **version 3** (2026-09-15): 地理圏の定義を接頭辞 5 種の固定リストから「`global` 以外の全接頭辞」に改め（AC-013 を追加）、`region-notes.json` の `geo` に `ca`（ca-central-1 / ca-west-1）と `in`（ap-south-1 / ap-south-2）を足すことを AC-014 として定めた。正規化の規則・生成物の形・`cause` の扱いは変更しない。理由: `ca.amazon.nova-lite-v1:0` と `in.openai.gpt-5.6-*` が実データに現れ、5 種の固定リストでは Geo と判定できなかった。AWS docs は地理圏の閉じた一覧を公開しておらず（models-region-compatibility は「US, EU, Japan, or Australia」、geographic-cross-region-inference は「such as US, EU, and APAC」と食い違う）、API のスナップショットを正とする（D-012）
 - **version 2** (2026-09-14): 取得失敗の理由を公開データから外した。AC-010 は `reason`（API のエラー原文）ではなく `cause`（分類）を記録すると改め、AC-011 をアカウント ID だけでなく識別子全般とエラー原文に広げた。取り直さずに正規化だけやり直す `--from-raw` を AC-012 として追加（D-008）
 - **version 1** (2026-09-14): 初版
