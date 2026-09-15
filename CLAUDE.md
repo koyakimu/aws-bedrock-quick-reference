@@ -181,7 +181,7 @@ source region R、モデル M について:
 | 列 | 判定 |
 |---|---|
 | In-Region | R の `models.json[M].availability[R]` が `ON_DEMAND` を含む |
-| Geo | `profiles.json` に接頭辞 `us` / `eu` / `apac` / `au` / `jp` で M を対象とし `sources[R]` を持つものがある |
+| Geo | `profiles.json` に接頭辞が `global` **以外**で M を対象とし `sources[R]` を持つものがある（接頭辞の固定リストは持たない、D-012） |
 | Global | 同じく接頭辞 `global`。destination は API から取れないので `["*"]` で、画面では注記にする |
 | データなし | `fetch-log.json.regions[R].status` が `denied` |
 | 入力 / 出力 $/1M | `prices.json.byModel[M][R].standard` の `input` / `output`。無ければ「—」 |

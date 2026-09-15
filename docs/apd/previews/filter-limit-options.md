@@ -1,15 +1,16 @@
 # 推論先の限定セレクタの選択肢（確定表）
 
-- Spec: FILTER-001 v4（AC-005 / AC-006 / AC-008 / AC-011 / AC-012〜AC-019）、判断: D-007
+- Spec: FILTER-001 v5（AC-005 / AC-006 / AC-008 / AC-011 / AC-012〜AC-020）、判断: D-007 / D-012
 - 実装: `src/scripts/filter-model.mjs` の `buildLimitOptions()`
-- この表は `data/region-notes.json` と `data/profiles.json`（2026-09-14 のスナップショット）
-  から生成した実際の値。固定表はコードに持たない。件数はデータが変われば変わる
+- この表は `data/region-notes.json` と `data/profiles.json`（`fetch-log.json` の `generatedAt` は
+  2026-09-14T13:32:42.541Z）から生成した実際の値。**国の一覧も地理圏の一覧も件数も
+  固定表を持たない**（D-012）。データが変われば選択肢も件数も変わる
 
 D-007 が選んだ C（固定リスト + カスタムのリージョン複数選択）は両方とも実装済み。固定リストは
 初回サイクル、カスタムは Issue #1。判定関数 `satisfiesLimit(destinations, L)` は変えておらず、
 違うのは `L` の作り方と `limit` の表現だけ。
 
-## 選択肢（1 つの平坦なリスト、9 件）
+## 選択肢（1 つの平坦なリスト、11 件）
 
 見出し（国 / 地理圏）は持たない。ラベルにはリージョン数が付き、**リージョン集合が完全に
 一致する選択肢は 1 つに畳む**（FILTER-001 v4 AC-018）。畳まれた値は残った選択肢の別名
@@ -21,61 +22,73 @@ D-007 が選んだ C（固定リスト + カスタムのリージョン複数選
 | `country:jp` | 日本国内（2） / Japan (2) | 2 | `geo:jp` | `ap-northeast-1` `ap-northeast-3` |
 | `country:us` | 米国内（4） / United States (4) | 4 | — | `us-east-1` `us-east-2` `us-west-1` `us-west-2` |
 | `country:au` | オーストラリア国内（2） / Australia (2) | 2 | — | `ap-southeast-2` `ap-southeast-4` |
+| `country:ca` | カナダ国内（2） / Canada (2) | 2 | `geo:ca` | `ca-central-1` `ca-west-1` |
+| `country:in` | インド国内（2） / India (2) | 2 | `geo:in` | `ap-south-1` `ap-south-2` |
 | `geo:au` | オーストラリア＋ニュージーランド（3） / Australia + New Zealand (3) | 3 | — | `ap-southeast-2` `ap-southeast-4` `ap-southeast-6` |
 | `geo:eu` | EU 内（8） / EU (8) | 8 | — | `eu-central-1` `eu-central-2` `eu-north-1` `eu-south-1` `eu-south-2` `eu-west-1` `eu-west-2` `eu-west-3` |
 | `geo:apac` | アジア太平洋内（12） / Asia Pacific (12) | 12 | — | `ap-east-2` `ap-northeast-1` `ap-northeast-2` `ap-northeast-3` `ap-south-1` `ap-south-2` `ap-southeast-1` `ap-southeast-2` `ap-southeast-3` `ap-southeast-4` `ap-southeast-5` `ap-southeast-7` |
 | `geo:us` | 米国＋カナダ（5） / United States + Canada (5) | 5 | — | `ca-central-1` `us-east-1` `us-east-2` `us-west-1` `us-west-2` |
 | `custom` / `custom:<code>+<code>...` | カスタム… / Custom… | 0〜33 | — | 閲覧者がピッカーで選んだリージョン（昇順・重複なし）。空集合は「制限なし」と同じ意味 |
 
-畳まれたのは `geo:jp` の 1 件だけ。`geo:us` は `us.` プロファイルの destination に
+畳まれたのは `geo:jp` / `geo:ca` / `geo:in` の 3 件。`geo:us` は `us.` プロファイルの destination に
 `ca-central-1` が入るため `country:us` と集合が違い、選択肢として残る。`geo:au` も
 `ap-southeast-6`（ニュージーランド）を含むので `country:au` とは別物。
 
-地理圏のラベルは i18n 辞書（`filter.geo.*`）が正で、コードからは組み立てない。国と集合が
-違う地理圏だけが表に出るので、ラベルは「どこが違うか」が読める語にしてある。
+地理圏のラベルは i18n 辞書（`filter.geo.*`）、国のラベルは `filter.country.*` が正で、
+コードからは組み立てない。**辞書にキーが無いコードはコードをそのまま表示する**（AC-020）。
+一覧から落としたり例外にしたりはしないので、新しい接頭辞が出ても選択肢には必ず現れる。
 
 ### 並び
 
-「制限なし」→ 国（`jp` → `us` → `au`）→ 残った地理圏（`au` → `eu` → `apac` → `us`）→
-「カスタム…」。国と地理圏の並びの定義は `filter-model.mjs` の `LIMIT_COUNTRY_ORDER` /
-`LIMIT_GEO_ORDER`。カスタムのピッカーのグループ順（`CUSTOM_GROUP_ORDER`）とは別で、
+「制限なし」→ 国（`jp` → `us` → `au` → 残りの国コードを昇順）→ 残った地理圏
+（`jp` → `au` → `eu` → `apac` → `us` → 残りを昇順）→「カスタム…」。
+
+一覧そのものはデータから導く（`filter-model.mjs` の `geoCodes()` / `countryCodes()`）。
+並びだけを `COUNTRY_ORDER_PREFERENCE` / `LIMIT_GEO_ORDER_PREFERENCE` が決め、
+そこに無いコードは落とさず昇順で後ろに並ぶ。カスタムのピッカーのグループ順
+（`orderGeoCodes()`: `jp` → `apac` → `eu` → `us` → `au` → 残りを昇順 → `other`）とは別で、
 どちらも相手の都合で並べ替えない。
 
 ## 集合の導出元
 
 | グループ | 導出 |
 |---|---|
-| 国 | `region-notes.json` の `country` が一致するリージョン（`jp` / `au` / `us`） |
-| 地理圏 | `profiles.json` の同じ接頭辞を持つプロファイルの destination 全件 ∪ `region-notes.json` の `geo` が一致するリージョン。国と集合が完全一致するものは落として国に畳む |
+| 国 | 「地理圏として存在し、かつ `region-notes.json` の `country` に現れるコード」（`jp` / `us` / `au` / `ca` / `in`）に属するリージョン |
+| 地理圏 | `profiles.json` の接頭辞（`global` 以外のすべて）∪ `region-notes.json` の `geo` の実値。各コードについて 同じ接頭辞のプロファイルの destination 全件 ∪ `geo` が一致するリージョン。国と集合が完全一致するものは落として国に畳む |
 | カスタム | 閲覧者がピッカーでチェックしたリージョン。集合は `limit` の値そのものが持つ（選択肢の `regions` は空） |
 
 地理圏を 2 つのデータ源の和集合にしているのは次の理由による。
 
 - `profiles.json` だけだと、取得できていない起点リージョンのプロファイルが欠けて集合が狭くなる
-  （2026-09-14 のスナップショットは `ap-northeast-1` からしか取れていない）
+  （現在のスナップショットは `ap-northeast-1` からしか取れていない）
 - `region-notes.json` の `geo` だけだと、`apac.` プロファイルの destination に含まれる
   `ap-northeast-1` / `ap-northeast-3`（`geo` は `jp`）が落ち、AC-006 が求める
   「`apac.` も `jp.` も APAC 内に収まる」が成り立たなくなる
 
 実データでの効き方の例: `geo:apac` に `ap-southeast-2` / `ap-southeast-4`（`region-notes.json` の
-`geo` は `au`）が入っているのは、`apac.` プロファイルの destination から導出しているため。
+`geo` は `au`）と `ap-south-1` / `ap-south-2`（同 `in`）が入っているのは、`apac.` プロファイルの
+destination から導出しているため。
 
 ## カスタムのピッカー（AC-012 〜 AC-017）
 
 「カスタム…」を選ぶとセレクタの下にリージョンのピッカーが開く。中身は `region-notes.json` の
-全 33 リージョンで、`geo` ごとに `fieldset` で区切る。グループの並びは
-`jp` → `apac` → `eu` → `us` → `au` → `other`（`other` は `region-notes.json` の `geo` にしか
-無い区分で、プロファイルの接頭辞には対応しない）。
+全 33 リージョンで、`geo` の**実値**ごとに `fieldset` で区切る（AC-013）。グループの並びは
+`orderGeoCodes()`（`other` は `region-notes.json` の `geo` にしか無い区分で、プロファイルの
+接頭辞には対応しないため末尾）。
 
 | グループ（`geo`） | 見出し（ja / en） | リージョン数 |
 |---|---|---|
 | `jp` | 日本国内 / Japan | 2 |
-| `apac` | アジア太平洋 / Asia Pacific | 8 |
+| `apac` | アジア太平洋 / Asia Pacific | 6 |
 | `eu` | EU / EU | 8 |
 | `us` | 米国 / United States | 4 |
 | `au` | オーストラリア / Australia | 3 |
-| `other` | その他 / Other | 8 |
+| `ca` | カナダ / Canada | 2 |
+| `in` | インド / India | 2 |
+| `other` | その他 / Other | 6 |
 
+- `ca` / `in` は `region-notes.json` の `geo` を `ca.` / `in.` の接頭辞に合わせた結果として現れた
+  （DATA-001 AC-014）。**コードの変更は要らず**、グループも選択肢も自動で追随した
 - 各行のラベルは `ap-northeast-1 — 東京` のように「コード — 現地名」。名前は
   `region-notes.json` の `ja` / `en` が正（I18N-001 AC-005）で、i18n 辞書には持たない
 - グループごとの「すべて選ぶ」は既存の選択に足し込む（他グループの選択を消さない）
@@ -118,6 +131,8 @@ D-007 が選んだ C（固定リスト + カスタムのリージョン複数選
 |---|---|---|---|
 | `?limit=country:jp` | `country:jp` の 2 件 | 日本国内（2） | 無し |
 | `?limit=geo:jp` | 同上（別名として解決） | 日本国内（2） | `?limit=country:jp` |
+| `?limit=geo:ca` | `country:ca` の 2 件 | カナダ国内（2） | `?limit=country:ca` |
+| `?limit=geo:in` | `country:in` の 2 件 | インド国内（2） | `?limit=country:in` |
 | `?limit=geo:au` | `geo:au` の 3 件 | オーストラリア＋ニュージーランド（3） | 無し |
 | `?limit=geo:atlantis` | 限定なし | 制限なし | 通知に出して削除（SHARE-001 AC-008） |
 
