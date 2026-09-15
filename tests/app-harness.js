@@ -10,6 +10,7 @@ import {
   regionNotes,
 } from "./fixtures/bedrock-fixture.js";
 import mantle from "../data/mantle.json";
+import { resetRememberedLane } from "../src/scripts/detail-view.js";
 
 export const BASE_URL = "https://koyakimu.github.io/aws-bedrock-quick-reference/";
 
@@ -32,11 +33,28 @@ export function fakeHistory(loc) {
   };
 }
 
-/** fixture のスナップショットで画面一式を組み立てる。 */
-export function mountFixtureApp({ search = "", overrides, prices, lang = "ja-JP" } = {}) {
+/**
+ * fixture のスナップショットで画面一式を組み立てる。
+ * extraProfiles を渡すと profiles.json に足した状態で組み立てられる
+ * (未知の接頭辞の扱いを確かめるため。DATA-001 AC-013 / FILTER-001 AC-020)。
+ */
+export function mountFixtureApp({
+  search = "",
+  overrides,
+  prices,
+  lang = "ja-JP",
+  extraProfiles = null,
+  regionNotes: notes = regionNotes,
+  getView,
+  setView,
+  // 取得の記録の差し替え (REGIONS-001 AC-007 / AC-014)。関数なら snapshot のものを渡す。
+  fetchLog,
+} = {}) {
   Object.defineProperty(navigator, "language", { value: lang, configurable: true });
   document.body.innerHTML = '<main id="main"></main>';
   localStorage.clear();
+  // DETAIL-001 AC-020 のレーンの記憶はモジュールのメモリなので、組み立てのたびに戻す。
+  resetRememberedLane();
   initI18n();
 
   const snapshot = buildSnapshot();
@@ -45,19 +63,33 @@ export function mountFixtureApp({ search = "", overrides, prices, lang = "ja-JP"
   const app = mountApp({
     host: document.getElementById("main"),
     models: snapshot.models,
-    profiles: snapshot.profiles,
-    fetchLog: snapshot.fetchLog,
-    regionNotes,
+    profiles: extraProfiles ? { ...snapshot.profiles, ...extraProfiles } : snapshot.profiles,
+    fetchLog:
+      typeof fetchLog === "function"
+        ? fetchLog(snapshot.fetchLog)
+        : (fetchLog ?? snapshot.fetchLog),
+    regionNotes: notes,
     overrides: overrides ?? {},
     mantle,
     prices: prices ?? buildPrices(),
     location: loc,
     history: hist,
+    getView,
+    setView,
   });
   return { ...app, location: loc, history: hist, snapshot };
 }
 
 export { buildOverrides, buildPrices, regionNotes, mantle };
+
+// --- ビュータブと行列 (REGIONS-001) ---
+export const viewTab = (view) => document.querySelector(`nav.tabs .tab[data-view="${view}"]`);
+export const matrixHeadRows = () => [...document.querySelectorAll("#regions-matrix thead tr")];
+export const matrixBodyRows = () => [...document.querySelectorAll("#regions-matrix tbody tr")];
+export const matrixRegionHeads = () =>
+  [...(matrixHeadRows()[1]?.children ?? [])].map((th) => th.querySelector(".rg-code")?.textContent);
+export const matrixCells = (rowIndex = 0) =>
+  [...(matrixBodyRows()[rowIndex]?.querySelectorAll("td.mx") ?? [])];
 
 // --- DOM の取り回し ---
 export const bodyRows = () =>

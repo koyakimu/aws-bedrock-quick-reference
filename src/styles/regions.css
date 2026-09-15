@@ -1,0 +1,277 @@
+/*
+ * ビュータブとモデル × 全リージョンの行列 (REGIONS-001)。
+ * 色はすべて tokens.css の変数から取る。テーマ分岐はここに書かない。
+ */
+
+/* --- ヘッダ直下のビュータブ (AC-001) --- */
+/* タブと「この表示の URL をコピー」を 1 行に並べる。どちらもビューに依らない */
+.tabs-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+  margin-bottom: var(--sp-4);
+}
+
+.tabs-row .share-copy {
+  margin-left: auto;
+}
+
+nav.tabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--bg-inset);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+nav.tabs .tab {
+  padding: var(--sp-1) var(--sp-3);
+  font: inherit;
+  font-size: var(--fs-sm);
+  color: var(--fg-muted);
+  background: none;
+  border: 0;
+  border-radius: var(--radius);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+nav.tabs .tab:hover {
+  color: var(--fg);
+}
+
+nav.tabs .tab[aria-selected="true"] {
+  background: var(--bg-active);
+  color: var(--fg-strong);
+}
+
+/* --- 行列の上のバー (地域チップ・絞り込み・件数) --- */
+.regions-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+  margin: var(--sp-3) 0;
+  font-size: var(--fs-sm);
+}
+
+.regions-bar .filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  align-items: center;
+}
+
+.regions-bar .label {
+  margin-right: var(--sp-1);
+  color: var(--fg-muted);
+  font-size: var(--fs-xs);
+}
+
+.regions-bar .filter-field {
+  display: inline-flex;
+  gap: var(--sp-1);
+  align-items: center;
+}
+
+.fchip {
+  padding: var(--sp-1) 9px;
+  font: inherit;
+  font-size: var(--fs-sm);
+  line-height: 1.2;
+  color: var(--fg);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.fchip:hover {
+  border-color: var(--fg-dim);
+}
+
+.fchip.on {
+  color: var(--fg-strong);
+  background: var(--accent-bg);
+  border-color: var(--accent-line);
+}
+
+.row-count {
+  margin-left: auto;
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+}
+
+/* --- 行列 (AC-004 / AC-005 / AC-NFR-001) --- */
+/* 横スクロールを持つのはこの枠だけ。ページ本体は横に伸びない。 */
+.matrix-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+table.matrix {
+  width: auto;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+table.matrix th,
+table.matrix td {
+  padding: 5px 7px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+table.matrix thead th {
+  vertical-align: bottom;
+  line-height: 1.35;
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--fg-muted);
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--line-head);
+}
+
+table.matrix thead th.geo-head {
+  text-align: center;
+  color: var(--fg-strong);
+  font-weight: 600;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+table.matrix .geo-code {
+  color: var(--fg-dim);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+table.matrix thead th .rg-ja {
+  color: var(--fg);
+}
+
+table.matrix thead th .rg-code {
+  color: var(--fg-dim);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+/* グループの先頭の列に区切り線 (AC-004) */
+table.matrix .geo-start {
+  border-left: 1px solid var(--line);
+}
+
+/* 起点リージョンの列 (AC-008) */
+table.matrix .is-origin,
+table.matrix thead th.is-origin {
+  background: var(--accent-bg);
+}
+
+table.matrix thead th.is-origin .rg-ja {
+  color: var(--accent);
+}
+
+.origin-marker {
+  margin-left: 4px;
+  padding: 0 3px;
+  font-size: 10px;
+  color: var(--accent);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius);
+}
+
+/* セルの 4 状態 (AC-005) */
+table.matrix td.mx {
+  text-align: center;
+  font-size: var(--fs-md);
+}
+
+td.mx-yes {
+  color: var(--yes-fg);
+}
+
+td.mx-prof {
+  color: var(--chip-fg);
+}
+
+td.mx-none {
+  color: var(--fg-dim);
+}
+
+td.mx-blank {
+  color: transparent;
+}
+
+/* プロバイダが変わる行の区切り線 (AC-003) */
+table.matrix tr.prov-start > td {
+  border-top: 1px solid var(--line);
+}
+
+table.matrix td.prov {
+  color: var(--fg-strong);
+  font-weight: 600;
+}
+
+/* 左 2 列は横スクロール中も固定する (AC-NFR-001) */
+table.matrix .sticky-1,
+table.matrix .sticky-2 {
+  position: sticky;
+  z-index: 2;
+  background: var(--bg-panel);
+}
+
+table.matrix thead .sticky-1,
+table.matrix thead .sticky-2 {
+  z-index: 3;
+  background: var(--bg-raised);
+}
+
+table.matrix .sticky-1 {
+  left: 0;
+  width: var(--col-provider-w);
+  min-width: var(--col-provider-w);
+}
+
+table.matrix .sticky-2 {
+  left: var(--col-provider-w);
+  border-right: 1px solid var(--line);
+}
+
+/* --- 凡例 (AC-006) と注記 (AC-007) --- */
+.legend {
+  margin: var(--sp-3) 0 0;
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
+
+.legend .g-yes {
+  color: var(--yes-fg);
+}
+
+.legend .g-prof {
+  color: var(--chip-fg);
+}
+
+.legend .g-none {
+  color: var(--fg-dim);
+}
+
+.note-muted {
+  margin: var(--sp-2) 0 0;
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
+
+/* --- 空状態 (AC-013)。FILTER-001 AC-010 と同じ見た目 --- */
+.regions-empty {
+  margin: var(--sp-3) 0;
+}
+
+@media (max-width: 768px) {
+  .regions-bar .row-count {
+    margin-left: 0;
+  }
+}

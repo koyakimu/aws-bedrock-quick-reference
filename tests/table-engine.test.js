@@ -219,3 +219,100 @@ describe("createTable", () => {
     }
   });
 });
+
+// REGIONS-001 の行列も同じエンジンで描く (「Bedrock 固有の知識を持たせない」)。
+// 足したのは「2 段ヘッダ」「セルごとの class / title」「枠と table の class」の
+// 3 つの汎用オプションだけで、ここではデータの意味を一切使わずに検証する。
+describe("createTable の 2 段ヘッダと列グループ", () => {
+  const MATRIX_COLUMNS = [
+    { key: "a", labelKey: "col.a", sticky: true, stickyName: "1", sortable: false },
+    { key: "b", labelKey: "col.b", sticky: true, stickyName: "2", sortable: false },
+    {
+      key: "x1",
+      group: "g1",
+      sortable: false,
+      className: "cell",
+      headerContent: () => "X1",
+      format: (value) => String(value ?? ""),
+      cellClass: (row) => (row.x1 ? "on" : "off"),
+      cellTitle: (row) => (row.x1 ? "有" : "無"),
+    },
+    { key: "x2", group: "g1", sortable: false, headerContent: () => "X2", format: () => "" },
+    { key: "y1", group: "g2", sortable: false, headerContent: () => "Y1", format: () => "" },
+  ];
+  const MATRIX_ROWS = [{ a: "p", b: "q", x1: 1, x2: 0, y1: 0 }];
+
+  function mountMatrix(state = baseState) {
+    const table = createTable({
+      columns: MATRIX_COLUMNS,
+      rows: MATRIX_ROWS,
+      state,
+      i18n,
+      headerGroups: (shown) => {
+        const groups = [];
+        for (const column of shown.filter((c) => c.group)) {
+          const last = groups[groups.length - 1];
+          if (last && last.label === column.group) last.colspan += 1;
+          else groups.push({ label: column.group, colspan: 1, className: "geo-head" });
+        }
+        return groups;
+      },
+      frameClass: "matrix-scroll",
+      tableClass: "grid matrix",
+    });
+    document.body.replaceChildren(table.el);
+    return table;
+  }
+
+  it("ヘッダが 2 行になり、覆われない列は rowspan=2 になる", () => {
+    mountMatrix();
+    const rows = document.querySelectorAll("thead tr");
+    expect(rows).toHaveLength(2);
+    expect([...rows[0].children].map((th) => th.getAttribute("scope"))).toEqual([
+      "col",
+      "col",
+      "colgroup",
+      "colgroup",
+    ]);
+    expect([...rows[0].children].slice(0, 2).every((th) => th.rowSpan === 2)).toBe(true);
+    expect(rows[1].children).toHaveLength(3);
+  });
+
+  it("colspan の合計が 2 行目の列数に一致する", () => {
+    mountMatrix();
+    const groups = [...document.querySelectorAll('thead th[scope="colgroup"]')];
+    expect(groups.map((th) => th.colSpan)).toEqual([2, 1]);
+    expect(groups.reduce((sum, th) => sum + th.colSpan, 0)).toBe(
+      document.querySelectorAll("thead tr")[1].children.length,
+    );
+  });
+
+  it("列が隠れるとグループの colspan も減る", () => {
+    const table = mountMatrix();
+    table.update(MATRIX_ROWS, { ...baseState, hiddenGroups: ["g2"] });
+    expect(
+      [...document.querySelectorAll('thead th[scope="colgroup"]')].map((th) => th.colSpan),
+    ).toEqual([2]);
+  });
+
+  it("stickyName で固定列の class を位置で名乗らせられる", () => {
+    mountMatrix();
+    expect(document.querySelectorAll("thead th")[0].classList.contains("sticky-1")).toBe(true);
+    expect(document.querySelectorAll("tbody td")[0].classList.contains("sticky-1")).toBe(true);
+  });
+
+  it("セルごとの class と title を列が決められる", () => {
+    mountMatrix();
+    const td = document.querySelectorAll("tbody td")[2];
+    expect(td.classList.contains("cell")).toBe(true);
+    expect(td.classList.contains("on")).toBe(true);
+    expect(td.title).toBe("有");
+  });
+
+  it("枠と table に class を足せる", () => {
+    const table = mountMatrix();
+    expect(table.el.classList.contains("table-frame")).toBe(true);
+    expect(table.el.classList.contains("matrix-scroll")).toBe(true);
+    expect(document.querySelector("table").className).toBe("grid matrix");
+  });
+});

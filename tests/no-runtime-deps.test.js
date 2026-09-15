@@ -55,7 +55,8 @@ describe("data/region-notes.json の形", () => {
   });
 
   it("全リージョンが ja / en / optIn / endpoint / country / geo を持つ", () => {
-    const geos = new Set(["us", "eu", "apac", "au", "jp", "other"]);
+    // geo の値は接頭辞の固定リストではなく「2 文字以上の小文字コード」か、
+    // どの地理圏にも属さない "other"。閉じた一覧は持たない (D-012)。
     const codes = Object.keys(notes).filter((key) => key !== "_source");
     expect(codes.length).toBeGreaterThan(20);
     for (const code of codes) {
@@ -65,12 +66,15 @@ describe("data/region-notes.json の形", () => {
       expect(typeof note.optIn, code).toBe("boolean");
       expect(note.endpoint, code).toBe(`bedrock-runtime.${code}.amazonaws.com`);
       expect(note.country, code).toMatch(/^[a-z]{2}$/);
-      expect(geos.has(note.geo), `${code}: ${note.geo}`).toBe(true);
+      expect(note.geo, code).toMatch(/^[a-z]{2,6}$/);
     }
   });
 
   it("geo は推論プロファイルの接頭辞の地理圏と対応する", () => {
     expect(notes["ap-northeast-1"].geo).toBe("jp");
+    // DATA-001 AC-014: ca. / in. のプロファイルが実在するので geo も合わせる
+    for (const code of ["ca-central-1", "ca-west-1"]) expect(notes[code].geo).toBe("ca");
+    for (const code of ["ap-south-1", "ap-south-2"]) expect(notes[code].geo).toBe("in");
     expect(notes["ap-northeast-3"].geo).toBe("jp");
     for (const code of ["ap-southeast-2", "ap-southeast-4", "ap-southeast-6"]) expect(notes[code].geo).toBe("au");
     for (const code of ["us-east-1", "us-east-2", "us-west-1", "us-west-2"]) expect(notes[code].geo).toBe("us");

@@ -1,355 +1,499 @@
-// DETAIL-001 v2 の結合テスト (jsdom)。AC-001 / 007 / 008 / 009 / 010 / 011 / 012 と、
-// 単体で作った行が画面にそのまま出ていること (AC-002 〜 006)。
-import { describe, it, expect, vi } from "vitest";
-import { mountFixtureApp, rowFor, cells, $ } from "./app-harness.js";
+// DETAIL-001 v8 の描画 (jsdom)。共通の見出し行・レーンのタブ・タブパネルの中身。
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { mountFixtureApp, rowFor, bodyRows } from "./app-harness.js";
 import { panelId } from "../src/scripts/detail-view.js";
-import { DENIED_REGION, TOKYO, EMPTY_REGION } from "./fixtures/bedrock-fixture.js";
+import { setLang } from "../src/scripts/i18n.js";
+import {
+  CLAUDE_45,
+  DENIED_REGION,
+  EXTRA_PROFILES,
+  NO_LANE_MODEL,
+  NVIDIA,
+  regionNotesWithoutCountry,
+} from "./fixtures/bedrock-fixture.js";
 
-const CLAUDE = "anthropic.claude-sonnet-4-5-20250929-v1:0";
-const NVIDIA = "nvidia.nemotron-nano-12b-v2";
-const TITAN = "amazon.titan-embed-text-v1:2:8k";
+const NOVA = "amazon.nova-lite-v1:0";
 
-const toggleOf = (modelId) => rowFor(modelId).querySelector(".detail-toggle");
 const panelOf = (modelId) => document.getElementById(panelId(modelId));
+const open = (modelId) => {
+  rowFor(modelId).querySelector(".detail-toggle").click();
+  return panelOf(modelId);
+};
+const tabsOf = (panel) => [...panel.querySelectorAll('.lane-tabs [role="tab"]')];
+const tabFor = (panel, lane) => panel.querySelector(`.lane-tabs [role="tab"][data-lane="${lane}"]`);
+const laneOf = (panel, lane) => panel.querySelector(`[role="tabpanel"][data-lane="${lane}"]`);
+const visibleLane = (panel) =>
+  [...panel.querySelectorAll('[role="tabpanel"]')].find((element) => !element.hidden);
 
-// --- AC-001 行の展開 ---
-describe("DETAIL-001 AC-001 行の展開", () => {
-  it("展開トグルのクリックで行の直下にパネルが挿入され aria-expanded が切り替わる", () => {
-    mountFixtureApp();
-    const row = rowFor(CLAUDE);
-    const toggle = toggleOf(CLAUDE);
+let app;
+beforeEach(() => {
+  app = mountFixtureApp({ extraProfiles: EXTRA_PROFILES });
+});
+
+describe("AC-001 行の展開", () => {
+  it("トグルのクリックでパネルが挿入され aria-expanded が切り替わる", () => {
+    const toggle = rowFor(NOVA).querySelector(".detail-toggle");
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
-    expect(toggle.getAttribute("aria-controls")).toBe(panelId(CLAUDE));
-    expect(panelOf(CLAUDE)).toBeNull();
-
     toggle.click();
-    const panel = panelOf(CLAUDE);
-    expect(panel).not.toBeNull();
-    expect(row.nextElementSibling).toBe(panel);
-    expect(toggleOf(CLAUDE).getAttribute("aria-expanded")).toBe("true");
-    expect(panel.querySelector("td").colSpan).toBe(cells(row).length);
-
-    toggleOf(CLAUDE).click();
-    expect(panelOf(CLAUDE)).toBeNull();
-    expect(toggleOf(CLAUDE).getAttribute("aria-expanded")).toBe("false");
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
+    expect(panelOf(NOVA)).not.toBeNull();
+    expect(toggle.getAttribute("aria-controls")).toBe(panelId(NOVA));
+    toggle.click();
+    expect(panelOf(NOVA)).toBeNull();
   });
 
-  it("行クリックでも開く (パネル内のコピーボタンでは閉じない)", () => {
-    mountFixtureApp();
-    cells(rowFor(CLAUDE))[0].click();
-    expect(panelOf(CLAUDE)).not.toBeNull();
-
-    // 表にコピーボタンは無い (TABLE-001 v2 AC-007)。パネル内のボタンを押しても閉じない
-    panelOf(CLAUDE).querySelector("button.copy-btn").click();
-    expect(panelOf(CLAUDE)).not.toBeNull();
-  });
-
-  it("複数行を同時に開ける", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    toggleOf(NVIDIA).click();
-    expect(panelOf(CLAUDE)).not.toBeNull();
-    expect(panelOf(NVIDIA)).not.toBeNull();
-  });
-
-  it("起点リージョンを切り替えても対象モデルが表に残っていれば開いたまま", () => {
-    const app = mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    app.view.setRegion(EMPTY_REGION);
-    expect(rowFor(CLAUDE)).toBeNull();
-    app.view.setRegion(TOKYO);
-    expect(panelOf(CLAUDE)).not.toBeNull();
-    expect(toggleOf(CLAUDE).getAttribute("aria-expanded")).toBe("true");
+  it("起点を切り替えても対象モデルが表に残っていれば開いたまま", () => {
+    open(NOVA);
+    app.view.setRegion("ap-northeast-3");
+    expect(panelOf(NOVA)).not.toBeNull();
   });
 });
 
-// --- AC-002 / AC-003 / AC-004 提供状況 ---
-describe("DETAIL-001 AC-002 全リージョン横断の availability", () => {
-  it("region-notes.json のキー全件が並ぶ", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const items = panelOf(CLAUDE).querySelectorAll(".detail-region");
-    expect(items).toHaveLength(33);
-    expect(items[0].dataset.region).toBe("af-south-1");
+describe("AC-010 共通の見出し行", () => {
+  it("モデル ID がコピーボタン付きで出て、コピー文字列が ID と完全一致する", () => {
+    const grid = open(CLAUDE_45).querySelector(".head-grid");
+    const item = grid.querySelector('[data-item="detail.modelId"]');
+    expect(item.querySelector(".id").textContent).toBe(CLAUDE_45);
+    expect(item.querySelector(".copy-btn").dataset.copy).toBe(CLAUDE_45);
   });
 
-  it("推論タイプはそのままの名前で並ぶ", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const tokyo = panelOf(CLAUDE).querySelector('.detail-region[data-region="ap-northeast-1"]');
-    expect([...tokyo.querySelectorAll(".badge")].map((b) => b.textContent)).toEqual([
-      "INFERENCE_PROFILE",
-    ]);
-  });
-});
-
-describe("DETAIL-001 AC-003 提供なしの表示", () => {
-  it("取得できているがモデルが無いリージョンは「提供なし」", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const row = panelOf(CLAUDE).querySelector('.detail-region[data-region="eu-west-1"]');
-    expect(row.dataset.kind).toBe("none");
-    expect(row.textContent).toContain("提供なし");
-  });
-});
-
-describe("DETAIL-001 AC-004 空配列の表示", () => {
-  it("「提供あり・推論タイプの指定なし」は提供なし / 未取得 と別のクラス", () => {
-    mountFixtureApp();
-    toggleOf(TITAN).click();
-    const panel = panelOf(TITAN);
-    const tokyo = panel.querySelector('.detail-region[data-region="ap-northeast-1"]');
-    expect(tokyo.dataset.kind).toBe("empty");
-    expect(tokyo.querySelector(".state-empty")).not.toBeNull();
-    expect(tokyo.textContent).toContain("提供あり・推論タイプの指定なし");
-    expect(panel.querySelector('.detail-region[data-region="eu-west-1"]').dataset.kind).toBe(
-      "none",
-    );
-    expect(
-      panel.querySelector(`.detail-region[data-region="${DENIED_REGION}"]`).dataset.kind,
-    ).toBe("nodata");
-  });
-});
-
-// --- AC-005 / AC-006 プロファイル ---
-describe("DETAIL-001 AC-005 プロファイルの起点 → 推論先", () => {
-  it("接頭辞バッジとコピー可能な ID と destination が出る", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const jp = panelOf(CLAUDE).querySelector(
-      '.detail-profile[data-prefix="jp"]',
-    );
-    expect(jp.querySelector(".prefix-badge").textContent).toBe("jp");
-    expect(jp.querySelector(".copyable .id").textContent).toBe(
-      "jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
-    );
-    const source = jp.querySelector('.detail-source[data-source="ap-northeast-1"]');
-    // 推論先は地名とコードを併記する (DETAIL-001 v4 AC-005)
-    expect([...source.querySelectorAll(".chip-dest")].map((c) => c.textContent)).toEqual([
-      "東京 (ap-northeast-1)",
-      "大阪 (ap-northeast-3)",
-    ]);
-  });
-});
-
-describe("DETAIL-001 AC-006 Global の推論先", () => {
-  it("destination を列挙せず注記とリンクを出し、'*' を出さない", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const panel = panelOf(CLAUDE);
-    const global = panel.querySelector('.detail-profile[data-prefix="global"]');
-    expect(global.textContent).toContain("全対応リージョン（今後増えうる）");
-    expect(global.querySelector("a").href).toContain("global-cross-region-inference");
-    expect(global.querySelectorAll(".chip-dest")).toHaveLength(0);
-    expect(panel.textContent).not.toContain("*");
-  });
-});
-
-// --- AC-007 現在の起点リージョンの強調 ---
-describe("DETAIL-001 AC-007 現在の起点リージョンの強調", () => {
-  it("availability と sources の両方で起点の行にだけ印が付く", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const panel = panelOf(CLAUDE);
-    const currentRegions = [...panel.querySelectorAll(".detail-region.is-current")];
-    expect(currentRegions).toHaveLength(1);
-    expect(currentRegions[0].dataset.region).toBe(TOKYO);
-
-    const currentSources = [...panel.querySelectorAll(".detail-source.is-current")];
-    expect(currentSources.length).toBeGreaterThan(0);
-    for (const source of currentSources) expect(source.dataset.source).toBe(TOKYO);
-    expect(panel.querySelectorAll(".current-marker").length).toBeGreaterThanOrEqual(2);
-  });
-});
-
-// --- AC-008 denied は「未取得」 ---
-describe("DETAIL-001 AC-008 denied リージョンは「未取得」", () => {
-  it("「提供なし」と異なるクラス名で描画される", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const panel = panelOf(CLAUDE);
-    const denied = panel.querySelector(`.detail-region[data-region="${DENIED_REGION}"]`);
-    expect(denied.dataset.kind).toBe("nodata");
-    expect(denied.querySelector(".state-nodata")).not.toBeNull();
-    expect(denied.querySelector(".state-none")).toBeNull();
-    expect(denied.textContent).toContain("未取得");
-    expect(denied.textContent).not.toContain("提供なし");
-  });
-
-  it("取得できなかった理由は出さない (D-008)", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const denied = panelOf(CLAUDE).querySelector(
-      `.detail-region[data-region="${DENIED_REGION}"] .state-nodata`,
-    );
-    expect(denied.textContent.trim()).toBe("未取得");
-    expect(denied.title).toBe("");
-    expect(denied.querySelector(".detail-region-cause")).toBeNull();
-    expect(denied.querySelector("a")).toBeNull();
-    const text = document.body.textContent;
-    for (const sentence of [
-      "組織のポリシーで取得できませんでした",
-      "権限が足りず取得できませんでした",
-      "このアカウントで有効化されていないリージョンです",
-    ]) {
-      expect(text).not.toContain(sentence);
-    }
-    expect(text).not.toContain("cause.");
-  });
-
-  it("エラー原文は詳細パネルのどこにも出ない", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const text = document.body.textContent;
-    expect(text).not.toContain("AccessDenied");
-    expect(text).not.toContain("service control policy");
-    expect(text).not.toContain("arn:aws:sts");
-    expect(text).not.toContain("AWSReservedSSO");
-  });
-});
-
-// --- AC-009 プロファイルが 1 件も無い ---
-describe("DETAIL-001 AC-009 対象プロファイルが 1 件も無い", () => {
-  it("空欄ではなく説明文が出る", () => {
-    mountFixtureApp();
-    toggleOf(NVIDIA).click();
-    const panel = panelOf(NVIDIA);
-    expect(panel.querySelectorAll(".detail-profile")).toHaveLength(0);
-    expect(panel.querySelector(".detail-no-profiles").textContent).toBe(
-      "cross-region inference profile なし（モデル ID を直接指定する）",
-    );
-  });
-});
-
-// --- AC-010 モデル ID をパネルの先頭に出す ---
-describe("DETAIL-001 AC-010 モデル ID", () => {
-  it("パネルの先頭にモデル ID がコピーボタン付きで出る", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const panel = panelOf(CLAUDE);
-    const section = panel.querySelector(".detail-panel").firstElementChild;
-    expect(section.classList.contains("detail-model-id")).toBe(true);
-    expect(section.querySelector(".copyable .id").textContent).toBe(CLAUDE);
-    expect(section.querySelector("button.copy-btn")).not.toBeNull();
-  });
-
-  it("コピーボタンはモデル ID の文字列だけをコピーする", async () => {
-    const writeText = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    panelOf(CLAUDE).querySelector(".detail-model-id button.copy-btn").click();
-    await vi.waitFor(() => expect(writeText).toHaveBeenCalledTimes(1));
-    expect(writeText).toHaveBeenCalledWith(CLAUDE);
-  });
-});
-
-// --- AC-011 使い方ごとの「指定する ID」 ---
-describe("DETAIL-001 AC-011 種別 / 指定する ID / 推論先リージョン", () => {
-  it("3 列の表が出て、Geo は プロファイル ID と destination を出す", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const usage = panelOf(CLAUDE).querySelector(".detail-usage");
-    expect([...usage.querySelectorAll("thead th")].map((th) => th.textContent)).toEqual([
-      "種別",
-      "指定する ID",
-      "推論先リージョン",
-    ]);
-    const geo = usage.querySelector('.detail-usage-row[data-kind="geo"]');
-    expect(geo.querySelector(".usage-badge").textContent).toBe("Geo");
-    expect(geo.querySelector(".copyable .id").textContent).toBe(
-      "jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
-    );
-    expect([...geo.querySelectorAll(".chip-dest")].map((chip) => chip.textContent)).toEqual([
-      "東京 (ap-northeast-1)",
-      "大阪 (ap-northeast-3)",
-    ]);
-    expect([...geo.querySelectorAll(".chip-dest")].map((chip) => chip.dataset.region)).toEqual([
-      "ap-northeast-1",
-      "ap-northeast-3",
-    ]);
-  });
-
-  it("Global は推論先を列挙せず注記にする ('*' を出さない)", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const global = panelOf(CLAUDE).querySelector(
-      '.detail-usage .detail-usage-row[data-kind="global"]',
-    );
-    expect(global.querySelector(".usage-badge").textContent).toBe("Global");
-    expect(global.querySelector(".detail-usage-dest").textContent).toBe(
-      "全対応リージョン（今後増えうる）",
-    );
-    expect(global.querySelectorAll(".chip-dest")).toHaveLength(0);
-  });
-
-  it("In-Region で呼べるモデルはモデル ID と起点リージョンの行を出す", () => {
-    mountFixtureApp();
-    toggleOf(NVIDIA).click();
-    const row = panelOf(NVIDIA).querySelector('.detail-usage-row[data-kind="inRegion"]');
-    expect(row.querySelector(".usage-badge").textContent).toBe("In-Region");
-    expect(row.querySelector(".copyable .id").textContent).toBe(NVIDIA);
-    expect([...row.querySelectorAll(".chip-dest")].map((chip) => chip.textContent)).toEqual([
-      `東京 (${TOKYO})`,
-    ]);
-  });
-
-  it("プロファイル ID のコピーボタンはプロファイル ID だけをコピーする", async () => {
-    const writeText = vi.fn().mockResolvedValue(undefined);
-    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    panelOf(CLAUDE)
-      .querySelector('.detail-usage-row[data-kind="geo"] button.copy-btn')
-      .click();
-    await vi.waitFor(() => expect(writeText).toHaveBeenCalledTimes(1));
-    expect(writeText).toHaveBeenCalledWith("jp.anthropic.claude-sonnet-4-5-20250929-v1:0");
-  });
-
-  it("起点から呼べる使い方が無ければ説明文を出す", () => {
-    const app = mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    app.view.setRegion(EMPTY_REGION);
-    app.view.setRegion(TOKYO);
-    // 起点を東京に戻した状態では使い方がある
-    expect(panelOf(CLAUDE).querySelector(".detail-no-usage")).toBeNull();
-    expect(panelOf(CLAUDE).querySelectorAll(".detail-usage-row").length).toBeGreaterThan(0);
-  });
-});
-
-// --- AC-012 起点のエンドポイント ---
-describe("DETAIL-001 AC-012 起点のエンドポイント", () => {
-  it("パネルの最後に起点のエンドポイントが出て、ページ上部の表示と一致する", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const panel = panelOf(CLAUDE).querySelector(".detail-panel");
-    expect(panel.lastElementChild.classList.contains("detail-endpoint")).toBe(true);
-    expect(panel.querySelector(".detail-endpoint-value").textContent).toBe(
+  it("bedrock-runtime の FQDN が出て、起点に追随する", () => {
+    expect(open(CLAUDE_45).querySelector(".detail-endpoint-value").textContent).toBe(
       "bedrock-runtime.ap-northeast-1.amazonaws.com",
     );
-    expect(panel.querySelector(".detail-endpoint-value").textContent).toBe(
-      document.getElementById("endpoint-value").textContent,
+    app.view.setRegion("ap-northeast-3");
+    expect(panelOf(CLAUDE_45).querySelector(".detail-endpoint-value").textContent).toBe(
+      "bedrock-runtime.ap-northeast-3.amazonaws.com",
     );
-    // 節の見出しは「接続先」(spec-detail v6 / MANTLE-001 AC-005)。
-    expect(panel.querySelector(".detail-endpoint h4").textContent).toBe("接続先");
+  });
+
+  it("mantle が無い起点では 3 項目目ごと出さない", () => {
+    expect(open(CLAUDE_45).querySelector('[data-item="detail.mantleEndpoint"]')).not.toBeNull();
+    app.view.setRegion("ap-northeast-3");
+    expect(panelOf(CLAUDE_45).querySelector('[data-item="detail.mantleEndpoint"]')).toBeNull();
+    expect(panelOf(CLAUDE_45).textContent).not.toContain(".api.aws");
+  });
+
+  it("見出し行はレーンによらず 1 つだけ", () => {
+    expect(open(CLAUDE_45).querySelectorAll(".head-grid")).toHaveLength(1);
   });
 });
 
-// --- パネルの節の並び (UI Description) ---
-describe("DETAIL-001 詳細パネルの節の並び", () => {
-  it("モデル ID → 使い方 → 提供状況 → 推論プロファイル → エンドポイント", () => {
-    mountFixtureApp();
-    toggleOf(CLAUDE).click();
-    const sections = [...panelOf(CLAUDE).querySelector(".detail-panel").children].map(
-      (node) => node.className,
+describe("AC-014 レーンのタブと常時見える要約", () => {
+  it("role=tablist に 3 つのタブが並ぶ", () => {
+    const panel = open(CLAUDE_45);
+    expect(panel.querySelector(".lane-tabs").getAttribute("role")).toBe("tablist");
+    expect(tabsOf(panel).map((tab) => tab.dataset.lane)).toEqual(["inRegion", "geo", "global"]);
+  });
+
+  it("要約はタブを開かなくても読める", () => {
+    const panel = open(CLAUDE_45);
+    const sums = tabsOf(panel).map((tab) => tab.querySelector(".lane-sum").textContent);
+    expect(sums).toEqual(["提供なし", "国内 2 ・ 国外 6", "世界中 ・ 限定不可"]);
+  });
+
+  it("Geo の見出しは地理圏名を「 ・ 」で連ねる", () => {
+    const panel = open(CLAUDE_45);
+    expect(tabFor(panel, "geo").querySelector(".lane-title").textContent).toBe(
+      "Geo（日本国内 ・ アジア太平洋）",
     );
-    expect(sections).toEqual([
-      "detail-model-id",
-      "detail-usage",
-      "detail-price",
-      "detail-availability",
-      "detail-profiles",
-      "detail-endpoint",
+  });
+
+  it("国外 M ≧ 1 のとき要約が warn 色になる", () => {
+    const panel = open(CLAUDE_45);
+    expect(tabFor(panel, "geo").querySelector(".lane-sum").classList.contains("is-warn")).toBe(true);
+  });
+
+  it("apac. だけのモデルでも国内 / 国外を数える", () => {
+    const panel = open(NOVA);
+    const sum = tabFor(panel, "geo").querySelector(".lane-sum");
+    expect(sum.textContent).toBe("国内 2 ・ 国外 4");
+    expect(sum.classList.contains("is-warn")).toBe(true);
+  });
+
+  it("In-Region 可のときは「国内に留まる」", () => {
+    expect(tabFor(open(NOVA), "inRegion").querySelector(".lane-sum").textContent).toBe(
+      "国内に留まる",
+    );
+  });
+
+  it("起点の country が分からないときは「推論先 K」", () => {
+    app = mountFixtureApp({
+      extraProfiles: EXTRA_PROFILES,
+      regionNotes: regionNotesWithoutCountry(),
+    });
+    const panel = open(CLAUDE_45);
+    expect(tabFor(panel, "geo").querySelector(".lane-sum").textContent).toBe("推論先 8");
+  });
+
+  it("英語でも要約が出る", () => {
+    app = mountFixtureApp({ extraProfiles: EXTRA_PROFILES, lang: "en-US" });
+    setLang("en");
+    const panel = open(CLAUDE_45);
+    expect(tabsOf(panel).map((tab) => tab.querySelector(".lane-sum").textContent)).toEqual([
+      "Not available",
+      "In country 2 · Abroad 6",
+      "Worldwide · cannot be limited",
     ]);
+  });
+});
+
+describe("AC-015 既定で選ばれるレーン", () => {
+  it("使えるレーンのうち最も狭いものが aria-selected になる", () => {
+    expect(visibleLane(open(NOVA)).dataset.lane).toBe("inRegion");
+    expect(tabFor(panelOf(NOVA), "inRegion").getAttribute("aria-selected")).toBe("true");
+  });
+
+  it("In-Region 不可なら Geo が開く", () => {
+    expect(visibleLane(open(CLAUDE_45)).dataset.lane).toBe("geo");
+  });
+
+  it("3 つとも不可なら In-Region が開く", () => {
+    expect(visibleLane(open(NO_LANE_MODEL)).dataset.lane).toBe("inRegion");
+  });
+});
+
+describe("AC-016 使えないレーンも開ける", () => {
+  it("淡色になるが disabled にはならない", () => {
+    const tab = tabFor(open(CLAUDE_45), "inRegion");
+    expect(tab.classList.contains("is-dim")).toBe(true);
+    expect(tab.disabled).toBe(false);
+    expect(tab.hasAttribute("disabled")).toBe(false);
+  });
+
+  it("クリックで開き、「直接提供なし」が出る", () => {
+    const panel = open(CLAUDE_45);
+    tabFor(panel, "inRegion").click();
+    const lane = laneOf(panel, "inRegion");
+    expect(lane.hidden).toBe(false);
+    expect(lane.textContent).toContain("このモデルは東京で直接提供なし");
+  });
+
+  it("単価があれば価格の節を出し、呼べない旨を注記に足す", () => {
+    const panel = open(CLAUDE_45);
+    const price = laneOf(panel, "inRegion").querySelector(".detail-price");
+    expect(price.querySelector(".detail-price-table")).not.toBeNull();
+    expect(price.querySelector(".detail-price-unit").textContent).toContain(
+      "価格は掲載されているが、この使い方では呼べない",
+    );
+  });
+});
+
+describe("AC-016 使えない Geo / Global のレーン", () => {
+  // NOVA は Global 不可、NVIDIA を除く In-Region 専用モデルは Geo 不可。
+  const NO_GEO = "cohere.embed-v4:0"; // 東京起点で Geo プロファイルが無い
+
+  it("Geo 不可のレーンは「指定する ID」を出さない", () => {
+    const lane = laneOf(open(NO_GEO), "geo");
+    expect(lane.querySelector(".detail-id")).toBeNull();
+    // モデル ID を指定する ID のように見せない。
+    expect(lane.querySelector(".lane-block").textContent).not.toContain(NO_GEO);
+  });
+
+  it("Geo 不可のレーンの推論先は「提供なし」の 1 行だけ", () => {
+    const lines = [...laneOf(open(NO_GEO), "geo").querySelectorAll(".dest-list li")];
+    expect(lines.map((line) => line.dataset.kind)).toEqual(["unavailable"]);
+    expect(lines[0].textContent).toBe("提供なし");
+    // 「国内 0」も出さない。
+    expect(laneOf(panelOf(NO_GEO), "geo").textContent).not.toContain("国内 0");
+  });
+
+  it("Global 不可のレーンも同じ形になる（範囲の行を出さない）", () => {
+    const lane = laneOf(open(NOVA), "global");
+    expect(lane.querySelector(".detail-id")).toBeNull();
+    const lines = [...lane.querySelectorAll(".dest-list li")];
+    expect(lines.map((line) => line.dataset.kind)).toEqual(["unavailable"]);
+    // 「範囲: 全商用リージョン（国外を含む・限定できない）」の行を出さない。
+    // 図の見出し（「全商用リージョン ・ 境界なし」）は AC-016 の指示どおり残す。
+    expect(lane.querySelector(".detail-dest").textContent).not.toContain("全商用リージョン");
+  });
+
+  it("使えない Geo / Global の図は内側が淡色で、推論先のチップを描かない", () => {
+    for (const [modelId, lane] of [
+      [NO_GEO, "geo"],
+      [NOVA, "global"],
+    ]) {
+      const svg = laneOf(open(modelId), lane).querySelector("svg");
+      const off = svg.querySelector("g.s-off");
+      expect(off, `${modelId}/${lane}`).not.toBeNull();
+      // 起点と記録のノードが淡色の中に入っている (g が空でないことの確認)。
+      expect(off.querySelector('[data-node="origin"]'), `${modelId}/${lane}`).not.toBeNull();
+      expect(off.querySelector('[data-node="record"]'), `${modelId}/${lane}`).not.toBeNull();
+      expect(
+        svg.querySelectorAll("rect.s-chip-warn, rect.s-chip-accent, rect.s-chip-faint"),
+        `${modelId}/${lane}`,
+      ).toHaveLength(0);
+    }
+  });
+
+  it("使える Geo / Global の図は淡色にしない", () => {
+    // CLAUDE_45 は Geo も Global も可。.s-off は「呼べない」だけを表す。
+    const panel = open(CLAUDE_45);
+    for (const lane of ["geo", "global"]) {
+      const svg = laneOf(panel, lane).querySelector("svg");
+      expect(svg.querySelector("g.s-off"), lane).toBeNull();
+    }
+    // Global の起点のチップは常に淡いが、それは .s-faint で .s-off ではない。
+    const globalSvg = laneOf(panel, "global").querySelector("svg");
+    expect(globalSvg.querySelector("g.s-faint")).not.toBeNull();
+    expect(globalSvg.querySelectorAll("rect.s-chip-faint").length).toBeGreaterThan(3);
+  });
+
+  it("In-Region が不可でも「指定する ID」（モデル ID）は残る", () => {
+    const lane = laneOf(open(CLAUDE_45), "inRegion");
+    expect(lane.querySelector(".detail-id .id").textContent).toBe(CLAUDE_45);
+  });
+});
+
+describe("AC-017 レーンのパネルの中身の順番", () => {
+  it("図 → 指定する ID → 推論先 → 価格", () => {
+    const lane = visibleLane(open(CLAUDE_45));
+    const order = [...lane.querySelectorAll("figure.flow, section")].map(
+      (element) => element.tagName.toLowerCase() + ":" + (element.className || ""),
+    );
+    expect(order).toEqual([
+      "figure:flow",
+      "section:detail-id",
+      "section:detail-dest",
+      "figure:flow",
+      "section:detail-id",
+      "section:detail-dest",
+      "section:detail-price",
+    ]);
+  });
+
+  it("In-Region の「指定する ID」はモデル ID", () => {
+    const panel = open(NOVA);
+    const id = laneOf(panel, "inRegion").querySelector(".detail-id .id");
+    expect(id.textContent).toBe(NOVA);
+  });
+
+  it("Global の「指定する ID」はプロファイル ID", () => {
+    const panel = open(CLAUDE_45);
+    expect(laneOf(panel, "global").querySelector(".detail-id .id").textContent).toBe(
+      `global.${CLAUDE_45}`,
+    );
+  });
+});
+
+describe("AC-018 Geo に複数のプロファイルがあるとき", () => {
+  it("狭い順にブロックが積まれ、見出しは地理圏名", () => {
+    const lane = laneOf(open(CLAUDE_45), "geo");
+    const blocks = [...lane.querySelectorAll(".lane-block")];
+    expect(blocks).toHaveLength(2);
+    expect(blocks.map((block) => block.querySelector(".lane-block-head").textContent)).toEqual([
+      "日本国内",
+      "アジア太平洋",
+    ]);
+    expect(blocks.map((block) => block.dataset.profileId)).toEqual([
+      `jp.${CLAUDE_45}`,
+      `apac.${CLAUDE_45}`,
+    ]);
+  });
+
+  it("図が 2 枚・ID が 2 つ・価格の節は 1 つ", () => {
+    const lane = laneOf(open(CLAUDE_45), "geo");
+    expect(lane.querySelectorAll("figure.flow")).toHaveLength(2);
+    expect(lane.querySelectorAll(".detail-id")).toHaveLength(2);
+    expect(lane.querySelectorAll(".detail-price")).toHaveLength(1);
+  });
+});
+
+describe("AC-019 推論先の表示", () => {
+  it("In-Region は起点の地名だけ", () => {
+    const dest = laneOf(open(NOVA), "inRegion").querySelector(".detail-dest");
+    expect(dest.textContent).toContain("東京");
+    expect(dest.textContent).not.toContain("ap-northeast-1");
+  });
+
+  it("In-Region 不可のときは文言が出る", () => {
+    const dest = laneOf(open(CLAUDE_45), "inRegion").querySelector(".detail-dest");
+    expect(dest.querySelector(".state-none").textContent).toBe(
+      "提供なし（東京では推論プロファイル経由のみ）",
+    );
+  });
+
+  it("Geo は 国内 / 国外 の 2 行で、国外が warn", () => {
+    const block = [...laneOf(open(CLAUDE_45), "geo").querySelectorAll(".lane-block")][1];
+    const lines = [...block.querySelectorAll(".dest-list li")];
+    expect(lines.map((line) => line.dataset.kind)).toEqual(["domestic", "foreign"]);
+    expect(lines[1].querySelector(".v-warn")).not.toBeNull();
+    expect(block.querySelector(".dest-note").textContent).toBe(
+      "起点が東京のときの推論先。起点が変わると推論先も変わる",
+    );
+    expect(block.querySelector(".detail-dest").textContent).not.toContain("ap-southeast");
+  });
+
+  it("国外 0 件の Geo は国外の行を出さない", () => {
+    // CLAUDE_45 の 1 ブロック目は jp.（東京・大阪 = 国内 2 / 国外 0）。
+    const block = [...laneOf(open(CLAUDE_45), "geo").querySelectorAll(".lane-block")][0];
+    expect(block.dataset.profileId).toBe(`jp.${CLAUDE_45}`);
+    const kinds = [...block.querySelectorAll(".dest-list li")].map((line) => line.dataset.kind);
+    expect(kinds).toEqual(["domestic"]);
+  });
+
+  it("国外があるプロファイルでは 2 行になる", () => {
+    const block = [...laneOf(open(NOVA), "geo").querySelectorAll(".lane-block")][0];
+    const kinds = [...block.querySelectorAll(".dest-list li")].map((line) => line.dataset.kind);
+    expect(kinds).toEqual(["domestic", "foreign"]);
+  });
+
+  it("Global は 1 行だけで個別のリージョンを列挙しない", () => {
+    const dest = laneOf(open(CLAUDE_45), "global").querySelector(".detail-dest");
+    const lines = [...dest.querySelectorAll(".dest-list li")];
+    expect(lines).toHaveLength(1);
+    expect(lines[0].querySelector(".v-warn").textContent).toBe(
+      "全商用リージョン（国外を含む・限定できない）",
+    );
+    expect(dest.querySelector(".dest-note").textContent).toContain("例示");
+  });
+
+  it("英語でも地名だけが出る", () => {
+    app = mountFixtureApp({ extraProfiles: EXTRA_PROFILES, lang: "en-US" });
+    setLang("en");
+    const block = [...laneOf(open(CLAUDE_45), "geo").querySelectorAll(".lane-block")][1];
+    const dest = block.querySelector(".detail-dest");
+    expect(dest.textContent).toContain("Asia Pacific (Tokyo)");
+    expect(dest.textContent).not.toContain("ap-northeast-1");
+  });
+});
+
+describe("AC-013 レーンごとの価格", () => {
+  it("In-Region / Geo は標準系、Global は global の行だけ", () => {
+    const panel = open(CLAUDE_45);
+    const kinds = (lane) =>
+      [...laneOf(panel, lane).querySelectorAll(".detail-price-table tbody tr")].map(
+        (tr) => tr.dataset.kind,
+      );
+    expect(kinds("geo")).toEqual(["standard", "batch", "cacheRead"]);
+    expect(kinds("global")).toEqual(["global"]);
+  });
+
+  it("3 列の小表で、出力の無い種別は「—」", () => {
+    const table = laneOf(open(CLAUDE_45), "geo").querySelector(".detail-price-table");
+    expect([...table.querySelectorAll("thead th")].map((th) => th.textContent)).toEqual([
+      "種別",
+      "入力",
+      "出力",
+    ]);
+    const cacheRead = table.querySelector('tr[data-kind="cacheRead"]');
+    expect([...cacheRead.children].map((td) => td.textContent)).toEqual([
+      "キャッシュ読み",
+      "$0.33",
+      "—",
+    ]);
+  });
+
+  it("単位の注記に起点の地名が入る", () => {
+    const unit = laneOf(open(CLAUDE_45), "geo").querySelector(".detail-price-unit").textContent;
+    expect(unit).toContain("USD / 100 万トークン（東京）");
+    expect(unit).toContain("割引・契約価格・無料枠は含まない");
+  });
+
+  it("Geo には「標準価格と同じ」の注記が付く", () => {
+    expect(laneOf(open(CLAUDE_45), "geo").querySelector(".detail-price-unit").textContent).toContain(
+      "Geo の推論プロファイルは標準価格と同じ",
+    );
+  });
+
+  it("単価が無いレーンは説明文を出す", () => {
+    const price = laneOf(open(NOVA), "global").querySelector(".detail-price");
+    expect(price.querySelector(".detail-price-table")).toBeNull();
+    expect(price.querySelector(".detail-no-price").textContent).toBe(
+      "この起点リージョンの価格データがありません",
+    );
+  });
+
+  it("SKU・usagetype・offer code は出さない", () => {
+    const panel = open(CLAUDE_45);
+    expect(panel.textContent).not.toMatch(/usagetype|AmazonBedrock(FoundationModels)?\b/i);
+  });
+});
+
+describe("AC-020 選んだレーンはセッション内で覚える", () => {
+  it("別の行を開いても同じレーンが選ばれる", () => {
+    const panel = open(CLAUDE_45);
+    tabFor(panel, "global").click();
+    expect(visibleLane(panel).dataset.lane).toBe("global");
+    expect(visibleLane(open("cohere.embed-v4:0")).dataset.lane).toBe("global");
+  });
+
+  it("そのレーンが使えない行では既定に戻る", () => {
+    tabFor(open(CLAUDE_45), "global").click();
+    expect(visibleLane(open(NOVA)).dataset.lane).toBe("inRegion");
+  });
+
+  it("URL にも localStorage にも保存しない", () => {
+    const before = app.location.search;
+    const keys = Object.keys(localStorage).sort();
+    tabFor(open(CLAUDE_45), "global").click();
+    expect(app.location.search).toBe(before);
+    expect(Object.keys(localStorage).sort()).toEqual(keys);
+    expect(JSON.stringify(localStorage)).not.toContain("global");
+  });
+});
+
+describe("AC-021 どのレーンも使えない", () => {
+  it("3 タブとも淡色で、説明文が出る", () => {
+    const panel = open(NO_LANE_MODEL);
+    expect(tabsOf(panel).every((tab) => tab.classList.contains("is-dim"))).toBe(true);
+    expect(visibleLane(panel).querySelector(".detail-no-lane").textContent).toBe(
+      "この起点リージョンからは呼べません",
+    );
+  });
+
+  it("説明文は開く In-Region のパネルにだけ置く（3 枚に重複させない）", () => {
+    const panel = open(NO_LANE_MODEL);
+    expect(panel.querySelectorAll(".detail-no-lane")).toHaveLength(1);
+    expect(laneOf(panel, "inRegion").querySelector(".detail-no-lane")).not.toBeNull();
+    for (const lane of ["geo", "global"]) {
+      expect(laneOf(panel, lane).querySelector(".detail-no-lane"), lane).toBeNull();
+    }
+  });
+});
+
+describe("AC-022 起点が未取得のリージョン", () => {
+  it("表が 0 行になり、パネルは 1 つも開かない", () => {
+    app.view.setRegion(DENIED_REGION);
+    expect(bodyRows()).toHaveLength(0);
+    expect(document.querySelectorAll("tr.detail-row")).toHaveLength(0);
+  });
+
+  // パネルのコードに `cause` の参照が無いことの検査は tests/flow-model.test.js
+  // (node 環境。ファイルを読むため) が持つ。
+});
+
+describe("a11y", () => {
+  it("タブは roving tabindex で、矢印キーで移動できる", () => {
+    const panel = open(CLAUDE_45);
+    const tabs = tabsOf(panel);
+    expect(tabs.map((tab) => tab.tabIndex)).toEqual([-1, 0, -1]);
+    tabs[1].focus();
+    panel
+      .querySelector(".lane-tabs")
+      .dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+    expect(document.activeElement.dataset.lane).toBe("global");
+    expect(visibleLane(panel).dataset.lane).toBe("global");
+  });
+
+  it("タブパネルは aria-labelledby で対応するタブを指す", () => {
+    const panel = open(CLAUDE_45);
+    for (const lane of ["inRegion", "geo", "global"]) {
+      expect(laneOf(panel, lane).getAttribute("aria-labelledby")).toBe(
+        tabFor(panel, lane).id,
+      );
+      expect(tabFor(panel, lane).getAttribute("aria-controls")).toBe(laneOf(panel, lane).id);
+    }
+  });
+});
+
+describe("コピーは ID の文字列だけ", () => {
+  it("クリップボードにはモデル ID だけが入る", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+    const button = open(NVIDIA).querySelector('[data-item="detail.modelId"] .copy-btn');
+    button.click();
+    await Promise.resolve();
+    expect(writeText).toHaveBeenCalledWith(NVIDIA);
   });
 });

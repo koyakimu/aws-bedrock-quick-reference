@@ -53,7 +53,7 @@
     "optIn": false,
     "endpoint": "bedrock-runtime.ap-south-1.amazonaws.com",
     "country": "in",
-    "geo": "apac"
+    "geo": "in"
   },
   "ap-south-2": {
     "ja": "ハイデラバード",
@@ -61,7 +61,7 @@
     "optIn": true,
     "endpoint": "bedrock-runtime.ap-south-2.amazonaws.com",
     "country": "in",
-    "geo": "apac"
+    "geo": "in"
   },
   "ap-southeast-1": {
     "ja": "シンガポール",
@@ -125,7 +125,7 @@
     "optIn": false,
     "endpoint": "bedrock-runtime.ca-central-1.amazonaws.com",
     "country": "ca",
-    "geo": "other"
+    "geo": "ca"
   },
   "ca-west-1": {
     "ja": "カナダ西部 (カルガリー)",
@@ -133,7 +133,7 @@
     "optIn": true,
     "endpoint": "bedrock-runtime.ca-west-1.amazonaws.com",
     "country": "ca",
-    "geo": "other"
+    "geo": "ca"
   },
   "eu-central-1": {
     "ja": "フランクフルト",

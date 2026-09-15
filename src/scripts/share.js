@@ -1,12 +1,19 @@
 // URL による状態の共有 (SHARE-001)。クエリの読み書きは url-state.mjs が持ち、
 // このファイルは history / clipboard / 通知の DOM だけを扱う。
-import { parseState, searchString, serializeState, shareUrl } from "./url-state.mjs";
+import {
+  DEFAULT_VIEW,
+  parseState,
+  searchString,
+  serializeState,
+  shareUrl,
+} from "./url-state.mjs";
 import { providerOptions } from "./filter-model.mjs";
 import { copyText } from "./copy.js";
 import { t, getLang, applyTranslations, LANG_CHANGED_EVENT } from "./i18n.js";
 import { regionOptionLabel } from "./region-names.js";
-import { SOURCE_REGION_EVENT } from "./table-view.js";
+import { SORT_CHANGED_EVENT, SOURCE_REGION_EVENT } from "./table-view.js";
 import { FILTER_CHANGED_EVENT } from "./filter-bar.js";
+import { VIEW_CHANGED_EVENT } from "./view-tabs.js";
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -16,16 +23,25 @@ function el(tag, className, text) {
 }
 
 /**
- * 起点リージョンと絞り込みを URL に載せ、URL から復元する。
+ * 起点リージョン・並び順・ビュー・絞り込みを URL に載せ、URL から復元する。
  * view (TABLE-001) と filter (FILTER-001) が mount 済みであることが前提。
+ *
+ * getView / setView は画面ビュー (REGIONS-001) の入口。タブの UI は REGIONS-001 が持つので、
+ * まだ無い間は既定の "origin" を返す getter と何もしない setter で動く (SHARE-001 AC-011)。
+ *
+ * providers は provider の正当値。REGIONS-001 の行列は起点に依存しない母集団を持つので
+ * (AC-003)、全モデルの providerName を渡す。省くと今の起点で表示できる行から作る。
  */
 export function mountShare({
   view,
   filter,
   regionNotes,
+  providers = null,
   host = document.getElementById("main"),
   location: loc = window.location,
   history: hist = window.history,
+  getView = () => DEFAULT_VIEW,
+  setView = () => {},
 } = {}) {
   const regions = view.getRegions();
   const limitOptions = filter ? filter.getLimitOptions() : [];
@@ -68,7 +84,13 @@ export function mountShare({
   if (sourceBar) sourceBar.appendChild(copy);
 
   function currentState() {
-    return { region: view.getRegion(), ...(filter ? filter.getState() : {}) };
+    return {
+      view: getView(),
+      region: view.getRegion(),
+      // 並び順は表が持つ (TABLE-001 AC-014)。まだ setSort を持たない画面でも落ちないようにする。
+      sort: view.getSort?.(),
+      ...(filter ? filter.getState() : {}),
+    };
   }
 
   function currentUrl() {
@@ -114,16 +136,25 @@ export function mountShare({
 
   /** 初期化。URL を読み、起点と絞り込みに適用してから URL を現在の状態に揃える。 */
   function restore(search = loc.search) {
-    // provider の正当値は「今の起点で表示できる行」の実値 (FILTER-001 AC-001)。
-    const providers = providerOptions(view.getModel()?.rows ?? []);
-    const { state, ignored } = parseState(search, { regions, providers, limitOptions });
+    // provider の正当値。渡されていればそれが正 (= 全モデルの providerName)。
+    // 起点で絞った一覧で検査すると、行が 0 件の起点を指した URL で provider が
+    // 落ちて通知が出てしまい、SHARE-001 AC-012 に反する。
+    const validProviders = providers ?? providerOptions(view.getModel()?.rows ?? []);
+    const { state, ignored } = parseState(search, {
+      regions,
+      providers: validProviders,
+      limitOptions,
+    });
 
     if (state.region !== view.getRegion()) view.setRegion(state.region);
+    // 並び順は表に、ビューは呼び出し側に当てる (AC-011 / AC-013)。
+    if (typeof view.setSort === "function") view.setSort(state.sort);
+    setView(state.view);
 
     if (filter) {
-      // 起点が変わると provider の母集団も変わるので、判定し直してから当てる。
-      const validProviders = providerOptions(view.getModel()?.rows ?? []);
-      const kept = state.provider.filter((entry) => validProviders.includes(entry));
+      // 起点を当てた後の母集団で判定し直す。providers が渡されていれば起点に依らない。
+      const afterRegion = providers ?? providerOptions(view.getModel()?.rows ?? []);
+      const kept = state.provider.filter((entry) => afterRegion.includes(entry));
       for (const entry of state.provider) {
         if (!kept.includes(entry)) ignored.push({ param: "provider", value: entry });
       }
@@ -145,6 +176,10 @@ export function mountShare({
   // 起点・絞り込みが変わるたびに URL を書き換える (AC-001 / AC-003)。
   document.addEventListener(SOURCE_REGION_EVENT, syncUrl);
   document.addEventListener(FILTER_CHANGED_EVENT, syncUrl);
+  // 並び順の切り替えも URL に載せる (AC-013)。履歴は積まず replaceState のまま。
+  document.addEventListener(SORT_CHANGED_EVENT, syncUrl);
+  // ビューの切り替えも URL に載せる (AC-011)。
+  document.addEventListener(VIEW_CHANGED_EVENT, syncUrl);
 
   document.addEventListener(LANG_CHANGED_EVENT, () => {
     applyTranslations(notice);

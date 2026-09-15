@@ -114,48 +114,57 @@ describe("AC-009 脚注に価格の取得日と出典を出す", () => {
   });
 });
 
-// --- AC-010 詳細パネルの価格 ---
+// --- AC-010 詳細パネルの価格 (DETAIL-001 v8 AC-013: レーンごと) ---
 describe("AC-010 詳細パネルの価格", () => {
+  const laneOf = (modelId, lane) =>
+    panelOf(modelId).querySelector(`[role="tabpanel"][data-lane="${lane}"]`);
+
   it("種別 × 入力 / 出力 の表が起点リージョンの単価で出る", () => {
     mountFixtureApp();
     rowFor(CLAUDE).querySelector(".detail-toggle").click();
-    const section = panelOf(CLAUDE).querySelector(".detail-price");
+    const section = laneOf(CLAUDE, "geo").querySelector(".detail-price");
     expect(section.querySelector("h4").textContent).toBe("価格");
     expect(
       [...section.querySelectorAll(".detail-price-table thead th")].map((th) => th.textContent),
-    ).toEqual([
-      "種別",
-      "入力",
-      "出力",
-    ]);
+    ).toEqual(["種別", "入力", "出力"]);
     const rows = [...section.querySelectorAll(".detail-price-table tbody tr")].map((tr) => [
       tr.dataset.kind,
       ...[...tr.children].map((td) => td.textContent),
     ]);
+    // Geo のレーンは標準系だけ。Global の単価は Global のレーンに出る (AC-013)。
     expect(rows).toEqual([
       ["standard", "標準", "$3.30", "$16.50"],
-      ["global", "Global", "$3.00", "$15.00"],
       ["batch", "バッチ", "$1.65", "—"],
       ["cacheRead", "キャッシュ読み", "$0.33", "—"],
     ]);
     expect(section.querySelector(".detail-price-unit").textContent).toContain("100 万トークン");
   });
 
-  it("buildPriceRows は種別の並びを標準 → Global → バッチ → キャッシュ → 優先 → Flex に揃える", () => {
+  it("Global のレーンには global の行だけが出る", () => {
+    mountFixtureApp();
+    rowFor(CLAUDE).querySelector(".detail-toggle").click();
+    const rows = [
+      ...laneOf(CLAUDE, "global").querySelectorAll(".detail-price-table tbody tr"),
+    ].map((tr) => [tr.dataset.kind, ...[...tr.children].map((td) => td.textContent)]);
+    expect(rows).toEqual([["global", "Global", "$3.00", "$15.00"]]);
+  });
+
+  it("buildPriceRows はレーンごとに種別を絞る", () => {
     const prices = buildPrices();
-    expect(buildPriceRows(NOVA_LITE, { prices, region: TOKYO }).map((row) => row.kind)).toEqual([
-      "standard",
-      "batch",
-      "cacheRead",
-    ]);
-    expect(buildPriceRows("no-such-model", { prices, region: TOKYO })).toEqual([]);
+    expect(
+      buildPriceRows(NOVA_LITE, { prices, region: TOKYO, lane: "inRegion" }).map((row) => row.kind),
+    ).toEqual(["standard", "batch", "cacheRead"]);
+    expect(
+      buildPriceRows(NOVA_LITE, { prices, region: TOKYO, lane: "global" }).map((row) => row.kind),
+    ).toEqual([]);
+    expect(buildPriceRows("no-such-model", { prices, region: TOKYO, lane: "geo" })).toEqual([]);
   });
 
   it("英語でも同じ表が出る", () => {
     mountFixtureApp({ lang: "en-US" });
     setLang("en");
     rowFor(CLAUDE).querySelector(".detail-toggle").click();
-    const section = panelOf(CLAUDE).querySelector(".detail-price");
+    const section = laneOf(CLAUDE, "geo").querySelector(".detail-price");
     expect(section.querySelector("h4").textContent).toBe("Pricing");
     expect(section.querySelector('tr[data-kind="standard"] td').textContent).toBe("Standard");
   });

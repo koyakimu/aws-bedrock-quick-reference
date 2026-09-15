@@ -1,6 +1,6 @@
 # URL パラメータの一覧表
 
-- Spec: SHARE-001（AC-001 〜 AC-009）、関連: FILTER-001 / TABLE-001
+- Spec: SHARE-001（AC-001 〜 AC-013）、関連: FILTER-001 / TABLE-001 / REGIONS-001
 - 実装: `src/scripts/url-state.mjs`（`parseState` / `serializeState` / `shareUrl`）と
   `src/scripts/share.js`（`history.replaceState` / クリップボード / 通知）
 
@@ -8,6 +8,8 @@
 
 | 名前 | 値の形 | 既定値 | 省略条件 | 不正値のときの扱い |
 |---|---|---|---|---|
+| `view` | `origin`（起点から）/ `regions`（リージョンの行列）の 1 件 | `origin` | 既定値と同じとき | 既定値にフォールバックし、通知を出し、URL を書き換える（AC-011） |
+| `sort` | `pinned`（既定の並び）/ `alpha`（プロバイダ名の昇順）の 1 件 | `pinned` | 既定値と同じとき | 既定値にフォールバックし、通知を出し、URL を書き換える（AC-013） |
 | `region` | リージョンコード 1 件（`region-notes.json` のキー） | `ap-northeast-1` | 既定値と同じとき | 既定値にフォールバックし、通知を出し、URL を書き換える（AC-007） |
 | `provider` | `providerName` のカンマ区切り（例: `Anthropic,Cohere`） | 空（絞らない） | 1 件も選んでいないとき | 表示中データに無い値だけを落として通知（AC-008） |
 | `modality` | `TEXT` / `IMAGE` / `SPEECH` / `VIDEO` / `EMBEDDING` のカンマ区切り。小文字も受ける | 空（絞らない） | 1 件も選んでいないとき | 5 種に無い値だけを落として通知 |
@@ -15,7 +17,12 @@
 | `callable` | `1`（ON）または `0`（OFF） | `0`（OFF） | OFF のとき | `1` / `0` 以外は落として通知 |
 | `limit` | `none` / `country:<jp\|au\|us>` / `geo:<jp\|apac\|eu\|us\|au>` / `custom` / `custom:<code>(+<code>)*` | `none` | `none` のとき | 固定リストは一覧に無い値を落として通知。`custom:` はコードごとに `region-notes.json` と突き合わせ、無いコードだけを落として通知（選択肢は `filter-limit-options.md`） |
 
-- 並び順は `region` → `provider` → `modality` → `q` → `callable` → `limit`
+- 並び順は `view` → `region` → `sort` → `provider` → `modality` → `q` → `callable` → `limit`
+- `view=regions` のとき、`region` は行列の「起点」の印にだけ使い、`q` / `callable` / `limit` は
+  行列の内容を変えない。値は保持され、「起点から」タブに戻すとそのまま効く（AC-012）。
+  これらを「解釈できない指定」として通知しない
+- `sort` は「起点から」の表と「リージョン」の行列の両方に効く（TABLE-001 AC-014 / REGIONS-001 AC-003）
+- 行列の地域チップ（すべて / jp / apac / …）は URL に載せない（REGIONS-001 AC-009）
 - **既定状態の URL はクエリなしになる**（全パラメータが既定値なら `?` ごと付かない）
 - `limit=custom:...` のリージョンコードは昇順・重複なしで `+` 連結する。アプリが書くときは `+` が
   `%2B` に percent encode されるが、手で書いた生の `+` も（`URLSearchParams` が空白に復号するため
@@ -44,3 +51,7 @@
 | `?limit=custom` | カスタムのピッカーを開いた状態。リージョン未選択なので限定はかからない |
 | `?limit=custom:ap-northeast-1+xx-nowhere-9` | 未知の `xx-nowhere-9` を落として通知し、URL は `?limit=custom%3Aap-northeast-1` に書き換わる |
 | `?region=xx-nowhere-9` | 対象外のリージョン。東京にフォールバックし通知を出し、URL は `/aws-bedrock-quick-reference/` に書き換わる |
+| `?view=regions` | モデル × 全リージョンの行列 |
+| `?view=regions&region=eu-central-1&provider=Anthropic&limit=country:jp` | 行列を表示。`provider` だけが行に効き、`region` は「起点」の印、`limit` は保持だけ |
+| `?sort=alpha` | プロバイダ名の昇順（固定なし）。表と行列の両方に効く |
+| `?view=galaxy` | 対象外のビュー。`origin` にフォールバックし通知を出し、URL を書き換える |

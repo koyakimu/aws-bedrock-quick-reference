@@ -9,12 +9,21 @@ import {
   isCustomLimit,
   normalizeCustomLimit,
 } from "./filter-model.mjs";
+import { DEFAULT_SORT, SORT_VALUES } from "./bedrock-view-model.mjs";
 
 export const DEFAULT_REGION = "ap-northeast-1";
 
+// 画面ビュー (REGIONS-001 AC-001 / SHARE-001 AC-011)。既定は「起点から」。
+export const VIEW_ORIGIN = "origin";
+export const VIEW_REGIONS = "regions";
+export const VIEW_VALUES = Object.freeze([VIEW_ORIGIN, VIEW_REGIONS]);
+export const DEFAULT_VIEW = VIEW_ORIGIN;
+
 // パラメータ名と並び順。URL の見た目を安定させるため配列で持つ。
 export const PARAM_ORDER = Object.freeze([
+  "view",
   "region",
+  "sort",
   "provider",
   "modality",
   "q",
@@ -23,7 +32,9 @@ export const PARAM_ORDER = Object.freeze([
 ]);
 
 export const DEFAULT_STATE = Object.freeze({
+  view: DEFAULT_VIEW,
   region: DEFAULT_REGION,
+  sort: DEFAULT_SORT,
   ...DEFAULT_FILTERS,
 });
 
@@ -50,6 +61,19 @@ export function parseState(search, { regions = [], providers = [], limitOptions 
   const params = new URLSearchParams(String(search ?? "").replace(/^\?/, ""));
   const state = { ...DEFAULT_STATE, provider: [], modality: [] };
   const ignored = [];
+
+  // ビューと並び順 (AC-011 / AC-013)。値は 2 つずつで、それ以外は既定に倒して報告する。
+  const view = params.get("view");
+  if (view != null) {
+    if (VIEW_VALUES.includes(view)) state.view = view;
+    else ignored.push({ param: "view", value: view, fallback: true });
+  }
+
+  const sort = params.get("sort");
+  if (sort != null) {
+    if (SORT_VALUES.includes(sort)) state.sort = sort;
+    else ignored.push({ param: "sort", value: sort, fallback: true });
+  }
 
   const region = params.get("region");
   if (region != null) {
@@ -116,6 +140,14 @@ export function serializeState(state = {}) {
   const merged = { ...DEFAULT_STATE, ...state };
   const params = new URLSearchParams();
   for (const name of PARAM_ORDER) {
+    if (name === "view") {
+      if (merged.view && merged.view !== DEFAULT_STATE.view) params.set("view", merged.view);
+      continue;
+    }
+    if (name === "sort") {
+      if (merged.sort && merged.sort !== DEFAULT_STATE.sort) params.set("sort", merged.sort);
+      continue;
+    }
     if (name === "region") {
       if (merged.region && merged.region !== DEFAULT_STATE.region) params.set("region", merged.region);
       continue;

@@ -3,9 +3,20 @@
 
 import { isMantleRegion, judgeMantle, mantleEndpointOf } from "./mantle-model.mjs";
 
-// Geo の接頭辞 (D-003)。global は別扱いなのでここには入れない。
-export const GEO_PREFIXES = Object.freeze(["us", "eu", "apac", "au", "jp"]);
+// Global の接頭辞 (D-003)。これ以外の接頭辞はすべて地理圏 (Geo) として扱う (D-012)。
+// 接頭辞の閉じた一覧はコードにもデータにも持たない (DATA-001 AC-013)。
 export const GLOBAL_PREFIX = "global";
+
+// 行の並びで先頭に固定するプロバイダ (D-011 / TABLE-001 AC-014)。
+// これは「どのプロバイダを Geo と見なすか」のような判定の一覧ではなく、
+// 並び順の好みの定義。データに無いプロバイダは単に飛ばす (空の見出しを作らない)。
+export const PINNED_PROVIDERS = Object.freeze(["Anthropic", "OpenAI"]);
+
+// 行の並びの値 (TABLE-001 AC-014)。既定は pinned。
+export const SORT_PINNED = "pinned";
+export const SORT_ALPHA = "alpha";
+export const SORT_VALUES = Object.freeze([SORT_PINNED, SORT_ALPHA]);
+export const DEFAULT_SORT = SORT_PINNED;
 
 // In-Region: availability[R] に ON_DEMAND が含まれるか。
 // INFERENCE_PROFILE だけ / PROVISIONED だけ / 空配列 はいずれも「不可」(AC-003)。
@@ -19,13 +30,16 @@ function servesRegion(profile, region) {
   return Array.isArray(profile?.sources?.[region]);
 }
 
-// Geo: 接頭辞 5 種のうち modelId が一致し sources[R] を持つプロファイル全件。
+// Geo: 接頭辞が global 以外のプロファイルのうち modelId が一致し sources[R] を持つ全件 (D-012)。
+// 接頭辞の固定リストを持たないので、新しい地理圏 (ca. / in. など) も自動的に拾う。
 // destination は昇順、プロファイルが複数あれば profileId の昇順で並べる (AC-004)。
 export function judgeGeo(profiles, modelId, region) {
   return Object.entries(profiles ?? {})
     .filter(
       ([, profile]) =>
-        GEO_PREFIXES.includes(profile?.prefix) &&
+        typeof profile?.prefix === "string" &&
+        profile.prefix.length > 0 &&
+        profile.prefix !== GLOBAL_PREFIX &&
         profile.modelId === modelId &&
         servesRegion(profile, region),
     )
@@ -92,6 +106,44 @@ export function geoPlaces(destinations, { region, regionNotes, lang = "ja" } = {
 /** 起点の国の外にある推論先の件数 (AC-004 の「（国外 N）」)。 */
 export function outsideCount(places) {
   return (places ?? []).filter((place) => place.outside).length;
+}
+
+// --- 行の並び (TABLE-001 AC-014 / D-011) ----------------------------------
+
+/**
+ * 行を プロバイダ → モデル名 の 2 段で並べる純関数 (TABLE-001 AC-014)。
+ * table-engine.js の sortRows (列ヘッダでの並べ替え) とは別物なので orderRows と呼ぶ。
+ *
+ *  - `pinned` (既定): PINNED_PROVIDERS を先頭に固定し、残りをプロバイダ名の昇順
+ *  - `alpha`: 全プロバイダを名前の昇順。固定は無い
+ *
+ * どちらの値でも同じプロバイダの中はモデル名の昇順。行を落としたり増やしたりはしない。
+ * REGIONS-001 の行列も同じ関数で並べる (REGIONS-001 AC-003)。
+ */
+export function orderRows(rows, { sort = DEFAULT_SORT, lang = "ja" } = {}) {
+  const list = [...(rows ?? [])];
+  const present = new Set(list.map((row) => row.provider ?? ""));
+  // データに無い固定プロバイダは飛ばす (空の見出しを作らない)。
+  const pinned = sort === SORT_PINNED ? PINNED_PROVIDERS.filter((name) => present.has(name)) : [];
+  const rank = (provider) => {
+    const index = pinned.indexOf(provider);
+    return index >= 0 ? index : pinned.length;
+  };
+  return list.sort((a, b) => {
+    const rankA = rank(a.provider ?? "");
+    const rankB = rank(b.provider ?? "");
+    if (rankA !== rankB) return rankA - rankB;
+    // 固定した同じプロバイダ同士は名前で比べない (同じ文字列なので結果は同じ)。
+    const byProvider =
+      rankA < pinned.length
+        ? 0
+        : String(a.provider ?? "").localeCompare(String(b.provider ?? ""), lang);
+    return (
+      byProvider ||
+      String(a.name ?? "").localeCompare(String(b.name ?? ""), lang) ||
+      String(a.modelId ?? "").localeCompare(String(b.modelId ?? ""))
+    );
+  });
 }
 
 // --- 価格 (PRICE-001) -----------------------------------------------------

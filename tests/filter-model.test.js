@@ -4,11 +4,10 @@ import { describe, it, expect } from "vitest";
 import { buildViewModel } from "../src/scripts/bedrock-view-model.mjs";
 import { regionName } from "../src/scripts/region-names.js";
 import {
-  COUNTRY_CODES,
   CUSTOM_LIMIT,
-  GEO_CODES,
-  LIMIT_COUNTRY_ORDER,
-  LIMIT_GEO_ORDER,
+  LIMIT_GEO_ORDER_PREFERENCE,
+  countryCodes,
+  geoCodes,
   allRegionCodes,
   canonicalLimitValue,
   customLimitCodes,
@@ -139,8 +138,14 @@ describe("FILTER-001 AC-004 この起点リージョンから呼べるものだ�
 
 // --- AC-005 推論先の限定: 国 ---
 describe("FILTER-001 AC-005 推論先の限定 (国)", () => {
-  it("国の選択肢は日本 / オーストラリア / 米国の 3 件", () => {
-    expect([...COUNTRY_CODES]).toEqual(["jp", "au", "us"]);
+  it("国の選択肢はデータから導く (jp / us / au / ca / in)", () => {
+    expect(countryCodes({ regionNotes, profiles: snapshot.profiles })).toEqual([
+      "jp",
+      "us",
+      "au",
+      "ca",
+      "in",
+    ]);
     expect(regionsByCountry(regionNotes, "jp")).toEqual(["ap-northeast-1", "ap-northeast-3"]);
     expect(regionsByCountry(regionNotes, "us")).toEqual([
       "us-east-1",
@@ -199,8 +204,16 @@ describe("FILTER-001 AC-005 推論先の限定 (国)", () => {
 
 // --- AC-006 推論先の限定: 地理圏 ---
 describe("FILTER-001 AC-006 推論先の限定 (地理圏)", () => {
-  it("地理圏の選択肢は jp / apac / eu / us / au の 5 件", () => {
-    expect([...GEO_CODES]).toEqual(["jp", "apac", "eu", "us", "au"]);
+  it("地理圏の一覧は固定リストではなくデータ由来 (D-012)", () => {
+    expect(geoCodes({ regionNotes, profiles: snapshot.profiles })).toEqual([
+      "jp",
+      "apac",
+      "eu",
+      "us",
+      "au",
+      "ca",
+      "in",
+    ]);
   });
 
   it("地理圏グループは profiles.json の destination 和集合から導出する", () => {
@@ -386,15 +399,16 @@ describe("FILTER-001 AC-018 推論先の限定の選択肢は 1 つの平坦な�
     const geos = middle.filter((value) => value.startsWith("geo:"));
     // 国が先、地理圏が後。国と地理圏が交互に混ざらない
     expect(middle).toEqual([...countries, ...geos]);
-    expect(countries).toEqual(["country:jp", "country:us", "country:au"]);
-    // 残った地理圏は LIMIT_GEO_ORDER の並びのまま
-    const geoOrder = LIMIT_GEO_ORDER.map((code) => `geo:${code}`);
+    expect(countries).toEqual([
+      "country:jp",
+      "country:us",
+      "country:au",
+      "country:ca",
+      "country:in",
+    ]);
+    // 残った地理圏は LIMIT_GEO_ORDER_PREFERENCE の並びのまま
+    const geoOrder = LIMIT_GEO_ORDER_PREFERENCE.map((code) => `geo:${code}`);
     expect(geos).toEqual(geoOrder.filter((value) => geos.includes(value)));
-  });
-
-  it("並びの定義は COUNTRY_CODES / GEO_CODES と同じ集合", () => {
-    expect([...LIMIT_COUNTRY_ORDER].sort()).toEqual([...COUNTRY_CODES].sort());
-    expect([...LIMIT_GEO_ORDER].sort()).toEqual([...GEO_CODES].sort());
   });
 
   it("国と集合が同じ地理圏は落ち、国のラベルだけが残る", () => {
@@ -486,10 +500,28 @@ describe("FILTER-001 AC-012 カスタムの限定集合", () => {
 describe("FILTER-001 AC-013 地理圏ごとのグループ", () => {
   it("ピッカーの区分は region-notes.json の geo から作る (固定表を持たない)", () => {
     const groups = customRegionGroups(regionNotes);
-    expect(groups.map((group) => group.geo)).toEqual(["jp", "apac", "eu", "us", "au", "other"]);
+    // ca / in は region-notes.json の geo に足した実値から自動で現れる (DATA-001 AC-014)。
+    expect(groups.map((group) => group.geo)).toEqual([
+      "jp",
+      "apac",
+      "eu",
+      "us",
+      "au",
+      "ca",
+      "in",
+      "other",
+    ]);
     expect(groups.find((group) => group.geo === "jp").regions).toEqual([
       "ap-northeast-1",
       "ap-northeast-3",
+    ]);
+    expect(groups.find((group) => group.geo === "ca").regions).toEqual([
+      "ca-central-1",
+      "ca-west-1",
+    ]);
+    expect(groups.find((group) => group.geo === "in").regions).toEqual([
+      "ap-south-1",
+      "ap-south-2",
     ]);
     // 全リージョンがちょうど 1 つのグループに入る
     const all = groups.flatMap((group) => group.regions).sort();
