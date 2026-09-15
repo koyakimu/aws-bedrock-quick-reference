@@ -10,7 +10,7 @@ function isTheme(value) {
   return value === "light" || value === "dark";
 }
 
-export function getStoredTheme() {
+function getStoredTheme() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     return isTheme(saved) ? saved : null;
@@ -19,22 +19,22 @@ export function getStoredTheme() {
   }
 }
 
-export function getSystemTheme() {
+function getSystemTheme() {
   if (typeof window.matchMedia !== "function") return "dark";
   return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 }
 
-export function getTheme() {
+function getTheme() {
   return getStoredTheme() || getSystemTheme();
 }
 
 // 適用するだけ。保存しない。
-export function applyTheme(theme) {
+function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
 }
 
 // 明示的な選択。適用して保存する。
-export function setTheme(theme) {
+function setTheme(theme) {
   applyTheme(theme);
   try {
     localStorage.setItem(STORAGE_KEY, theme);

@@ -11,6 +11,7 @@ import {
   regionNotes,
   regionNotesWithoutCountry,
 } from "./fixtures/bedrock-fixture.js";
+import expectedSvg from "./fixtures/flow-svg.json";
 
 const NOVA = "amazon.nova-lite-v1:0";
 
@@ -408,5 +409,17 @@ describe("AC-010 推論先が 0 件のプロファイル", () => {
 describe("AC-NFR-001 横スクロールの入れ物", () => {
   it("図は .flow-scroll の中に入る (CSS の取り決めは responsive.test.js)", () => {
     expect(figureOf(open(NOVA), "inRegion").querySelector(".flow-scroll")).not.toBeNull();
+  });
+});
+
+// 座標を flow-model.mjs 側に寄せる整理で、描画が 1 バイトも変わらないことを固定する。
+// marker の id だけは図の出現順で増えるので正規化する。
+describe("SVG の出力が変わらない", () => {
+  it("3 レーンの svg.outerHTML が固定の期待値と一致する", () => {
+    const panel = open(NOVA);
+    for (const lane of ["inRegion", "geo", "global"]) {
+      const html = svgOf(panel, lane).outerHTML.replace(/-f\d+/g, "-fN");
+      expect(html, lane).toBe(expectedSvg[lane]);
+    }
   });
 });

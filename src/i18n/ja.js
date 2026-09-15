@@ -15,9 +15,7 @@ export const ja = {
   source: {
     label: "起点リージョン",
     endpointLabel: "エンドポイント",
-    optIn: "オプトイン",
     optionUnfetched: "{label}（未取得）",
-    statusOk: "取得済み",
   },
   table: {
     provider: "プロバイダ",
@@ -30,7 +28,6 @@ export const ja = {
     notes: "備考",
     mantle: "Mantle",
     legacyTag: "旧版",
-    rowCount: "{shown} / {total} 行",
   },
   // AC-011: 列挙子を出さず、その言語の平易な語に置き換える。
   modality: {
@@ -99,11 +96,7 @@ export const ja = {
     endpointLabel: "Mantle:",
     notAvailable: "Mantle: このリージョンでは提供なし",
     noCris: "Mantle では地理圏・全世界への振り分け（cross-region inference）は使えません",
-    column: "Mantle",
     modelIdTooltip: "bedrock-mantle で指定するモデル ID: {id}",
-    endpoints: "接続先",
-    runtimeName: "bedrock-runtime",
-    mantleName: "bedrock-mantle",
     runtimeApis: "InvokeModel / Converse / OpenAI Responses / Chat Completions / Anthropic Messages",
     mantleApis: "OpenAI Responses / Chat Completions / Anthropic Messages",
     mantleModelId: "Mantle で指定するモデル ID",
@@ -253,8 +246,6 @@ export const ja = {
     docGeoCris: "Geographic cross-Region inference",
     docGlobalCris: "Global cross-Region inference",
     docEndpoints: "Amazon Bedrock のエンドポイントとクォータ",
-    docMantleEndpoints: "Endpoints supported by Amazon Bedrock",
-    docMantleAvailability: "Endpoint availability (モデル別)",
   },
   // FLOW-001: データの流れ図。図の中の文字列はすべてここから引く (AC-009)。
   // 図が主張してよい内容は claims の C-1 〜 C-8 だけ (AC-008 / D-014)。

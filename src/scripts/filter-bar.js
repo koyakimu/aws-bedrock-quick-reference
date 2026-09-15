@@ -61,7 +61,7 @@ export function limitLabel(option) {
 }
 
 /** 条件チップに出す 1 件ぶんの表示名。 */
-export function conditionLabel(condition, limitOptions) {
+function conditionLabel(condition, limitOptions) {
   if (condition.param === "provider") return `${t("filter.provider")}: ${condition.value}`;
   if (condition.param === "modality") return `${t("filter.modality")}: ${condition.value}`;
   if (condition.param === "q") return `${t("filter.search")}: ${condition.value}`;

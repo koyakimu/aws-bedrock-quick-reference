@@ -15,9 +15,7 @@ export const en = {
   source: {
     label: "Source Region",
     endpointLabel: "Endpoint",
-    optIn: "opt-in",
     optionUnfetched: "{label} (not fetched)",
-    statusOk: "fetched",
   },
   table: {
     provider: "Provider",
@@ -30,7 +28,6 @@ export const en = {
     notes: "Notes",
     mantle: "Mantle",
     legacyTag: "Legacy",
-    rowCount: "{shown} / {total} rows",
   },
   // AC-011: plain words instead of the API enum values.
   modality: {
@@ -99,11 +96,7 @@ export const en = {
     endpointLabel: "Mantle:",
     notAvailable: "Mantle: not available in this Region",
     noCris: "Cross-region inference (geographic and global routing) is not available on Mantle",
-    column: "Mantle",
     modelIdTooltip: "Model ID to pass on bedrock-mantle: {id}",
-    endpoints: "Endpoints",
-    runtimeName: "bedrock-runtime",
-    mantleName: "bedrock-mantle",
     runtimeApis: "InvokeModel / Converse / OpenAI Responses / Chat Completions / Anthropic Messages",
     mantleApis: "OpenAI Responses / Chat Completions / Anthropic Messages",
     mantleModelId: "Model ID to pass on Mantle",
@@ -256,8 +249,6 @@ export const en = {
     docGeoCris: "Geographic cross-Region inference",
     docGlobalCris: "Global cross-Region inference",
     docEndpoints: "Amazon Bedrock endpoints and quotas",
-    docMantleEndpoints: "Endpoints supported by Amazon Bedrock",
-    docMantleAvailability: "Endpoint availability (per model)",
   },
   // FLOW-001: the data-flow figures. Every string inside a figure comes from here (AC-009).
   // A figure may only assert C-1 … C-8 below (AC-008 / D-014).

@@ -32,7 +32,7 @@ export function isSupportedLang(value) {
 }
 
 // localStorage は private モードや設定次第で例外を投げる。読み書きとも握り潰す (AC-008)。
-export function readStoredLang() {
+function readStoredLang() {
   try {
     return localStorage.getItem(STORAGE_KEY);
   } catch {

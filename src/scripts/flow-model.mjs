@@ -5,7 +5,7 @@
 
 // --- 図全体の寸法 ---------------------------------------------------------
 export const FLOW_WIDTH = 820;
-export const FLOW_BASE_HEIGHT = 280;
+const FLOW_BASE_HEIGHT = 280;
 // Global の外壁は viewBox の右端を越えて切れる (AC-005)。
 export const OPEN_WALL_RIGHT = 824;
 
@@ -33,7 +33,7 @@ export const CLAIM_IDS = Object.freeze(["c1", "c2", "c3", "c4", "c5", "c6", "c7"
 
 // Global の図に並べる地名は「例示」(AC-005)。実際の推論先は API から取れないので
 // 列挙してはいけない (D-003)。ここは固定のサンプルで、判定には一切使わない。
-export const GLOBAL_SAMPLE_REGIONS = Object.freeze([
+const GLOBAL_SAMPLE_REGIONS = Object.freeze([
   "us-east-1",
   "eu-central-1",
   "ap-southeast-2",

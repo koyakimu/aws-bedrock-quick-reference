@@ -13,8 +13,8 @@ export const NO_LIMIT = "none";
 // 地理圏コードの一覧は固定リストを持たず、データから導く (D-012 / AC-020)。
 // 下の 3 つは「どれを地理圏と見なすか」ではなく**並び順の好み**の定義で、
 // ここに無いコードも落とさず末尾に昇順で並べる。
-export const GEO_ORDER_PREFERENCE = Object.freeze(["jp", "apac", "eu", "us", "au"]);
-export const COUNTRY_ORDER_PREFERENCE = Object.freeze(["jp", "us", "au"]);
+const GEO_ORDER_PREFERENCE = Object.freeze(["jp", "apac", "eu", "us", "au"]);
+const COUNTRY_ORDER_PREFERENCE = Object.freeze(["jp", "us", "au"]);
 // 推論先の限定セレクタだけは残った地理圏の並びが違う (FILTER-001 AC-018)。
 export const LIMIT_GEO_ORDER_PREFERENCE = Object.freeze(["jp", "au", "eu", "apac", "us"]);
 
@@ -112,7 +112,7 @@ export function orderGeoCodes(codes) {
 }
 
 /** 国コードの表示順 (FILTER-001 UI Description)。jp → us → au → 残りを昇順。 */
-export function orderCountryCodes(codes) {
+function orderCountryCodes(codes) {
   return orderByPreference(codes, COUNTRY_ORDER_PREFERENCE);
 }
 
@@ -321,7 +321,7 @@ export function satisfiesLimit(destinations, limitRegions) {
 }
 
 /** In-Region の推論先は起点 R 自身だけ。R ∈ L なら満たす (AC-007)。 */
-export function inRegionSatisfiesLimit(region, limitRegions) {
+function inRegionSatisfiesLimit(region, limitRegions) {
   if (!limitRegions) return true;
   return limitRegions.has(region);
 }
