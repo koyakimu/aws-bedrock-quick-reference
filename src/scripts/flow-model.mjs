@@ -31,8 +31,6 @@ const ROW_GAP = 32;
 // AC-008 の主張の識別子。図に出る主張はこの 8 つだけ (D-014)。
 export const CLAIM_IDS = Object.freeze(["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"]);
 
-export const LANES = Object.freeze(["inRegion", "geo", "global"]);
-
 // Global の図に並べる地名は「例示」(AC-005)。実際の推論先は API から取れないので
 // 列挙してはいけない (D-003)。ここは固定のサンプルで、判定には一切使わない。
 export const GLOBAL_SAMPLE_REGIONS = Object.freeze([

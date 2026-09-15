@@ -131,6 +131,30 @@ describe("TABLE-001 AC-014 画面の並べ替え", () => {
     expect(providerHeader().getAttribute("aria-sort")).toBe("other");
   });
 
+  it("他の列で並べ替えた後でもプロバイダ列のクリックで行の並びが切り替わる", () => {
+    // 期待する alpha の並び (同じ fixture を setSort で alpha にしたときの順)。
+    const reference = mountFixtureApp();
+    reference.view.setSort("alpha");
+    const alphaOrder = modelIds();
+
+    const app = mountFixtureApp();
+    const nameHeader = () => document.querySelector('thead th[data-key="name"]');
+    // まずモデル名の列で並べ替える。
+    nameHeader().click();
+    expect(nameHeader().getAttribute("aria-sort")).toBe("descending");
+    const byName = modelIds();
+    expect(byName).not.toEqual(alphaOrder);
+
+    // プロバイダ列のクリックは列の並べ替えを解除し、行も alpha の順になる。
+    providerHeader().click();
+    expect(app.view.getSort()).toBe("alpha");
+    expect(modelIds()).toEqual(alphaOrder);
+    expect(providerColumn()[0]).toBe("Amazon");
+    // 前に並べ替えていた列の表示は消える。
+    expect(nameHeader().getAttribute("aria-sort")).toBe("none");
+    expect(nameHeader().classList.contains("sorted")).toBe(false);
+  });
+
   it("setSort で切り替わり、並び順の変更がイベントで外に出る", () => {
     const app = mountFixtureApp();
     const seen = [];

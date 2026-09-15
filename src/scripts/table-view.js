@@ -153,9 +153,8 @@ function inRegionCell(row) {
   return wrap;
 }
 
-// 接頭辞 → 地理圏の平易な名前 (AC-004)。辞書に無い接頭辞は接頭辞そのものを出す。
-// 実体は geo-labels.js の 1 か所 (FILTER-001 / REGIONS-001 / FLOW-001 と共有)。
-export { geoAreaLabel };
+// 接頭辞 → 地理圏の平易な名前 (AC-004) は geo-labels.js の 1 か所が実体
+// (FILTER-001 / REGIONS-001 / FLOW-001 と共有)。使う側はそちらから import する。
 
 function geoCell(row, notes) {
   if (row.geo.length === 0) return markNo();
@@ -458,6 +457,10 @@ export function mountTableView({
     onStateChange(next) {
       // プロバイダ列のヘッダは列の並べ替えではなく pinned ⇄ alpha の切り替えに使う (AC-014)。
       if (next.sortKey === SORT_TOGGLE_KEY) {
+        // 先に他の列で並べ替えていたら、その指定を捨ててから切り替える。
+        // 残したままだと sortRows がその列で並べ直すので、行の順が pinned / alpha に
+        // ならないまま aria-sort と URL だけが変わってしまう。
+        state = { ...state, sortKey: null, sortDir: null };
         setSort(sort === SORT_PINNED ? SORT_ALPHA : SORT_PINNED);
         return;
       }
@@ -643,8 +646,8 @@ export function mountTableView({
   function markSortHeader() {
     const th = table.el.querySelector(`thead th[data-key="${SORT_TOGGLE_KEY}"]`);
     if (!th) return;
-    // 列ヘッダでの並べ替え (table-engine) が効いているときはそちらの表示を優先する。
-    if (state.sortKey === SORT_TOGGLE_KEY && state.sortDir) return;
+    // プロバイダ列は列の並べ替えに使わない (onStateChange が横取りして state を空にする) ので、
+    // state.sortKey がこの列になることはない。
     th.setAttribute("aria-sort", sort === SORT_ALPHA ? "ascending" : "other");
     th.dataset.sort = sort;
   }
