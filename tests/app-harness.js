@@ -45,6 +45,8 @@ export function mountFixtureApp({
   extraProfiles = null,
   getView,
   setView,
+  // 取得の記録の差し替え (REGIONS-001 AC-007 / AC-014)。関数なら snapshot のものを渡す。
+  fetchLog,
 } = {}) {
   Object.defineProperty(navigator, "language", { value: lang, configurable: true });
   document.body.innerHTML = '<main id="main"></main>';
@@ -58,7 +60,10 @@ export function mountFixtureApp({
     host: document.getElementById("main"),
     models: snapshot.models,
     profiles: extraProfiles ? { ...snapshot.profiles, ...extraProfiles } : snapshot.profiles,
-    fetchLog: snapshot.fetchLog,
+    fetchLog:
+      typeof fetchLog === "function"
+        ? fetchLog(snapshot.fetchLog)
+        : (fetchLog ?? snapshot.fetchLog),
     regionNotes,
     overrides: overrides ?? {},
     mantle,
@@ -72,6 +77,15 @@ export function mountFixtureApp({
 }
 
 export { buildOverrides, buildPrices, regionNotes, mantle };
+
+// --- ビュータブと行列 (REGIONS-001) ---
+export const viewTab = (view) => document.querySelector(`nav.tabs .tab[data-view="${view}"]`);
+export const matrixHeadRows = () => [...document.querySelectorAll("#regions-matrix thead tr")];
+export const matrixBodyRows = () => [...document.querySelectorAll("#regions-matrix tbody tr")];
+export const matrixRegionHeads = () =>
+  [...(matrixHeadRows()[1]?.children ?? [])].map((th) => th.querySelector(".rg-code")?.textContent);
+export const matrixCells = (rowIndex = 0) =>
+  [...(matrixBodyRows()[rowIndex]?.querySelectorAll("td.mx") ?? [])];
 
 // --- DOM の取り回し ---
 export const bodyRows = () =>

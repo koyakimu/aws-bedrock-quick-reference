@@ -250,7 +250,7 @@ export function createTable({
   el.appendChild(table);
 
   let currentState = state;
-  const currentColumns = columns;
+  let currentColumns = columns;
 
   // ヘッダは描き直されるので、th ではなく thead に 1 度だけ委譲で張る。
   thead.addEventListener("click", (event) => {
@@ -274,6 +274,11 @@ export function createTable({
 
   return {
     el,
+    // 列そのものが変わる表 (列がデータから決まる行列など) のための入口。
+    // 次の update() から効く。
+    setColumns(nextColumns) {
+      currentColumns = nextColumns;
+    },
     update(nextRows, nextState) {
       render(nextRows, nextState || currentState);
     },

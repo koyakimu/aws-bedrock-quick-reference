@@ -214,4 +214,27 @@ export const en = {
     docMantleEndpoints: "Endpoints supported by Amazon Bedrock",
     docMantleAvailability: "Endpoint availability (per model)",
   },
+  // --- View tabs (REGIONS-001 AC-001) ---
+  view: {
+    tablistLabel: "Switch view",
+    tabOrigin: "From origin",
+    tabRegions: "Regions",
+  },
+  // --- Model x all regions matrix (REGIONS-001) ---
+  regions: {
+    geoLabel: "Area",
+    geoAll: "All",
+    colProvider: "Provider",
+    colModel: "Model",
+    origin: "Origin",
+    cellYes: "Direct (On-Demand)",
+    cellProfile: "Through an inference profile only",
+    cellUnspecified: "Offered; no inference type reported",
+    cellNone: "Not offered",
+    cellBlank: "Not fetched",
+    legendBlank: "blank",
+    count: "{shown} / {total} models · {regions} regions",
+    // Never mention the cause, the account, permissions or opt-in (D-008).
+    note: "The {count} blank regions were not fetched with the account used to collect this data. Whether they offer the model is unknown.",
+  },
 };

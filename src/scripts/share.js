@@ -13,6 +13,7 @@ import { t, getLang, applyTranslations, LANG_CHANGED_EVENT } from "./i18n.js";
 import { regionOptionLabel } from "./region-names.js";
 import { SORT_CHANGED_EVENT, SOURCE_REGION_EVENT } from "./table-view.js";
 import { FILTER_CHANGED_EVENT } from "./filter-bar.js";
+import { VIEW_CHANGED_EVENT } from "./view-tabs.js";
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -167,6 +168,8 @@ export function mountShare({
   document.addEventListener(FILTER_CHANGED_EVENT, syncUrl);
   // 並び順の切り替えも URL に載せる (AC-013)。履歴は積まず replaceState のまま。
   document.addEventListener(SORT_CHANGED_EVENT, syncUrl);
+  // ビューの切り替えも URL に載せる (AC-011)。
+  document.addEventListener(VIEW_CHANGED_EVENT, syncUrl);
 
   document.addEventListener(LANG_CHANGED_EVENT, () => {
     applyTranslations(notice);

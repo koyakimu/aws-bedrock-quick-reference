@@ -213,4 +213,27 @@ export const ja = {
     docMantleEndpoints: "Endpoints supported by Amazon Bedrock",
     docMantleAvailability: "Endpoint availability (モデル別)",
   },
+  // --- 画面ビューのタブ (REGIONS-001 AC-001) ---
+  view: {
+    tablistLabel: "表示の切り替え",
+    tabOrigin: "起点から",
+    tabRegions: "リージョン",
+  },
+  // --- モデル × 全リージョンの行列 (REGIONS-001) ---
+  regions: {
+    geoLabel: "地域",
+    geoAll: "すべて",
+    colProvider: "プロバイダ",
+    colModel: "モデル名",
+    origin: "起点",
+    cellYes: "直接提供（On-Demand）",
+    cellProfile: "推論プロファイル経由のみ",
+    cellUnspecified: "提供あり・推論タイプの指定なし",
+    cellNone: "提供なし",
+    cellBlank: "未取得",
+    legendBlank: "空欄",
+    count: "{shown} / {total} モデル ・ {regions} リージョン",
+    // 取得できなかった理由・アカウント・権限・オプトインには触れない (D-008)。
+    note: "空欄の {count} リージョンは、データ取得に使ったアカウントで取得できていない。提供の有無は不明。",
+  },
 };
