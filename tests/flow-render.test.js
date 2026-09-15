@@ -217,6 +217,45 @@ describe("AC-005 Global の図", () => {
   });
 });
 
+describe("AC-016 呼べないレーンの図（淡色の範囲）", () => {
+  const NO_GEO = "cohere.embed-v4:0"; // 東京起点で Geo プロファイルが無い
+
+  it("可の Geo / Global には .s-off が無い", () => {
+    const panel = open(CLAUDE_45);
+    for (const lane of ["geo", "global"]) {
+      expect(svgOf(panel, lane).querySelector("g.s-off"), lane).toBeNull();
+    }
+  });
+
+  it("不可の Geo では 起点・記録・国外のチップがまとめて .s-off の中に入る", () => {
+    const svg = svgOf(open(NO_GEO), "geo");
+    const off = svg.querySelector("g.s-off");
+    expect(off).not.toBeNull();
+    expect(off.querySelector('[data-node="origin"]')).not.toBeNull();
+    expect(off.querySelector('[data-node="record"]')).not.toBeNull();
+    // 不正利用検知の警告も淡色の中 (呼べないレーンで単独で目立たせない)。
+    expect(off.querySelector("[data-claim='c6']")).not.toBeNull();
+    expect(svg.querySelectorAll("rect.s-chip-warn")).toHaveLength(0);
+  });
+
+  it("不可の Global では推論先のサンプルのチップを 1 つも描かない", () => {
+    const svg = svgOf(open(NOVA), "global");
+    expect(svg.querySelectorAll("rect.s-chip-faint")).toHaveLength(0);
+    const off = svg.querySelector("g.s-off");
+    expect(off).not.toBeNull();
+    // 「限定できない」「右に壁がない」も淡色の中に入る。
+    expect(off.textContent).toContain("国外を含む ・ 限定できない");
+    expect(off.textContent).toContain("右に壁がない ＝ 範囲を限定できない");
+  });
+
+  it("可の Global の常設の淡色グループは .s-faint で、.s-off ではない", () => {
+    const svg = svgOf(open(CLAUDE_45), "global");
+    expect(svg.querySelector("g.s-faint")).not.toBeNull();
+    expect(svg.querySelector("g.s-off")).toBeNull();
+    expect(svg.querySelectorAll("rect.s-chip-faint").length).toBeGreaterThan(3);
+  });
+});
+
 describe("AC-006 国外に出るレーンの警告", () => {
   it("Geo と Global にはあり、In-Region には無い", () => {
     const panel = open(CLAUDE_45);

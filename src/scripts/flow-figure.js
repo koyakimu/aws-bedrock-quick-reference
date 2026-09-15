@@ -328,10 +328,10 @@ export function buildFlowFigure(lane, ctx = {}) {
   if (lane === "geo") {
     // 国内の推論先 (内側の境界の中)。
     if (description.domestic.length > 0 && description.countryKnown) {
-      svg.appendChild(
+      inner.appendChild(
         node("path", { d: "M240,134 L240,144", class: "s-arrow", "marker-end": `url(#hd-${uid})` }),
       );
-      svg.appendChild(
+      inner.appendChild(
         node(
           "text",
           { x: 162, y: 165, class: "s-t-yes" },
@@ -339,7 +339,7 @@ export function buildFlowFigure(lane, ctx = {}) {
         ),
       );
       description.domestic.forEach((item) =>
-        chip(svg, item, {
+        chip(inner, item, {
           fill: item.isOrigin ? "s-chip-accent" : "s-chip",
           text: item.isOrigin ? "s-chip-accent-t" : "s-chip-t",
         }),
@@ -354,22 +354,21 @@ export function buildFlowFigure(lane, ctx = {}) {
       labelY: description.recordY - 18,
       tagX: 412,
     });
-    if (off) svg.appendChild(inner);
     // 2 つの境界のあいだ (国外)、または国が分からないときの中立のチップ (AC-004 / AC-010)。
     const outside = description.countryKnown ? description.foreign : description.rest;
     if (outside.length > 0) {
-      svg.appendChild(
+      inner.appendChild(
         node("path", {
           d: "M406,110 C436,110 448,110 476,110",
           class: "s-arrow",
           "marker-end": `url(#hd-${uid})`,
         }),
       );
-      svg.appendChild(
+      inner.appendChild(
         node("text", { x: 486, y: 58, class: "s-t-muted" }, t("flow.somewhereIn", { area })),
       );
       if (description.countryKnown) {
-        svg.appendChild(
+        inner.appendChild(
           node(
             "text",
             { x: 486, y: 78, class: "s-t-warn" },
@@ -377,7 +376,7 @@ export function buildFlowFigure(lane, ctx = {}) {
           ),
         );
       } else {
-        svg.appendChild(
+        inner.appendChild(
           node(
             "text",
             { x: 486, y: 78, class: "s-t-muted" },
@@ -386,23 +385,26 @@ export function buildFlowFigure(lane, ctx = {}) {
         );
       }
       outside.forEach((item) =>
-        chip(svg, item, {
+        chip(inner, item, {
           fill: description.countryKnown ? "s-chip-warn" : "s-chip",
           text: description.countryKnown ? "s-chip-warn-t" : "s-chip-t",
         }),
       );
-      svg.appendChild(
+      inner.appendChild(
         node("text", { x: 486, y: description.cannotChooseY, class: "s-t-muted" }, t("flow.cannotChoose")),
       );
     }
     // AC-006: 国外に出るレーンにだけ出す警告。
     const warn = node("text", { x: 486, y: description.warnY, class: "s-t-warn" }, t("flow.abuseDetection"));
     warn.dataset.claim = "c6";
-    svg.appendChild(warn);
+    inner.appendChild(warn);
+    if (off) svg.appendChild(inner);
   }
 
   if (lane === "global") {
-    const faint = node("g", { class: "s-off" });
+    // 常に淡い起点のチップ (Global では起点も「選ばれるかもしれない 1 つ」でしかない)。
+    // 呼べないことを表す .s-off とは別のクラスにする。
+    const faint = node("g", { class: "s-faint" });
     faint.appendChild(
       node("path", { d: "M238,134 L238,144", class: "s-arrow", "marker-end": `url(#hd-${uid})` }),
     );
@@ -425,24 +427,28 @@ export function buildFlowFigure(lane, ctx = {}) {
       labelY: description.recordY - 18,
       tagX: 412,
     });
-    if (off) svg.appendChild(inner);
-    svg.appendChild(
+    inner.appendChild(
       node("path", {
         d: "M406,110 C436,110 448,110 472,110",
         class: "s-arrow",
         "marker-end": `url(#hd-${uid})`,
       }),
     );
-    svg.appendChild(node("text", { x: 484, y: 70, class: "s-t-warn" }, t("flow.includesForeign")));
-    for (const sample of description.samples) {
-      chip(svg, sample, { fill: "s-chip-faint", text: "s-chip-faint-t", fade: sample.fade });
+    inner.appendChild(node("text", { x: 484, y: 70, class: "s-t-warn" }, t("flow.includesForeign")));
+    // 呼べないレーンでは推論先のサンプルを 1 つも描かない (AC-016)。
+    // 地名の例示が残っていると、そのレーンで実際に振り分けられるように読める。
+    if (!off) {
+      for (const sample of description.samples) {
+        chip(inner, sample, { fill: "s-chip-faint", text: "s-chip-faint-t", fade: sample.fade });
+      }
     }
-    svg.appendChild(
+    inner.appendChild(
       node("text", { x: 484, y: description.noRightWallY, class: "s-t-warn" }, t("flow.noRightWall")),
     );
     const warn = node("text", { x: 484, y: description.warnY, class: "s-t-warn" }, t("flow.abuseDetection"));
     warn.dataset.claim = "c6";
-    svg.appendChild(warn);
+    inner.appendChild(warn);
+    if (off) svg.appendChild(inner);
   }
 
   // 「応答は同じ経路で戻る」は常に図の左下 (AC-002)。

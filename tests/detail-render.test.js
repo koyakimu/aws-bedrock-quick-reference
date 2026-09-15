@@ -214,12 +214,29 @@ describe("AC-016 使えない Geo / Global のレーン", () => {
       [NOVA, "global"],
     ]) {
       const svg = laneOf(open(modelId), lane).querySelector("svg");
-      expect(svg.querySelector("g.s-off"), `${modelId}/${lane}`).not.toBeNull();
+      const off = svg.querySelector("g.s-off");
+      expect(off, `${modelId}/${lane}`).not.toBeNull();
+      // 起点と記録のノードが淡色の中に入っている (g が空でないことの確認)。
+      expect(off.querySelector('[data-node="origin"]'), `${modelId}/${lane}`).not.toBeNull();
+      expect(off.querySelector('[data-node="record"]'), `${modelId}/${lane}`).not.toBeNull();
       expect(
-        svg.querySelectorAll("rect.s-chip-warn, rect.s-chip-accent"),
+        svg.querySelectorAll("rect.s-chip-warn, rect.s-chip-accent, rect.s-chip-faint"),
         `${modelId}/${lane}`,
       ).toHaveLength(0);
     }
+  });
+
+  it("使える Geo / Global の図は淡色にしない", () => {
+    // CLAUDE_45 は Geo も Global も可。.s-off は「呼べない」だけを表す。
+    const panel = open(CLAUDE_45);
+    for (const lane of ["geo", "global"]) {
+      const svg = laneOf(panel, lane).querySelector("svg");
+      expect(svg.querySelector("g.s-off"), lane).toBeNull();
+    }
+    // Global の起点のチップは常に淡いが、それは .s-faint で .s-off ではない。
+    const globalSvg = laneOf(panel, "global").querySelector("svg");
+    expect(globalSvg.querySelector("g.s-faint")).not.toBeNull();
+    expect(globalSvg.querySelectorAll("rect.s-chip-faint").length).toBeGreaterThan(3);
   });
 
   it("In-Region が不可でも「指定する ID」（モデル ID）は残る", () => {
