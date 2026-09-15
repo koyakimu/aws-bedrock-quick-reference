@@ -32,8 +32,18 @@ export function fakeHistory(loc) {
   };
 }
 
-/** fixture のスナップショットで画面一式を組み立てる。 */
-export function mountFixtureApp({ search = "", overrides, prices, lang = "ja-JP" } = {}) {
+/**
+ * fixture のスナップショットで画面一式を組み立てる。
+ * extraProfiles を渡すと profiles.json に足した状態で組み立てられる
+ * (未知の接頭辞の扱いを確かめるため。DATA-001 AC-013 / FILTER-001 AC-020)。
+ */
+export function mountFixtureApp({
+  search = "",
+  overrides,
+  prices,
+  lang = "ja-JP",
+  extraProfiles = null,
+} = {}) {
   Object.defineProperty(navigator, "language", { value: lang, configurable: true });
   document.body.innerHTML = '<main id="main"></main>';
   localStorage.clear();
@@ -45,7 +55,7 @@ export function mountFixtureApp({ search = "", overrides, prices, lang = "ja-JP"
   const app = mountApp({
     host: document.getElementById("main"),
     models: snapshot.models,
-    profiles: snapshot.profiles,
+    profiles: extraProfiles ? { ...snapshot.profiles, ...extraProfiles } : snapshot.profiles,
     fetchLog: snapshot.fetchLog,
     regionNotes,
     overrides: overrides ?? {},

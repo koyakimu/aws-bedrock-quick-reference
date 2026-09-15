@@ -2,30 +2,31 @@
 // 判定のやり直しはしない。TABLE-001 が組み立てた行 (bedrock-view-model.mjs の buildRow)
 // をそのまま受け取り、条件で残す / 落とすだけを決める。
 
+import { GLOBAL_PREFIX } from "./bedrock-view-model.mjs";
+
 // モダリティの選択肢 (AC-002)。API から返る値のうち画面に出す 5 種。
 export const MODALITIES = Object.freeze(["TEXT", "IMAGE", "SPEECH", "VIDEO", "EMBEDDING"]);
 
 // 推論先の限定が無い状態 (既定)。
 export const NO_LIMIT = "none";
 
-// 固定リストの選択肢 (D-007 の Option A の経路)。
-// 国は region-notes.json の country、地理圏は接頭辞と同じ 5 種。
-export const COUNTRY_CODES = Object.freeze(["jp", "au", "us"]);
-export const GEO_CODES = Object.freeze(["jp", "apac", "eu", "us", "au"]);
+// 地理圏コードの一覧は固定リストを持たず、データから導く (D-012 / AC-020)。
+// 下の 3 つは「どれを地理圏と見なすか」ではなく**並び順の好み**の定義で、
+// ここに無いコードも落とさず末尾に昇順で並べる。
+export const GEO_ORDER_PREFERENCE = Object.freeze(["jp", "apac", "eu", "us", "au"]);
+export const COUNTRY_ORDER_PREFERENCE = Object.freeze(["jp", "us", "au"]);
+// 推論先の限定セレクタだけは残った地理圏の並びが違う (FILTER-001 AC-018)。
+export const LIMIT_GEO_ORDER_PREFERENCE = Object.freeze(["jp", "au", "eu", "apac", "us"]);
 
-// 推論先の限定セレクタに並べる順 (v4)。中身は COUNTRY_CODES / GEO_CODES と同じで、
-// 並びだけが違う。GEO_CODES の並びはカスタムのピッカー (CUSTOM_GROUP_ORDER) が使うので、
-// セレクタの都合で並べ替えない。
-export const LIMIT_COUNTRY_ORDER = Object.freeze(["jp", "us", "au"]);
-export const LIMIT_GEO_ORDER = Object.freeze(["jp", "au", "eu", "apac", "us"]);
+// どの地理圏にも属さないリージョンの区分。region-notes.json の geo にしか現れず、
+// プロファイルの接頭辞には対応しないので、限定の選択肢には出さず並びの末尾に置く。
+export const UNGROUPED_GEO = "other";
 
 // カスタムのリージョン複数選択 (D-007 の B の経路、Issue #1)。
 // セレクタの値は集合が空のとき "custom"、選択があるとき "custom:<code>+<code>..." (昇順)。
 export const CUSTOM_LIMIT = "custom";
 const CUSTOM_PREFIX = "custom:";
 
-// 地理圏グループの並び。region-notes.json の geo にしか無い "other" を末尾に置く。
-export const CUSTOM_GROUP_ORDER = Object.freeze([...GEO_CODES, "other"]);
 
 export const DEFAULT_FILTERS = Object.freeze({
   provider: [],
@@ -85,19 +86,88 @@ export function normalizeCustomLimit(value, known = []) {
 }
 
 /**
+ * 好みの並びを先に、そこに無いコードを昇順で後ろに置く (AC-020)。
+ * 一覧は固定しない。並べたいものだけを preference に書く。
+ */
+function orderByPreference(codes, preference, { last = [] } = {}) {
+  const rank = (code) => {
+    if (last.includes(code)) return 2;
+    return preference.includes(code) ? 0 : 1;
+  };
+  return [...new Set(codes ?? [])].sort((a, b) => {
+    const rankA = rank(a);
+    const rankB = rank(b);
+    if (rankA !== rankB) return rankA - rankB;
+    if (rankA === 0) return preference.indexOf(a) - preference.indexOf(b);
+    return a.localeCompare(b);
+  });
+}
+
+/**
+ * 地理圏コードの表示順 (REGIONS-001 AC-004 / カスタムのピッカー)。
+ * jp → apac → eu → us → au → 残りを昇順 → other。
+ */
+export function orderGeoCodes(codes) {
+  return orderByPreference(codes, GEO_ORDER_PREFERENCE, { last: [UNGROUPED_GEO] });
+}
+
+/** 国コードの表示順 (FILTER-001 UI Description)。jp → us → au → 残りを昇順。 */
+export function orderCountryCodes(codes) {
+  return orderByPreference(codes, COUNTRY_ORDER_PREFERENCE);
+}
+
+/**
+ * 地理圏コードの一覧 (D-012 / AC-020)。固定リストを持たず、2 つのデータ源の和集合から作る。
+ *  1. profiles.json の接頭辞のうち `global` 以外 (ca / in など新しい接頭辞も自動で入る)
+ *  2. region-notes.json の geo の実値 (プロファイルが 1 件も取れていない地理圏を拾う)
+ * どの地理圏にも属さない `other` は地理圏ではないので含めない。
+ */
+export function geoCodes({ regionNotes, profiles } = {}) {
+  const codes = new Set();
+  for (const profile of Object.values(profiles ?? {})) {
+    const prefix = profile?.prefix;
+    if (typeof prefix !== "string" || prefix.length === 0) continue;
+    if (prefix === GLOBAL_PREFIX) continue;
+    codes.add(prefix);
+  }
+  for (const code of allRegionCodes(regionNotes)) {
+    const geo = regionNotes?.[code]?.geo;
+    if (typeof geo !== "string" || geo.length === 0 || geo === UNGROUPED_GEO) continue;
+    codes.add(geo);
+  }
+  return orderGeoCodes([...codes]);
+}
+
+/**
+ * 推論先の限定に国の選択肢を出す国コード (AC-018 / UI Description)。
+ * 地理圏コードは国コードと同じ綴りで名乗る (`jp` / `us` / `au` / `ca` / `in`) ので、
+ * 「地理圏として存在し、かつ region-notes.json に country として現れる」コードを国の候補にする。
+ * 固定リストは持たないので、新しい地理圏が増えれば国の選択肢も自動で増える。
+ */
+export function countryCodes({ regionNotes, profiles } = {}) {
+  const countries = new Set(
+    allRegionCodes(regionNotes)
+      .map((code) => regionNotes?.[code]?.country)
+      .filter((country) => typeof country === "string" && country.length > 0),
+  );
+  return orderCountryCodes(
+    geoCodes({ regionNotes, profiles }).filter((code) => countries.has(code)),
+  );
+}
+
+/**
  * カスタムのピッカーに並べる地理圏ごとのリージョン (AC-012 / AC-013)。
- * 区分は region-notes.json の geo。固定表は持たず、データのキーから作る。
+ * 区分は region-notes.json の geo の実値。固定表は持たず、データのキーから作る。
+ * 並びは orderGeoCodes (other が末尾)。
  */
 export function customRegionGroups(regionNotes) {
   const byGeo = new Map();
   for (const code of allRegionCodes(regionNotes)) {
-    const geo = regionNotes?.[code]?.geo ?? "other";
+    const geo = regionNotes?.[code]?.geo ?? UNGROUPED_GEO;
     if (!byGeo.has(geo)) byGeo.set(geo, []);
     byGeo.get(geo).push(code);
   }
-  const known = CUSTOM_GROUP_ORDER.filter((geo) => byGeo.has(geo));
-  const unknown = [...byGeo.keys()].filter((geo) => !CUSTOM_GROUP_ORDER.includes(geo)).sort();
-  return [...known, ...unknown].map((geo) => ({ geo, regions: byGeo.get(geo) }));
+  return orderGeoCodes([...byGeo.keys()]).map((geo) => ({ geo, regions: byGeo.get(geo) }));
 }
 
 /** 表示中のデータに実際に現れる providerName の一覧 (AC-001)。固定表は持たない。 */
@@ -156,14 +226,17 @@ function sameRegions(a, b) {
  */
 export function buildLimitOptions({ regionNotes, profiles } = {}) {
   const candidates = [
-    ...LIMIT_COUNTRY_ORDER.map((code) => ({
+    ...countryCodes({ regionNotes, profiles }).map((code) => ({
       value: `country:${code}`,
       kind: "country",
       code,
       labelKey: `filter.country.${code}`,
       regions: regionsByCountry(regionNotes, code),
     })),
-    ...LIMIT_GEO_ORDER.map((code) => ({
+    ...orderByPreference(
+      geoCodes({ regionNotes, profiles }),
+      LIMIT_GEO_ORDER_PREFERENCE,
+    ).map((code) => ({
       value: `geo:${code}`,
       kind: "geo",
       code,

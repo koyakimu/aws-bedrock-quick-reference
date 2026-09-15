@@ -47,6 +47,8 @@ export const en = {
     us: "United States",
     eu: "EU",
     au: "Australia",
+    ca: "Canada",
+    in: "India",
   },
   // AC-004: the Geo cell lists destinations as place names, never as Region codes.
   geo: {
@@ -151,6 +153,8 @@ export const en = {
       jp: "Japan",
       au: "Australia",
       us: "United States",
+      ca: "Canada",
+      in: "India",
     },
     // Geography labels live in the dictionary, never derived from the code. Only the
     // geographies whose Region set differs from a country survive, so the label says
@@ -161,6 +165,8 @@ export const en = {
       eu: "EU",
       us: "United States + Canada",
       au: "Australia + New Zealand",
+      ca: "Canada",
+      in: "India",
     },
   },
   detail: {

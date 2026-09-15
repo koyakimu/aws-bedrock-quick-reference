@@ -11,7 +11,6 @@ import {
   buildViewModel,
   geoPlaces,
   outsideCount,
-  GEO_PREFIXES,
 } from "../src/scripts/bedrock-view-model.mjs";
 import {
   buildSnapshot,
@@ -60,18 +59,33 @@ describe("AC-003 judgeInRegion", () => {
   });
 });
 
-// AC-004: 接頭辞 5 種を拾い、destination は昇順。複数プロファイルは全て並べる。
+// AC-004: global 以外の接頭辞を全て拾い、destination は昇順。複数プロファイルは全て並べる。
+// 接頭辞の固定リストは持たない (D-012 / DATA-001 AC-013)。
+const OBSERVED_PREFIXES = ["us", "eu", "apac", "au", "jp", "ca", "in"];
+
 describe("AC-004 judgeGeo", () => {
   const profiles = Object.fromEntries(
-    GEO_PREFIXES.map((prefix) => [
+    OBSERVED_PREFIXES.map((prefix) => [
       `${prefix}.m.target`,
       { prefix, modelId: "m.target", sources: { [R]: ["z-region-9", "a-region-1"] } },
     ]),
   );
 
-  it("接頭辞 us / eu / apac / au / jp を全て拾う", () => {
+  it("global 以外の接頭辞を全て拾う (ca. / in. を含む)", () => {
     const geo = judgeGeo(profiles, "m.target", R);
-    expect(geo.map((entry) => entry.prefix).sort()).toEqual([...GEO_PREFIXES].sort());
+    expect(geo.map((entry) => entry.prefix).sort()).toEqual([...OBSERVED_PREFIXES].sort());
+  });
+
+  it("辞書にも定数にも無い未知の接頭辞もそのまま Geo として拾う", () => {
+    const unknown = {
+      "zz.m.target": { prefix: "zz", modelId: "m.target", sources: { [R]: [R] } },
+    };
+    expect(judgeGeo(unknown, "m.target", R).map((entry) => entry.prefix)).toEqual(["zz"]);
+  });
+
+  it("接頭辞が空のプロファイルは Geo にしない", () => {
+    const blank = { "m.target": { prefix: "", modelId: "m.target", sources: { [R]: [R] } } };
+    expect(judgeGeo(blank, "m.target", R)).toEqual([]);
   });
 
   it("destination を昇順に並べる", () => {
@@ -84,7 +98,7 @@ describe("AC-004 judgeGeo", () => {
     expect(geo.map((entry) => entry.profileId)).toEqual(
       [...geo.map((entry) => entry.profileId)].sort(),
     );
-    expect(geo).toHaveLength(GEO_PREFIXES.length);
+    expect(geo).toHaveLength(OBSERVED_PREFIXES.length);
   });
 
   it("global 接頭辞は Geo に混ぜない", () => {

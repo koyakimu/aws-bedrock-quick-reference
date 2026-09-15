@@ -10,6 +10,7 @@ import {
   regionStatus,
 } from "./bedrock-view-model.mjs";
 import { copyText } from "./copy.js";
+import { geoAreaLabel } from "./geo-labels.js";
 import { t, getLang, applyTranslations } from "./i18n.js";
 import { regionName, regionOptionLabel } from "./region-names.js";
 
@@ -140,11 +141,9 @@ function inRegionCell(row) {
   return wrap;
 }
 
-// 接頭辞 (jp / apac / us / eu / au) → 地理圏の平易な名前 (AC-004)。
-export function geoAreaLabel(prefix) {
-  const label = t(`geoArea.${prefix}`);
-  return label === `geoArea.${prefix}` ? prefix : label;
-}
+// 接頭辞 → 地理圏の平易な名前 (AC-004)。辞書に無い接頭辞は接頭辞そのものを出す。
+// 実体は geo-labels.js の 1 か所 (FILTER-001 / REGIONS-001 / FLOW-001 と共有)。
+export { geoAreaLabel };
 
 function geoCell(row, notes) {
   if (row.geo.length === 0) return markNo();

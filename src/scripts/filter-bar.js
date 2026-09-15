@@ -18,7 +18,9 @@ import {
   limitRegionSet,
   providerOptions,
   removeCondition,
+  UNGROUPED_GEO,
 } from "./filter-model.mjs";
+import { countryLimitLabel, geoAreaLabel, geoLimitLabel } from "./geo-labels.js";
 import { t, getLang, applyTranslations, LANG_CHANGED_EVENT } from "./i18n.js";
 import { regionName, regionOptionLabel } from "./region-names.js";
 
@@ -52,10 +54,10 @@ function field(...children) {
 export function limitLabel(option) {
   if (!option) return null;
   if (option.kind === "none" || option.kind === "custom") return t(option.labelKey);
-  return t("filter.limitOptionLabel", {
-    label: t(option.labelKey),
-    count: option.regions.length,
-  });
+  // 辞書にラベルが無い国 / 地理圏はコードをそのまま出す (AC-020)。
+  const label =
+    option.kind === "country" ? countryLimitLabel(option.code) : geoLimitLabel(option.code);
+  return t("filter.limitOptionLabel", { label, count: option.regions.length });
 }
 
 /** 条件チップに出す 1 件ぶんの表示名。 */
@@ -252,9 +254,9 @@ export function mountFilterBar({
   }
 
   function customGroupLabel(geo) {
-    // 地理圏の名前は I18N-001 の geoArea が正。region-notes.json にしか無い
-    // "other" だけ filter 名前空間に持つ。
-    return geo === "other" ? t("filter.customGroupOther") : t(`geoArea.${geo}`);
+    // 地理圏の名前は I18N-001 の geoArea が正。辞書に無い地理圏はコードをそのまま出す
+    // (AC-020)。region-notes.json にしか無い "other" だけ filter 名前空間に持つ。
+    return geo === UNGROUPED_GEO ? t("filter.customGroupOther") : geoAreaLabel(geo);
   }
 
   /** リージョンのチェックボックス一覧 (AC-012 / AC-013)。言語が変わったら作り直す。 */
