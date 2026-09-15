@@ -152,3 +152,37 @@ describe("SHARE-001 AC-011 view の受け渡し (jsdom)", () => {
     expect(app.share.notice.hidden).toBe(true);
   });
 });
+
+// ここから下は getView / setView の差し替えをせず、REGIONS-001 の本物のタブと往復する。
+describe("SHARE-001 AC-011 / AC-012 本物のタブとの往復 (jsdom)", () => {
+  const tab = (view) => document.querySelector(`nav.tabs .tab[data-view="${view}"]`);
+
+  it("未知の view では「起点から」が選ばれ、通知が出て URL も書き換わる", () => {
+    const app = mountFixtureApp({ search: "?view=galaxy" });
+    expect(tab("origin").getAttribute("aria-selected")).toBe("true");
+    expect(document.getElementById("vp-regions").hidden).toBe(true);
+    expect(app.share.notice.hidden).toBe(false);
+    expect(app.share.notice.textContent).toContain("view=galaxy");
+    expect(app.location.search).toBe("");
+  });
+
+  it("通知はタブの外にあり、どちらのビューでも読める", () => {
+    const app = mountFixtureApp({ search: "?view=galaxy" });
+    expect(app.share.notice.closest("[role=tabpanel]")).toBeNull();
+  });
+
+  it("「起点から」に切り替えると region と limit がそのまま効く (AC-012)", () => {
+    const app = mountFixtureApp({
+      search: "?view=regions&region=ap-northeast-3&provider=Anthropic&limit=country:jp",
+    });
+    expect(app.share.currentState().view).toBe("regions");
+
+    tab("origin").click();
+    expect(app.location.search).not.toContain("view=");
+    expect(app.location.search).toContain("region=ap-northeast-3");
+    expect(app.location.search).toContain("limit=country%3Ajp");
+    expect(document.getElementById("source-region").value).toBe("ap-northeast-3");
+    expect(document.getElementById("filter-limit").value).toBe("country:jp");
+    expect(app.filter.getState().limit).toBe("country:jp");
+  });
+});

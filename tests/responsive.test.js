@@ -46,6 +46,28 @@ describe("AC-NFR-001 スマートフォン幅", () => {
   });
 });
 
+describe("REGIONS-001 AC-NFR-001 行列の横スクロール", () => {
+  const regions = read("styles/regions.css");
+
+  it("横スクロールを持つのは行列の入れ物だけ", () => {
+    expect(regions).toMatch(/\.matrix-scroll\s*\{[^}]*overflow-x:\s*auto/);
+    expect(regions).toMatch(/\.matrix-scroll\s*\{[^}]*max-width:\s*100%/);
+    // 他に overflow-x を持つ規則を増やさない。
+    expect(regions.match(/overflow-x:\s*auto/g)).toHaveLength(1);
+  });
+
+  it("左 2 列が position: sticky で固定される", () => {
+    expect(regions).toMatch(/\.sticky-1[\s\S]{0,120}position:\s*sticky/);
+    expect(regions).toMatch(/table\.matrix \.sticky-1\s*\{[^}]*left:\s*0/);
+    expect(regions).toMatch(/table\.matrix \.sticky-2\s*\{[^}]*left:\s*var\(--col-provider-w\)/);
+  });
+
+  it("色はトークンから取り、テーマ分岐を書かない", () => {
+    expect(regions).not.toContain("data-theme");
+    expect(regions).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
+  });
+});
+
 describe("テーマ", () => {
   it("ダークが既定で、ライトはトークンの再定義だけ", () => {
     expect(tokens).toContain("color-scheme: dark");
