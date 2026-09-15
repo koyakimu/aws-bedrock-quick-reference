@@ -43,6 +43,8 @@ export function mountFixtureApp({
   prices,
   lang = "ja-JP",
   extraProfiles = null,
+  getView,
+  setView,
 } = {}) {
   Object.defineProperty(navigator, "language", { value: lang, configurable: true });
   document.body.innerHTML = '<main id="main"></main>';
@@ -63,6 +65,8 @@ export function mountFixtureApp({
     prices: prices ?? buildPrices(),
     location: loc,
     history: hist,
+    getView,
+    setView,
   });
   return { ...app, location: loc, history: hist, snapshot };
 }

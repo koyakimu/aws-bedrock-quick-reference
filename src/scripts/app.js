@@ -18,6 +18,9 @@ export function mountApp({
   prices = {},
   location: loc = typeof window !== "undefined" ? window.location : undefined,
   history: hist = typeof window !== "undefined" ? window.history : undefined,
+  // 画面ビュー (REGIONS-001) の入口。タブの UI ができるまでは既定の "origin" のまま。
+  getView,
+  setView,
 }) {
   const view = mountTableView({
     host,
@@ -47,7 +50,16 @@ export function mountApp({
     prices,
   });
 
-  const share = mountShare({ view, filter, regionNotes, host, location: loc, history: hist });
+  const share = mountShare({
+    view,
+    filter,
+    regionNotes,
+    host,
+    location: loc,
+    history: hist,
+    ...(getView ? { getView } : {}),
+    ...(setView ? { setView } : {}),
+  });
   // URL の値は TABLE-001 の既定値より優先する (SHARE-001 AC-002)。
   share.restore();
 

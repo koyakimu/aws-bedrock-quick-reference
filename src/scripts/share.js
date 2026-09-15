@@ -1,11 +1,17 @@
 // URL による状態の共有 (SHARE-001)。クエリの読み書きは url-state.mjs が持ち、
 // このファイルは history / clipboard / 通知の DOM だけを扱う。
-import { parseState, searchString, serializeState, shareUrl } from "./url-state.mjs";
+import {
+  DEFAULT_VIEW,
+  parseState,
+  searchString,
+  serializeState,
+  shareUrl,
+} from "./url-state.mjs";
 import { providerOptions } from "./filter-model.mjs";
 import { copyText } from "./copy.js";
 import { t, getLang, applyTranslations, LANG_CHANGED_EVENT } from "./i18n.js";
 import { regionOptionLabel } from "./region-names.js";
-import { SOURCE_REGION_EVENT } from "./table-view.js";
+import { SORT_CHANGED_EVENT, SOURCE_REGION_EVENT } from "./table-view.js";
 import { FILTER_CHANGED_EVENT } from "./filter-bar.js";
 
 function el(tag, className, text) {
@@ -16,8 +22,11 @@ function el(tag, className, text) {
 }
 
 /**
- * 起点リージョンと絞り込みを URL に載せ、URL から復元する。
+ * 起点リージョン・並び順・ビュー・絞り込みを URL に載せ、URL から復元する。
  * view (TABLE-001) と filter (FILTER-001) が mount 済みであることが前提。
+ *
+ * getView / setView は画面ビュー (REGIONS-001) の入口。タブの UI は REGIONS-001 が持つので、
+ * まだ無い間は既定の "origin" を返す getter と何もしない setter で動く (SHARE-001 AC-011)。
  */
 export function mountShare({
   view,
@@ -26,6 +35,8 @@ export function mountShare({
   host = document.getElementById("main"),
   location: loc = window.location,
   history: hist = window.history,
+  getView = () => DEFAULT_VIEW,
+  setView = () => {},
 } = {}) {
   const regions = view.getRegions();
   const limitOptions = filter ? filter.getLimitOptions() : [];
@@ -68,7 +79,13 @@ export function mountShare({
   if (sourceBar) sourceBar.appendChild(copy);
 
   function currentState() {
-    return { region: view.getRegion(), ...(filter ? filter.getState() : {}) };
+    return {
+      view: getView(),
+      region: view.getRegion(),
+      // 並び順は表が持つ (TABLE-001 AC-014)。まだ setSort を持たない画面でも落ちないようにする。
+      sort: view.getSort?.(),
+      ...(filter ? filter.getState() : {}),
+    };
   }
 
   function currentUrl() {
@@ -119,6 +136,9 @@ export function mountShare({
     const { state, ignored } = parseState(search, { regions, providers, limitOptions });
 
     if (state.region !== view.getRegion()) view.setRegion(state.region);
+    // 並び順は表に、ビューは呼び出し側に当てる (AC-011 / AC-013)。
+    if (typeof view.setSort === "function") view.setSort(state.sort);
+    setView(state.view);
 
     if (filter) {
       // 起点が変わると provider の母集団も変わるので、判定し直してから当てる。
@@ -145,6 +165,8 @@ export function mountShare({
   // 起点・絞り込みが変わるたびに URL を書き換える (AC-001 / AC-003)。
   document.addEventListener(SOURCE_REGION_EVENT, syncUrl);
   document.addEventListener(FILTER_CHANGED_EVENT, syncUrl);
+  // 並び順の切り替えも URL に載せる (AC-013)。履歴は積まず replaceState のまま。
+  document.addEventListener(SORT_CHANGED_EVENT, syncUrl);
 
   document.addEventListener(LANG_CHANGED_EVENT, () => {
     applyTranslations(notice);

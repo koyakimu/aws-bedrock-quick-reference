@@ -48,8 +48,10 @@ describe("SHARE-001 AC-003 絞り込み条件が URL に載る", () => {
     expect(serializeState({ callable: false, limit: "none", q: "" })).toBe("");
   });
 
-  it("パラメータの並び順は region / provider / modality / q / callable / limit", () => {
+  it("パラメータの並び順は view / region / sort / provider / modality / q / callable / limit", () => {
     const query = serializeState({
+      view: "regions",
+      sort: "alpha",
       region: "us-east-2",
       provider: ["Amazon"],
       modality: ["TEXT"],
@@ -93,6 +95,8 @@ describe("SHARE-001 AC-004 URL からの絞り込み復元", () => {
 
   it("serializeState → parseState で往復する", () => {
     const before = {
+      view: "origin",
+      sort: "pinned",
       region: "eu-central-1",
       provider: ["Anthropic", "Cohere"],
       modality: ["TEXT", "IMAGE"],
@@ -190,6 +194,8 @@ describe("SHARE-001 AC-010 limit のカスタム集合", () => {
 
   it("serializeState → parseState で往復する", () => {
     const before = {
+      view: "origin",
+      sort: "pinned",
       region: "ap-northeast-1",
       provider: [],
       modality: [],
