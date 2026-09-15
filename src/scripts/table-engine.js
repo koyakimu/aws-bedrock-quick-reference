@@ -83,46 +83,93 @@ function defaultCellText(type, value) {
   return String(value);
 }
 
-function buildHead(columns, state, i18n) {
-  const tr = document.createElement("tr");
+// 固定列に付ける class の添字。既定は列のキー。
+// 2 段ヘッダの表のように、位置で名乗らせたい場合は列に stickyName を持たせる。
+function stickyName(column) {
+  return column.stickyName ?? column.key;
+}
 
-  for (const column of columns) {
-    const th = document.createElement("th");
-    th.dataset.key = column.key;
-    th.setAttribute("scope", "col");
-    if (column.sticky) th.classList.add("sticky", `sticky-${column.key}`);
-    if (isNumericColumn(column)) th.classList.add("num");
-    if (column.title) th.title = column.title;
+// 1 列ぶんのヘッダセル。中身は labelKey か、列が持つ headerContent(column)。
+function buildHeaderCell(column, state, i18n) {
+  const th = document.createElement("th");
+  th.dataset.key = column.key;
+  th.setAttribute("scope", "col");
+  if (column.sticky) th.classList.add("sticky", `sticky-${stickyName(column)}`);
+  if (column.className) th.classList.add(...String(column.className).split(/\s+/).filter(Boolean));
+  if (isNumericColumn(column)) th.classList.add("num");
+  if (column.title) th.title = column.title;
 
-    const sortable = column.sortable !== false;
-    const label = i18n(column.labelKey);
-
-    // 並べ替えできる列だけ、中身をネイティブの button にする。
-    // フォーカスと Enter / Space はブラウザが面倒を見てくれる。
-    let content = th;
-    if (sortable) {
-      th.classList.add("sortable");
-      th.setAttribute("aria-sort", "none");
-      content = document.createElement("button");
-      content.type = "button";
-      content.className = "sort-btn";
-      th.appendChild(content);
-    }
-    content.textContent = label;
-
-    if (state.sortKey === column.key && state.sortDir) {
-      th.classList.add("sorted");
-      th.setAttribute("aria-sort", state.sortDir === "asc" ? "ascending" : "descending");
-      const arrow = document.createElement("span");
-      arrow.className = "sortarrow";
-      arrow.textContent = state.sortDir === "asc" ? "▲" : "▼";
-      content.appendChild(arrow);
-    }
-
-    tr.appendChild(th);
+  if (typeof column.headerContent === "function") {
+    const content = column.headerContent(column);
+    if (content instanceof Node) th.appendChild(content);
+    else th.textContent = String(content);
+    return th;
   }
 
-  return tr;
+  // 並べ替えできる列だけ、中身をネイティブの button にする。
+  // フォーカスと Enter / Space はブラウザが面倒を見てくれる。
+  let content = th;
+  if (column.sortable !== false) {
+    th.classList.add("sortable");
+    th.setAttribute("aria-sort", "none");
+    content = document.createElement("button");
+    content.type = "button";
+    content.className = "sort-btn";
+    th.appendChild(content);
+  }
+  content.textContent = i18n(column.labelKey);
+
+  if (state.sortKey === column.key && state.sortDir) {
+    th.classList.add("sorted");
+    th.setAttribute("aria-sort", state.sortDir === "asc" ? "ascending" : "descending");
+    const arrow = document.createElement("span");
+    arrow.className = "sortarrow";
+    arrow.textContent = state.sortDir === "asc" ? "▲" : "▼";
+    content.appendChild(arrow);
+  }
+
+  return th;
+}
+
+/**
+ * ヘッダの行。headerGroups が無ければ 1 行、あれば 2 行にする。
+ * headerGroups は [{ label | content, colspan, className }] の配列か、
+ * 表示中の列を受け取って同じ配列を返す関数。グループに覆われない先頭の列
+ * (= 列数 - colspan の合計) は rowspan=2 で 2 行ぶち抜きにする。
+ */
+function buildHead(columns, state, i18n, headerGroups) {
+  const groups = typeof headerGroups === "function" ? headerGroups(columns) : headerGroups;
+  const top = document.createElement("tr");
+  if (!groups) {
+    for (const column of columns) top.appendChild(buildHeaderCell(column, state, i18n));
+    return [top];
+  }
+
+  const spanned = groups.reduce((sum, group) => sum + (group.colspan ?? 1), 0);
+  const leading = Math.max(columns.length - spanned, 0);
+  const bottom = document.createElement("tr");
+
+  columns.forEach((column, index) => {
+    const th = buildHeaderCell(column, state, i18n);
+    if (index < leading) {
+      th.rowSpan = 2;
+      top.appendChild(th);
+    } else {
+      bottom.appendChild(th);
+    }
+  });
+
+  for (const group of groups) {
+    const th = document.createElement("th");
+    th.setAttribute("scope", "colgroup");
+    th.colSpan = group.colspan ?? 1;
+    if (group.className) th.classList.add(...String(group.className).split(/\s+/).filter(Boolean));
+    if (group.content instanceof Node) th.appendChild(group.content);
+    else th.textContent = String(group.label ?? "");
+    top.appendChild(th);
+  }
+
+  return [top, bottom];
 }
 
 function buildBody(columns, rows, state, options = {}) {
@@ -141,10 +188,20 @@ function buildBody(columns, rows, state, options = {}) {
       const td = document.createElement("td");
       const value = row[column.key];
 
-      if (column.sticky) td.classList.add("sticky", `sticky-${column.key}`);
+      if (column.sticky) td.classList.add("sticky", `sticky-${stickyName(column)}`);
       if (isNumericColumn(column)) td.classList.add("num");
       if (isMonoColumn(column)) td.classList.add("mono");
       if (state.sortKey === column.key && state.sortDir) td.classList.add("sorted");
+      // セルごとの見た目と説明は列が決める。エンジンは値の意味を知らない。
+      if (column.className) td.classList.add(...String(column.className).split(/\s+/).filter(Boolean));
+      if (typeof column.cellClass === "function") {
+        const extra = column.cellClass(row);
+        if (extra) td.classList.add(...String(extra).split(/\s+/).filter(Boolean));
+      }
+      if (typeof column.cellTitle === "function") {
+        const title = column.cellTitle(row);
+        if (title) td.title = String(title);
+      }
 
       const content = column.format
         ? column.format(value, row)
@@ -167,11 +224,25 @@ function buildBody(columns, rows, state, options = {}) {
   return fragment;
 }
 
-export function createTable({ columns, rows, state, onStateChange, i18n, rowAttrs }) {
+export function createTable({
+  columns,
+  rows,
+  state,
+  onStateChange,
+  i18n,
+  rowAttrs,
+  // 2 段ヘッダ (列グループ) を使う表だけが渡す。無ければヘッダは 1 行。
+  headerGroups,
+  // 枠と table に足す class。見た目の違う表を同じエンジンで描けるようにする。
+  frameClass,
+  tableClass,
+}) {
   const el = document.createElement("div");
   el.className = "table-frame";
+  if (frameClass) el.classList.add(...String(frameClass).split(/\s+/).filter(Boolean));
 
   const table = document.createElement("table");
+  if (tableClass) table.classList.add(...String(tableClass).split(/\s+/).filter(Boolean));
   const thead = document.createElement("thead");
   const tbody = document.createElement("tbody");
   table.appendChild(thead);
@@ -179,7 +250,7 @@ export function createTable({ columns, rows, state, onStateChange, i18n, rowAttr
   el.appendChild(table);
 
   let currentState = state;
-  const currentColumns = columns;
+  let currentColumns = columns;
 
   // ヘッダは描き直されるので、th ではなく thead に 1 度だけ委譲で張る。
   thead.addEventListener("click", (event) => {
@@ -193,7 +264,7 @@ export function createTable({ columns, rows, state, onStateChange, i18n, rowAttr
     currentState = nextState;
     const shown = visibleColumns(currentColumns, nextState.hiddenGroups);
     const sortColumn = shown.find((column) => column.key === nextState.sortKey) || null;
-    thead.replaceChildren(buildHead(shown, nextState, i18n));
+    thead.replaceChildren(...buildHead(shown, nextState, i18n, headerGroups));
     tbody.replaceChildren(
       buildBody(shown, sortRows(nextRows, sortColumn, nextState.sortDir), nextState, { rowAttrs }),
     );
@@ -203,6 +274,11 @@ export function createTable({ columns, rows, state, onStateChange, i18n, rowAttr
 
   return {
     el,
+    // 列そのものが変わる表 (列がデータから決まる行列など) のための入口。
+    // 次の update() から効く。
+    setColumns(nextColumns) {
+      currentColumns = nextColumns;
+    },
     update(nextRows, nextState) {
       render(nextRows, nextState || currentState);
     },

@@ -84,6 +84,40 @@ export function regionNotesWithoutCountry(region = TOKYO) {
   return { ...regionNotes, [region]: rest };
 }
 
+/**
+ * 取得の記録を差し替えたスナップショット (REGIONS-001 AC-007 / AC-014)。
+ * denied にしたいリージョンコードを渡す。"*" で全件を denied にする。
+ * models / profiles はそのままなので、「取れているのに status が ok でない」
+ * 極端な入力にもなる。行列は status を優先して空欄にする。
+ */
+export function withDeniedRegions(fetchLog, codes) {
+  const all = codes === "*";
+  const wanted = new Set(all ? [] : codes);
+  return {
+    ...fetchLog,
+    regions: Object.fromEntries(
+      Object.entries(fetchLog.regions).map(([code, entry]) =>
+        all || wanted.has(code)
+          ? [code, { status: "denied", cause: "access-denied" }]
+          : [code, entry],
+      ),
+    ),
+  };
+}
+
+/** 取得できなかったリージョンが 1 つも無い記録 (AC-007 の「0 件」)。 */
+export function withAllFetched(fetchLog) {
+  return {
+    ...fetchLog,
+    regions: Object.fromEntries(
+      Object.entries(fetchLog.regions).map(([code, entry]) => [
+        code,
+        entry.status === "ok" ? entry : { status: "ok", models: 0, profiles: 0 },
+      ]),
+    ),
+  };
+}
+
 // 分類のもとになる原文。公開データには載らないが、テストが分類の前提を確かめるのに使う。
 export const DENIED_ERROR_SOURCE = fmDenied;
 export const DENIED_CAUSE = "scp-deny";
