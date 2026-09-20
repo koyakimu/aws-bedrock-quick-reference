@@ -389,3 +389,29 @@ describe("AC-NFR-001 正規化の純粋性", () => {
     expect(Object.keys(profiles)).toEqual([...Object.keys(profiles)].sort());
   });
 });
+
+describe('launch dates from FoundationModelLifecycle', () => {
+  it('keeps earliest valid launch time across Regions, including epoch seconds', () => {
+    const model = date => ({modelId:'test.model', modelLifecycle:{status:'ACTIVE',startOfLifeTime:date}});
+    const regions = {
+      'us-east-1':{fm:{modelSummaries:[model('2026-09-02T00:00:00Z')]}},
+      'us-west-2':{fm:{modelSummaries:[model(Date.parse('2026-09-01T00:00:00Z')/1000)]}},
+      'ap-northeast-1':{fm:{modelSummaries:[model('invalid')]}},
+    };
+    const run = r => normalizeSnapshot({regions:r}).models['test.model'].releasedAt;
+    expect(run(regions)).toBe('2026-09-01T00:00:00.000Z');
+    expect(run(Object.fromEntries(Object.entries(regions).reverse()))).toBe(run(regions));
+  });
+  it('does not infer a launch date from the model ID', () => {
+    const result=normalizeSnapshot({regions:{'us-east-1':{fm:{modelSummaries:[{modelId:'test.20260901',modelLifecycle:{status:'ACTIVE'}}]}}}});
+    expect(result.models['test.20260901'].releasedAt).toBeNull();
+  });
+});
+
+it('uses a sourced official launch date override instead of a prelaunch API timestamp', () => {
+  const result=normalizeSnapshot({
+    regions:{'ap-northeast-1':{fm:{modelSummaries:[{modelId:'moonshotai.kimi-k3',modelLifecycle:{status:'ACTIVE',startOfLifeTime:'2026-08-27T16:00:00Z'}}]}}},
+    modelPolicies:{models:{'moonshotai.kimi-k3':{release:{date:'2026-09-18',sourceUrl:'https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html'}}}},
+  });
+  expect(result.models['moonshotai.kimi-k3'].releasedAt).toBe('2026-09-18T00:00:00.000Z');
+});

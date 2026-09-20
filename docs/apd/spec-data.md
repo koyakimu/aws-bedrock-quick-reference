@@ -162,3 +162,44 @@ decision_refs:
 - **version 3** (2026-09-15): 地理圏の定義を接頭辞 5 種の固定リストから「`global` 以外の全接頭辞」に改め（AC-013 を追加）、`region-notes.json` の `geo` に `ca`（ca-central-1 / ca-west-1）と `in`（ap-south-1 / ap-south-2）を足すことを AC-014 として定めた。正規化の規則・生成物の形・`cause` の扱いは変更しない。理由: `ca.amazon.nova-lite-v1:0` と `in.openai.gpt-5.6-*` が実データに現れ、5 種の固定リストでは Geo と判定できなかった。AWS docs は地理圏の閉じた一覧を公開しておらず（models-region-compatibility は「US, EU, Japan, or Australia」、geographic-cross-region-inference は「such as US, EU, and APAC」と食い違う）、API のスナップショットを正とする（D-012）
 - **version 2** (2026-09-14): 取得失敗の理由を公開データから外した。AC-010 は `reason`（API のエラー原文）ではなく `cause`（分類）を記録すると改め、AC-011 をアカウント ID だけでなく識別子全般とエラー原文に広げた。取り直さずに正規化だけやり直す `--from-raw` を AC-012 として追加（D-008）
 - **version 1** (2026-09-14): 初版
+
+## モデル別の保存ポリシー（手動管理）
+
+`data/model-policies.json` にAWS公式資料由来のモデル別ポリシーを置く。
+API生成物の `models.json` と分離するため、`fetch-bedrock-snapshot.mjs` や
+`--from-raw` で再生成しても上書きされない。
+
+- `schemaVersion`: 現在は `1`。
+- `models`: 基盤モデルIDをキーとする辞書。完全一致で参照し、提供元・名称の部分一致は使わない。
+- `models[modelId].abuseDetectionRetention`: 不正利用検知による保存の例外。
+  - `traffic`: `all`（すべての入出力）または `flagged`（分類器が検知した入出力）。
+  - `maxDays`: 最大保存日数。
+  - `storageRegion`: `inference-region`。クロスリージョンでは推論先、In-Regionでは送信元。
+  - `exception`: 顧客条件によるZDRなどの適用除外を `ja` / `en` で記載。
+  - `sourceUrl`: 根拠となるAWS公式資料。
+  - `verifiedAt`: 確認日（YYYY-MM-DD）。
+
+未登録は「この例外注記を表示しない」を意味し、保存が一切ないという保証ではない。
+現在の登録は公式資料で対象とされた既存5モデルのみ。新モデルの追加時や公式の
+対象条件変更時は、モデルIDと出典を照合してこのファイルも見直す。未取得モデルのIDは推測しない。
+CSAM検知などサービス全体の規定を、全モデル共通のこの注記へ展開するものではない。
+
+表示文の生成は `src/scripts/model-policy.mjs`。デザイン案03はビルド時にこのデータと
+表示処理を埋め込み、行の基盤モデルIDで判定する。元の本番画面には新しい表示を追加しない。
+
+## Bedrock提供開始日時
+
+`models[modelId].releasedAt` は `ListFoundationModels` の
+`modelLifecycle.startOfLifeTime` をUTC ISO 8601に正規化した値。取得したリージョン間で
+値が異なる場合は最も早い有効日時を使用する。欠損・無効値だけの場合は `null`。
+モデルIDの日付からは推測しない。提供元がモデルを発表した日ではなく、Bedrockでの
+提供開始を表す。API資料: https://docs.aws.amazon.com/bedrock/latest/APIReference/API_FoundationModelLifecycle.html
+
+現在のデータは取得済み `data/raw/2026-09-14` から日時のみを補完。提供状況・プロファイル・取得日は変更しない。
+
+### 公式発売日による補正
+
+APIの開始日時が先行公開などで公式発売日と異なる場合、`model-policies.json` の
+`models[modelId].release` に `date` / `sourceUrl` / `verifiedAt` / `reason` を記録し、
+取得・再正規化時に `releasedAt` へ優先適用する。日付はUTCの日付単位。
+Kimi K3はAPIの2026-08-27に対し、公式モデルカードの2026-09-18を採用した。

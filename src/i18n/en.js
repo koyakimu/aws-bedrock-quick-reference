@@ -1,6 +1,15 @@
 // English dictionary. Its key set must match ja.js exactly (I18N-001 AC-007).
 // Region display names do not live here — data/region-notes.json ja / en is the source (AC-005).
 export const en = {
+  rowSort: {
+    label: "Sort by",
+    pinned: "Preferred providers",
+    alpha: "Provider / model name",
+    newest: "Newest first",
+    hint: "Bedrock launch date, newest first; unknown dates last",
+    date: "Bedrock launch: {date}",
+    unknown: "Launch date unknown",
+  },
   app: {
     title: "Amazon Bedrock Quick Reference",
     tagline: "Model x source Region x where inference actually runs",
@@ -107,6 +116,7 @@ export const en = {
 
   // PRICE-001: pricing. All unit prices are USD per 1M tokens.
   price: {
+    modelCardSource: "Supplemental AWS model-card price (verified: {date})",
     inputColumn: "Input $/1M",
     outputColumn: "Output $/1M",
     heading: "Pricing",
@@ -115,7 +125,7 @@ export const en = {
     output: "Output",
     unit: "USD per 1M tokens ({place}). List price; discounts, commitments and free tiers not included",
     geoSame: "Geo inference profiles are billed at the standard price",
-    globalMissing: "The price list has no batch or cache price for Global",
+    globalMissing: "Global batch and cache prices are not included in this dataset",
     unavailableLane: "Prices are published, but this model cannot be called this way",
     none: "No pricing data for this source Region",
     globalHint: "Input / output unit price when inferring globally (USD per 1M tokens)",

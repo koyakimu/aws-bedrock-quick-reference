@@ -51,7 +51,7 @@ describe("AC-NFR-002 再描画性能", () => {
         `(全 5 回: ${samples.map((s) => s.toFixed(1)).join(", ")}ms, jsdom)`,
     );
 
-    expect(rows).toBe(68);
+    expect(rows).toBe(69); // Kimi K3 added to the Tokyo catalog.
     expect(value).toBeLessThan(200);
   });
 });

@@ -601,6 +601,12 @@
     "zai.glm-5": {
       "runtime": true,
       "mantle": true
+    },
+    "moonshotai.kimi-k3": {
+      "runtime": true,
+      "mantle": false,
+      "sourceUrl": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+      "verifiedAt": "2026-09-21"
     }
   }
 }

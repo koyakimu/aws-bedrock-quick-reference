@@ -1,0 +1,17 @@
+{
+  "_comment": "公式モデルカードの価格による補完。Price ListでRuntimeの価格として識別できない場合のみ使用し、既存の取得価格は上書きしない。",
+  "byProfile": {
+    "global.moonshotai.kimi-k3": {
+      "kind": "global",
+      "price": {"input": 3, "output": 15},
+      "sourceUrl": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+      "verifiedAt": "2026-09-21"
+    },
+    "us.moonshotai.kimi-k3": {
+      "kind": "standard",
+      "price": {"input": 3.3, "output": 16.5},
+      "sourceUrl": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+      "verifiedAt": "2026-09-21"
+    }
+  }
+}

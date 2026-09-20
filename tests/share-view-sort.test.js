@@ -39,7 +39,7 @@ describe("SHARE-001 AC-011 / AC-013 url-state (単体)", () => {
 
   it("往復する", () => {
     for (const view of ["origin", "regions"]) {
-      for (const sort of ["pinned", "alpha"]) {
+      for (const sort of ["pinned", "alpha", "newest"]) {
         const query = serializeState({ view, sort });
         const { state, ignored } = parseState(`?${query}`, vocab);
         expect(state.view).toBe(view);

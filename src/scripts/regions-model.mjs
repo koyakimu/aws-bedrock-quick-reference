@@ -77,6 +77,7 @@ export function matrixSourceRows(models) {
     modelId,
     provider: model?.provider ?? "",
     name: model?.name ?? "",
+    releasedAt: model?.releasedAt ?? null,
     input: model?.input ?? [],
     output: model?.output ?? [],
     lifecycle: model?.lifecycle ?? "",

@@ -1,0 +1,79 @@
+{
+  "_comment": "手動管理のモデル別ポリシー。キーは基盤モデルIDとの完全一致。未登録は例外の未登録であり、ZDRの保証ではない。APIスナップショット更新では上書きしない。",
+  "schemaVersion": 1,
+  "models": {
+    "anthropic.claude-fable-5": {
+      "abuseDetectionRetention": {
+        "traffic": "all",
+        "maxDays": 30,
+        "storageRegion": "inference-region",
+        "exception": {
+          "ja": "Enterprise Frontier Safeguardsの対象顧客は2026-12-31までZDR。",
+          "en": "Eligible Enterprise Frontier Safeguards customers receive ZDR through 2026-12-31."
+        },
+        "sourceUrl": "https://docs.aws.amazon.com/bedrock/latest/userguide/abuse-detection.html",
+        "verifiedAt": "2026-09-20"
+      }
+    },
+    "anthropic.claude-fable-5-1": {
+      "abuseDetectionRetention": {
+        "traffic": "all",
+        "maxDays": 30,
+        "storageRegion": "inference-region",
+        "exception": {
+          "ja": "Enterprise Frontier Safeguardsの対象顧客は2026-12-31までZDR。",
+          "en": "Eligible Enterprise Frontier Safeguards customers receive ZDR through 2026-12-31."
+        },
+        "sourceUrl": "https://docs.aws.amazon.com/bedrock/latest/userguide/abuse-detection.html",
+        "verifiedAt": "2026-09-20"
+      }
+    },
+    "openai.gpt-5.6-sol": {
+      "abuseDetectionRetention": {
+        "traffic": "flagged",
+        "maxDays": 30,
+        "storageRegion": "inference-region",
+        "exception": {
+          "ja": "対象顧客はAWS担当チームに完全なZDRを申請できます。",
+          "en": "Eligible customers may request full ZDR through their AWS account team."
+        },
+        "sourceUrl": "https://docs.aws.amazon.com/bedrock/latest/userguide/abuse-detection.html",
+        "verifiedAt": "2026-09-20"
+      }
+    },
+    "openai.gpt-5.6-terra": {
+      "abuseDetectionRetention": {
+        "traffic": "flagged",
+        "maxDays": 30,
+        "storageRegion": "inference-region",
+        "exception": {
+          "ja": "対象顧客はAWS担当チームに完全なZDRを申請できます。",
+          "en": "Eligible customers may request full ZDR through their AWS account team."
+        },
+        "sourceUrl": "https://docs.aws.amazon.com/bedrock/latest/userguide/abuse-detection.html",
+        "verifiedAt": "2026-09-20"
+      }
+    },
+    "openai.gpt-5.6-luna": {
+      "abuseDetectionRetention": {
+        "traffic": "flagged",
+        "maxDays": 30,
+        "storageRegion": "inference-region",
+        "exception": {
+          "ja": "対象顧客はAWS担当チームに完全なZDRを申請できます。",
+          "en": "Eligible customers may request full ZDR through their AWS account team."
+        },
+        "sourceUrl": "https://docs.aws.amazon.com/bedrock/latest/userguide/abuse-detection.html",
+        "verifiedAt": "2026-09-20"
+      }
+    },
+    "moonshotai.kimi-k3": {
+      "release": {
+        "date": "2026-09-18",
+        "sourceUrl": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+        "verifiedAt": "2026-09-21",
+        "reason": "Official launch date differs from API startOfLifeTime (2026-08-27)."
+      }
+    }
+  }
+}
