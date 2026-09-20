@@ -25,7 +25,7 @@ describe("TABLE-001 AC-014 orderRows (単体)", () => {
 
   it("既定は pinned で、Anthropic → OpenAI → 残りを昇順", () => {
     expect(DEFAULT_SORT).toBe("pinned");
-    expect([...SORT_VALUES]).toEqual(["pinned", "alpha"]);
+    expect([...SORT_VALUES]).toEqual(["pinned", "alpha", "newest"]);
     expect(providers(orderRows(rows, { sort: "pinned" }))).toEqual([
       "Anthropic",
       "Anthropic",
@@ -208,4 +208,40 @@ describe("TABLE-001 AC-015 固定したプロバイダを脚注で明かす", ()
     expect(afterCells.slice().sort()).toEqual(beforeCells.slice().sort());
     expect($("#filter-count").textContent).toBe(beforeCount);
   });
+});
+
+describe('newest: Bedrock launch time', () => {
+  it('sorts across providers, places missing/invalid dates last and preserves the input', () => {
+    const rows = [
+      {...row('Anthropic','Old'), releasedAt:'2024-01-01T00:00:00Z'},
+      {...row('Amazon','New'), releasedAt:'2026-09-01T00:00:00Z'},
+      {...row('OpenAI','Unknown'), releasedAt:null},
+      {...row('Amazon','Invalid'), releasedAt:'invalid'},
+    ];
+    expect(names(orderRows(rows,{sort:'newest'}))).toEqual(['New','Old','Invalid','Unknown']);
+    expect(names(rows)).toEqual(['Old','New','Unknown','Invalid']);
+  });
+  it('uses actual timestamps, with deterministic name ordering for ties', () => {
+    const rows = [
+      {...row('Amazon','B'), releasedAt:'2026-09-01T10:00:00+09:00'},
+      {...row('Amazon','A'), releasedAt:'2026-09-01T01:00:00Z'},
+      {...row('Amazon','C'), releasedAt:'2026-09-01T02:00:00Z'},
+    ];
+    expect(names(orderRows(rows,{sort:'newest'}))).toEqual(['C','A','B']);
+  });
+});
+
+it('restores newest from the URL, and selecting it clears a column sort', () => {
+  let app=mountFixtureApp({search:'?sort=newest'});
+  expect(app.view.getSort()).toBe('newest');
+  expect($('#row-sort').value).toBe('newest');
+  expect($('#row-sort-hint').hidden).toBe(false);
+  app=mountFixtureApp();
+  document.querySelector('thead th[data-key="name"]').click();
+  const select=$('#row-sort');
+  select.value='newest';
+  select.dispatchEvent(new Event('change',{bubbles:true}));
+  expect(app.view.getSort()).toBe('newest');
+  expect(document.querySelector('thead th[data-key="name"]').getAttribute('aria-sort')).toBe('none');
+  expect(providerHeader().getAttribute('aria-sort')).toBe('none');
 });

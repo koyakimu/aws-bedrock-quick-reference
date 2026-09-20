@@ -236,3 +236,14 @@ Design の「価格の目安が同じ行で分かる」に対応する。
 ## 変更履歴
 
 - **version 1** (2026-09-14): 初版
+
+## 公式モデルカードによる補完
+
+`data/price-supplements.json` は、Price List上でRuntime向けのSKUとして識別できない価格を
+公式モデルカードから補う。推論プロファイルIDごとに `kind`、`price`（USD/100万トークン）、
+`sourceUrl`、`verifiedAt` を手動管理する。再生成時にAPIで確認できた起点だけへ適用し、
+取得済みの価格を上書きしない。`prices.json` の `supplementSources` と詳細画面に出典を残す。
+
+Kimi K3は公式モデルカードでRuntimeのみ対応だが、現時点のPrice ListのSKU名にmantleが含まれる。
+既存のMantle除外を緩めず、Global 3/15、US Geo 3.3/16.5を補完した。キャッシュやサービスティアの
+推測値は追加しない。生成物 `prices.json` 自体は手編集しない。

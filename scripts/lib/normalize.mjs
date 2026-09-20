@@ -89,7 +89,7 @@ export function mergeProfilePages(pages) {
 //
 // 戻り値は技術設計 §4 の形:
 //   { models, profiles, fetchLog }
-export function normalizeSnapshot({ regions = {}, generatedAt = null, accountKind = null } = {}) {
+export function normalizeSnapshot({ regions = {}, generatedAt = null, accountKind = null, modelPolicies = {} } = {}) {
   const models = {};
   const profiles = {};
   const log = {};
@@ -121,12 +121,22 @@ export function normalizeSnapshot({ regions = {}, generatedAt = null, accountKin
           output: summary.outputModalities ?? [],
           streaming: summary.responseStreamingSupported ?? false,
           lifecycle: summary.modelLifecycle?.status ?? null,
+          releasedAt: null,
           availability: {},
         };
       }
       // inferenceTypesSupported は応答の配列をそのまま持つ。空配列でも行は残す (AC-004)。
       // API Reference の enum に無い INFERENCE_PROFILE が返るので、値を検査しない。
       models[modelId].availability[region] = summary.inferenceTypesSupported ?? [];
+      const override = modelPolicies.models?.[modelId]?.release;
+      const start = override?.date ?? summary.modelLifecycle?.startOfLifeTime;
+      const millis = typeof start === "number" ? start * 1000 : typeof start === "string" ? Date.parse(start) : NaN;
+      if (Number.isFinite(millis)) {
+        const date = new Date(millis).toISOString();
+        // Earliest documented availability across the fetched Regions, independent of iteration order.
+        if (!models[modelId].releasedAt || date < models[modelId].releasedAt) models[modelId].releasedAt = date;
+      }
+
     }
 
     const summaries = mergeProfilePages(result.ip);

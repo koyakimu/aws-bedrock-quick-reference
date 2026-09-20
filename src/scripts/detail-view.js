@@ -246,6 +246,14 @@ function priceSection(modelId, { prices, region, regionNotes, lane, available })
   // AC-016: 使えないレーンでも単価があれば表は出す。呼べないことを注記で足す。
   if (!available) notes.push(t("price.unavailableLane"));
   section.appendChild(el("p", "detail-price-unit price-unit", notes.join(" ")));
+  const supplement = prices?.byModel?.[modelId]?.[region]?.supplementSources?.[lane === LANE_GLOBAL ? "global" : "standard"];
+  if (supplement) {
+    const source = el("a", "detail-price-source", t("price.modelCardSource", { date: supplement.verifiedAt }));
+    source.href = supplement.url;
+    source.target = "_blank";
+    source.rel = "noreferrer";
+    section.appendChild(source);
+  }
   return section;
 }
 

@@ -1,0 +1,63 @@
+/* The diagram has its own dark palette, in both page themes. */
+figure.flow .flow-scroll{
+  position:relative;
+  border:1px solid #2c4961;
+  border-radius:14px;
+  padding:0 18px 18px;
+  background-color:#091725;
+  background-image:radial-gradient(ellipse at 40% 25%,#12344980,transparent 70%),radial-gradient(#679ac026 .7px,transparent .7px);
+  background-size:auto,18px 18px;
+  box-shadow:inset 0 1px 0 #9aceec18,0 12px 28px #05182c15;
+  isolation:isolate;
+}
+.flow-toolbar{display:flex;align-items:center;gap:12px;padding:17px 0 15px;margin-bottom:10px;border-bottom:1px solid #36516a80;min-width:700px;font-family:var(--font-mono);line-height:1.4}
+.flow-toolbar-title{color:#d8ecfa;font-size:10px;letter-spacing:.08em}
+.flow-toolbar-title::before{content:'';display:inline-block;width:5px;height:5px;border:1px solid #69dceb;transform:rotate(45deg);margin:0 10px 1px 1px;box-shadow:0 0 9px #66e1f455}
+.flow-toolbar-mode{color:#78dcea;font-size:9px;letter-spacing:.1em;border:1px solid #34576b;padding:3px 7px;border-radius:3px;background:#122c3d}
+.flow-toolbar-note{color:#8cabc0;font-size:9px;margin-left:auto;letter-spacing:.03em}
+.flow-scroll svg[data-future-flow]{overflow:visible}
+.flow-scroll .s-node{fill:#102338;stroke:#3b5a73;stroke-width:1}
+.flow-scroll .s-node-origin{fill:var(--flow-node-fill);stroke:#67d9e9;stroke-width:1;filter:drop-shadow(0 0 8px #44d3ee26)}
+.flow-scroll .s-node-log{fill:#101f30;stroke:#51788d;stroke-width:1}
+.flow-scroll .s-encl-yes-fill{fill:#163d3c;opacity:.26}
+.flow-scroll .s-encl-plain-fill{fill:#162a40;opacity:.35}
+.flow-scroll .s-wall{stroke:#46617c;stroke-width:1;stroke-dasharray:3 4}
+.flow-scroll .s-wall-yes{stroke:#4f9e8a;stroke-width:1.1;filter:drop-shadow(0 0 3px #62bca422)}
+.flow-scroll .s-wall-open{stroke:#e6b875;stroke-width:1.2;stroke-dasharray:5 6}
+.flow-scroll .s-tab{fill:#162b40;stroke:#47637a}
+.flow-scroll .s-tab-yes{fill:#15332f;stroke:#477e6f}
+.flow-scroll .s-tab-warn{fill:#342b21;stroke:#a48453}
+.flow-scroll .s-t,.flow-scroll .s-t-log{fill:#c1d4e3}
+.flow-scroll .s-t-strong,.flow-scroll .s-t-tab{fill:#e4f2ff}
+.flow-scroll .s-t-muted,.flow-scroll .s-t-dim{fill:#91adc3}
+.flow-scroll .s-t-accent,.flow-scroll .s-t-accent-sm{fill:#79e3ed}
+.flow-scroll .s-t-yes,.flow-scroll .s-t-tab-yes{fill:#92dabe}
+.flow-scroll .s-t-warn,.flow-scroll .s-t-tab-warn{fill:#eac18a}
+.flow-scroll .s-mono{fill:#94b2c9}
+.flow-scroll .s-mono-strong{fill:#c2d9eb}
+.flow-scroll .s-chip{fill:#122b3b;stroke:#42657b}
+.flow-scroll .s-chip-t{fill:#c0d9e7}
+.flow-scroll .s-chip-yes{fill:#163b32;stroke:#4b8d73}
+.flow-scroll .s-chip-yes-t{fill:#a3e0c4}
+.flow-scroll .s-chip-accent{fill:#163848;stroke:#5bbccb}
+.flow-scroll .s-chip-accent-t{fill:#9af0f5}
+.flow-scroll .s-chip-warn{fill:#392f22;stroke:#97784b}
+.flow-scroll .s-chip-warn-t{fill:#f0ce9c}
+.flow-scroll .s-chip-faint{fill:#182838;stroke:#6c879a}
+.flow-scroll .s-arrow{stroke:#81a7be;stroke-width:1.15}
+.flow-scroll .s-arrow-accent{stroke:#60d8ed;stroke-width:1.4}
+.flow-scroll .s-arrow-back{stroke:#719bb7;stroke-width:1;stroke-dasharray:3 4}
+.flow-scroll .s-head{fill:#86acc4}
+.flow-scroll .s-head-accent{fill:#79e5f2}
+.flow-scroll .s-head-dim{fill:#8aaec6}
+.flow-client-icon{fill:none;stroke:#93d9ed;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.flow-client-indicator{fill:#88e7dd;stroke:none}
+.flow-node-brackets{fill:none;stroke:#6bd8e6;stroke-width:1;opacity:.65}
+.flow-path-glow{fill:none;stroke:#3ed4f1;stroke-width:5;opacity:.12;filter:blur(3px)}
+.flow-signal{fill:none;stroke:#c1f9ff;stroke-width:2;stroke-linecap:round;stroke-dasharray:8 92;filter:drop-shadow(0 0 3px #52defc);pointer-events:none;animation:flow-request-travel 3.6s linear infinite}
+.flow-response-signal{stroke:#a6cbef;stroke-width:1.5;stroke-dasharray:5 95;animation-delay:-1.8s;animation-duration:4.8s;opacity:.8}
+.flow-scroll svg:has(.s-off) .flow-signal{display:none}
+.flow-scroll svg:has(.s-off) .flow-path-glow{display:none}
+@keyframes flow-request-travel{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.flow-signal{animation:none;display:none}}
+@media(max-width:768px){figure.flow .flow-scroll{padding:0 12px 12px;border-radius:10px}.flow-toolbar{padding:14px 0 12px}}

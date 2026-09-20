@@ -13,6 +13,7 @@ import {
   PINNED_PROVIDERS,
   SORT_ALPHA,
   SORT_PINNED,
+  SORT_NEWEST,
   SORT_VALUES,
 } from "./bedrock-view-model.mjs";
 import { copyText } from "./copy.js";
@@ -129,7 +130,9 @@ function capabilityCell(row) {
 // AC-006 / AC-012: モデル名。LEGACY のときだけ小さなタグを添える。
 function modelNameCell(row) {
   const wrap = el("span", "model-name");
-  wrap.append(el("span", "model-name-text", row.name || row.modelId));
+  const name = el("span", "model-name-text", row.name || row.modelId);
+  name.title = row.releasedAt ? t("rowSort.date", {date:row.releasedAt.slice(0, 10)}) : t("rowSort.unknown");
+  wrap.append(name);
   if (row.lifecycle === "LEGACY") {
     const tag = el("span", "legacy-tag", t("table.legacyTag"));
     tag.title = row.lifecycle;
@@ -489,7 +492,17 @@ export function mountTableView({
   const footnote = el("footer", "notes");
   footnote.id = "footnote";
 
-  host.replaceChildren(bar, filterHost, banner, table.el, emptyState, detailHost, footnote);
+  const sortControls = el("div", "row-sort-controls");
+  const sortLabel = el("label");
+  sortLabel.htmlFor = "row-sort";
+  const sortSelect = el("select");
+  sortSelect.id = "row-sort";
+  const sortHint = el("span", "row-sort-hint");
+  sortHint.id = "row-sort-hint";
+  sortSelect.setAttribute("aria-describedby", sortHint.id);
+  sortSelect.addEventListener("change", () => setSort(sortSelect.value));
+  sortControls.append(sortLabel, sortSelect, sortHint);
+  host.replaceChildren(bar, filterHost, banner, sortControls, table.el, emptyState, detailHost, footnote);
 
   let model = null;
   function current() {
@@ -582,6 +595,15 @@ export function mountTableView({
   }
 
   function render() {
+    sortLabel.textContent = t("rowSort.label");
+    sortSelect.replaceChildren(...SORT_VALUES.map(value => {
+      const option = el("option", null, t(`rowSort.${value}`));
+      option.value = value;
+      return option;
+    }));
+    sortSelect.value = sort;
+    sortHint.textContent = t("rowSort.hint");
+    sortHint.hidden = sort !== SORT_NEWEST;
     model = buildViewModel({
       models,
       profiles,
@@ -648,7 +670,7 @@ export function mountTableView({
     if (!th) return;
     // プロバイダ列は列の並べ替えに使わない (onStateChange が横取りして state を空にする) ので、
     // state.sortKey がこの列になることはない。
-    th.setAttribute("aria-sort", sort === SORT_ALPHA ? "ascending" : "other");
+    th.setAttribute("aria-sort", sort === SORT_NEWEST ? "none" : sort === SORT_ALPHA ? "ascending" : "other");
     th.dataset.sort = sort;
   }
 
@@ -656,6 +678,7 @@ export function mountTableView({
   function setSort(next) {
     if (!SORT_VALUES.includes(next) || next === sort) return;
     sort = next;
+    state = { ...state, sortKey: null, sortDir: null };
     render();
     document.dispatchEvent(new CustomEvent(SORT_CHANGED_EVENT, { detail: { sort } }));
   }

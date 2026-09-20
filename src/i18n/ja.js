@@ -1,6 +1,15 @@
 // 日本語の辞書。キー集合は en.js と完全に一致させること (I18N-001 AC-007)。
 // リージョンの表示名はここに持たない。data/region-notes.json の ja / en が正 (AC-005)。
 export const ja = {
+  rowSort: {
+    label: "並び順",
+    pinned: "提供元の優先順",
+    alpha: "提供元・モデル名順",
+    newest: "新しい順",
+    hint: "Bedrock提供開始日の新しい順・日付不明は末尾",
+    date: "Bedrock提供開始: {date}",
+    unknown: "提供開始日不明",
+  },
   app: {
     title: "Amazon Bedrock Quick Reference",
     tagline: "モデル × 起点リージョン × 推論が実際に行われる場所",
@@ -107,6 +116,7 @@ export const ja = {
 
   // PRICE-001: 価格。単価は USD / 100 万トークン。
   price: {
+    modelCardSource: "AWSモデルカードの補完価格（確認: {date}）",
     inputColumn: "入力 $/1M",
     outputColumn: "出力 $/1M",
     heading: "価格",
@@ -115,7 +125,7 @@ export const ja = {
     output: "出力",
     unit: "USD / 100 万トークン（{place}）。標準価格で、割引・契約価格・無料枠は含まない",
     geoSame: "Geo の推論プロファイルは標準価格と同じ",
-    globalMissing: "Global 用のバッチ・キャッシュ価格は価格表に無い",
+    globalMissing: "Global 用のバッチ・キャッシュ価格は未収録",
     unavailableLane: "価格は掲載されているが、この使い方では呼べない",
     none: "この起点リージョンの価格データがありません",
     globalHint: "Global で推論したときの 入力 / 出力 の単価（USD / 100 万トークン）",

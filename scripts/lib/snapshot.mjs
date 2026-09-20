@@ -111,7 +111,7 @@ export function writeOutputs({ dataDir, models, profiles, fetchLog }) {
 export function runSnapshot({ runner, profile, accountKind, regions, date, dataDir, rawRoot, generatedAt, dryRun = false, log = () => {} }) {
   const rawDir = join(rawRoot, date);
   const collected = collectRegions({ runner, profile, regions, rawDir, log });
-  const { models, profiles, fetchLog } = normalizeSnapshot({ regions: collected, generatedAt, accountKind });
+  const { models, profiles, fetchLog } = normalizeSnapshot({ regions: collected, generatedAt, accountKind, modelPolicies: readModelPolicies(dataDir) });
   if (!dryRun) writeOutputs({ dataDir, models, profiles, fetchLog });
   return { models, profiles, fetchLog, rawDir };
 }
@@ -133,6 +133,7 @@ export function runFromRaw({ accountKind, date, dataDir, rawRoot, generatedAt = 
   const previous = readGeneratedAt(join(dataDir, "fetch-log.json"));
   const { models, profiles, fetchLog } = normalizeSnapshot({
     regions: collected,
+    modelPolicies: readModelPolicies(dataDir),
     generatedAt: previous ?? generatedAt,
     accountKind,
   });
@@ -148,4 +149,9 @@ export function readGeneratedAt(path) {
   } catch {
     return null;
   }
+}
+
+function readModelPolicies(dataDir) {
+  const path = join(dataDir, "model-policies.json");
+  return existsSync(path) ? JSON.parse(readFileSync(path, "utf8")) : {};
 }

@@ -15,7 +15,8 @@ export const PINNED_PROVIDERS = Object.freeze(["Anthropic", "OpenAI"]);
 // 行の並びの値 (TABLE-001 AC-014)。既定は pinned。
 export const SORT_PINNED = "pinned";
 export const SORT_ALPHA = "alpha";
-export const SORT_VALUES = Object.freeze([SORT_PINNED, SORT_ALPHA]);
+export const SORT_NEWEST = "newest";
+export const SORT_VALUES = Object.freeze([SORT_PINNED, SORT_ALPHA, SORT_NEWEST]);
 export const DEFAULT_SORT = SORT_PINNED;
 
 // In-Region: availability[R] に ON_DEMAND が含まれるか。
@@ -130,6 +131,12 @@ export function orderRows(rows, { sort = DEFAULT_SORT, lang = "ja" } = {}) {
     return index >= 0 ? index : pinned.length;
   };
   return list.sort((a, b) => {
+    if (sort === SORT_NEWEST) {
+      const aDate = Date.parse(a.releasedAt), bDate = Date.parse(b.releasedAt);
+      const aKnown = Number.isFinite(aDate), bKnown = Number.isFinite(bDate);
+      if (aKnown !== bKnown) return aKnown ? -1 : 1;
+      if (aKnown && aDate !== bDate) return bDate - aDate;
+    }
     const rankA = rank(a.provider ?? "");
     const rankB = rank(b.provider ?? "");
     if (rankA !== rankB) return rankA - rankB;
@@ -230,6 +237,7 @@ export function buildRow({ modelId, model, profiles, region, overrides, mantle =
     sourceRegion: region,
     provider: model.provider ?? "",
     name: model.name ?? "",
+    releasedAt: model.releasedAt ?? null,
     input: model.input ?? [],
     output: model.output ?? [],
     streaming: model.streaming === true,

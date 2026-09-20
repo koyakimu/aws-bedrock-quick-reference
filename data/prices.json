@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-14T14:17:54.084Z",
-  "publicationDate": "2026-09-11T12:44:10Z",
+  "generatedAt": "2026-09-20T15:15:37.881Z",
+  "publicationDate": "2026-09-17T23:16:09Z",
   "source": {
     "index": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/index.json",
     "offers": {
@@ -9,7 +9,7 @@
     }
   },
   "unmapped": 0,
-  "outOfScope": 5752,
+  "outOfScope": 6194,
   "ignored": 447,
   "byModel": {
     "ai21.jamba-1-5-large-v1:0": {
@@ -15004,6 +15004,252 @@
         "flex": {
           "input": 0.5,
           "output": 1.6
+        }
+      }
+    },
+    "moonshotai.kimi-k3": {
+      "ap-northeast-1": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        }
+      },
+      "ap-northeast-2": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        }
+      },
+      "ap-northeast-3": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        }
+      },
+      "ap-south-1": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        }
+      },
+      "ap-southeast-1": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        }
+      },
+      "ap-southeast-2": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        }
+      },
+      "ca-central-1": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          },
+          "standard": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        },
+        "standard": {
+          "input": 3.3,
+          "output": 16.5
+        }
+      },
+      "eu-central-1": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        }
+      },
+      "eu-north-1": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        }
+      },
+      "eu-west-1": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        }
+      },
+      "eu-west-2": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        }
+      },
+      "eu-west-3": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        }
+      },
+      "sa-east-1": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        }
+      },
+      "us-east-1": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          },
+          "standard": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        },
+        "standard": {
+          "input": 3.3,
+          "output": 16.5
+        }
+      },
+      "us-east-2": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          },
+          "standard": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        },
+        "standard": {
+          "input": 3.3,
+          "output": 16.5
+        }
+      },
+      "us-west-1": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          },
+          "standard": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        },
+        "standard": {
+          "input": 3.3,
+          "output": 16.5
+        }
+      },
+      "us-west-2": {
+        "global": {
+          "input": 3,
+          "output": 15
+        },
+        "supplementSources": {
+          "global": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          },
+          "standard": {
+            "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.html",
+            "verifiedAt": "2026-09-21"
+          }
+        },
+        "standard": {
+          "input": 3.3,
+          "output": 16.5
         }
       }
     }

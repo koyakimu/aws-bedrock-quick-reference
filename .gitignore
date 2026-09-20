@@ -16,3 +16,7 @@ dist/
 # superpowers brainstorming mockups
 .superpowers/
 data/raw/
+
+# Generated review copies; source lives in src/ and docs/mockups/.
+docs/mockups/bedrock-reference-v2.html
+docs/mockups/bedrock-reference-v3.html
