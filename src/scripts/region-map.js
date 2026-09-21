@@ -54,7 +54,7 @@ export const decorateRegionMaps = (() => {
       const title=h('div','');title.append(h('span','map-eyebrow',global?'GLOBAL INFERENCE':'INFERENCE REGIONS'),h('strong','map-title',off?(en?'Not offered':'提供なし'):global?(en?'Worldwide routing':'世界の対応リージョンへ'):lane==='geo'?(en?'Regional routing':'地域内の推論先'):name(origin)));
       header.append(title,h('span','map-count',off?'—':global?'GLOBAL':`${destinations.length} ${en?'REGIONS':'リージョン'}`));shell.append(header);
       const svg=s('svg',{viewBox:'0 0 900 520',role:'img','aria-label':en?'Schematic map of origin and inference regions':'地図から矢印で推論先と監査ログなどの保存先を示す概念図',class:'inference-map'});
-      const viewport=h('div','map-diagram-scroll');viewport.tabIndex=0;viewport.setAttribute('aria-label',en?'Map diagram; scroll horizontally on narrow screens':'地図と保存先の図。狭い画面では横にスクロールできます');viewport.append(svg);shell.append(viewport);
+      const viewport=h('div','map-diagram-scroll');viewport.tabIndex=0;viewport.setAttribute('aria-label',en?'Map diagram; use the controls to zoom in or fit all inference regions':'地図と保存先の図。ボタンで拡大・全体表示を切り替えられます');viewport.append(svg);shell.append(viewport);
       const mapId=`region-map-${++mapSequence}`;
       const defs=s('defs');
       for(const [key,color] of [['inference','#6ce9ff'],['storage','#f3c783'],['response','#b8acff']]){
