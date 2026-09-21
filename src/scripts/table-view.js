@@ -196,27 +196,39 @@ function geoCell(row, notes) {
 }
 
 // PRICE-001 AC-007 / AC-008: 単価は $ 付きで右寄せ。値が無ければ「—」。
-function priceCell(value) {
-  const text = formatPrice(value);
-  if (text == null) return EMPTY;
-  return el("span", "price-value", `$${text}`);
+function priceCell(row, direction) {
+  if (!row.comparisonPrices.length) return el("span", "dim", t("price.unrecorded"));
+  const wrap = el("span", "comparison-prices");
+  const token = row.comparisonPrices.find(price => price.kind !== "metered" && formatPrice(price[direction]) != null);
+  const allRates = row.comparisonPrices.filter(price => price.kind === "metered" && price.axis === direction);
+  const unit = ["request", "image", "second", "searchUnit"].find(unit => allRates.some(rate => rate.unit === unit));
+  const rates = allRates.filter(rate => rate.unit === unit);
+  const price = token ?? rates[0];
+  if (!price) return EMPTY;
+  const line = el("span", "comparison-price");
+  const kind = price.kind === "metered" ? (price.scope ?? "standard") : price.kind;
+  const mode = kind === "global" ? "Global" : "In-Region / Geo";
+  const label = !token && new Set(allRates.map(rate => rate.unit)).size > 1 ? `${mode} · ${price.label}` : mode;
+  line.append(el("span", "comparison-price-label", label));
+  if (token) {
+    line.append(el("span", "price-value", `$${formatPrice(token[direction])}`));
+  } else {
+    const values = rates.map(rate => rate.value);
+    const min = Math.min(...values), max = Math.max(...values);
+    const amount = min === max ? `$${formatPrice(min)}` : `$${formatPrice(min)}–$${formatPrice(max)}`;
+    line.append(el("span", "price-value", `${amount} / ${t(`price.units.${price.unit}`)}`));
+  }
+  if (price.maxInputTokens) line.append(el("span", "comparison-price-region", t("price.shortContext", { count: price.maxInputTokens.toLocaleString("en-US") })));
+  if (price.reference) line.append(el("span", "comparison-price-region", t("price.referenceRegion", { region: price.region })));
+  wrap.append(line);
+  return wrap;
 }
 
-// Global は destination を列挙しない。sources[R] の ["*"] は画面に出さない (AC-005)。
-// Global に別の単価があれば「$入力 / $出力」を同じセルに添える (PRICE-001 AC-008)。
+// Global 列は利用可否を示し、単価は入力・出力の価格欄にまとめる。
 function globalCell(row) {
   if (!row.global) return markNo();
   const wrap = el("span", "cell-global");
   wrap.appendChild(markYes());
-  const globalPrice = row.price?.global;
-  const input = formatPrice(globalPrice?.input);
-  const output = formatPrice(globalPrice?.output);
-  if (input != null || output != null) {
-    const line = el("span", "global-price");
-    line.textContent = `$${input ?? EMPTY} / $${output ?? EMPTY}`;
-    line.title = t("price.globalHint");
-    wrap.appendChild(line);
-  }
   const note = el("span", "global-note");
   note.append(el("span", "global-note-text", t("value.globalNote")), document.createTextNode(" "));
   const link = el("a", "global-note-link", t("value.globalDocs"));
@@ -233,40 +245,7 @@ function globalCell(row) {
   return wrap;
 }
 
-// MANTLE-001 AC-003: モデルが mantle 対応かつ起点が mantle 提供リージョンのときだけ ✓。
-// それ以外 (未対応 / 提供外リージョン / docs に記載なし) は「—」で、
-// ツールチップに mantle で指定する素のモデル ID か、なぜ「—」なのかを出す。
-function mantleCell(row) {
-  const judged = row.mantle;
-  const wrap = el("span", "cell-mantle");
-  if (judged?.available === true) {
-    wrap.appendChild(markYes());
-    wrap.dataset.mantleModelId = judged.mantleModelId;
-    wrap.title = t("mantle.modelIdTooltip", { id: judged.mantleModelId });
-    return wrap;
-  }
-  wrap.appendChild(el("span", "mantle-dash", EMPTY));
-  if (!judged) wrap.title = t("mantle.mantleUnknownModel");
-  else if (!judged.modelSupported) wrap.title = t("mantle.mantleUnsupportedModel");
-  else wrap.title = t("mantle.notAvailable");
-  return wrap;
-}
-
-function notesCell(row) {
-  if (row.notes.length === 0) return EMPTY;
-  const lang = getLang();
-  const wrap = el("span", "cell-notes");
-  for (const entry of row.notes) {
-    const text = entry.note?.[lang];
-    if (typeof text !== "string" || text.length === 0) continue;
-    wrap.appendChild(el("span", "note-line", text));
-  }
-  return wrap.childElementCount > 0 ? wrap : EMPTY;
-}
-
-// AC-006 の列構成。左から プロバイダ / モデル名 / できること / In-Region / Geo /
-// Global / 入力 $/1M / 出力 $/1M / Mantle / 備考。技術的な識別子 (モデル ID / プロファイル ID / lifecycle) は表に出さず
-// DETAIL-001 の詳細パネルへ移した。モデル名列は横スクロールしても左端に残す (AC-NFR-001)。
+// 比較に使うモデル情報・推論場所・価格を表示する。接続方法と備考は詳細へ。
 export function buildColumns(regionNotes) {
   return [
     { key: "provider", group: "id", labelKey: "table.provider", type: "text", sticky: true },
@@ -309,39 +288,24 @@ export function buildColumns(regionNotes) {
       sortable: false,
       format: (_value, row) => globalCell(row),
     },
-    // PRICE-001 AC-007: Global の右に 標準の 入力 / 出力 の単価 (USD / 100 万トークン)。
+    // 標準・Global の比較価格を入力 / 出力にまとめる (USD / 100 万トークン)。
     {
       key: "priceInput",
       group: "price",
       labelKey: "price.inputColumn",
+      sortHint: (direction) => t(direction ? `price.sort.${direction}` : "price.sort.none"),
       type: "number",
       align: "right",
-      format: (value) => priceCell(value),
+      format: (_value, row) => priceCell(row, "input"),
     },
     {
       key: "priceOutput",
       group: "price",
       labelKey: "price.outputColumn",
+      sortHint: (direction) => t(direction ? `price.sort.${direction}` : "price.sort.none"),
       type: "number",
       align: "right",
-      format: (value) => priceCell(value),
-    },
-    // MANTLE-001 AC-003: 備考の手前に置く最後の列。
-    {
-      key: "mantle",
-      group: "judge",
-      labelKey: "table.mantle",
-      type: "flag",
-      sortValue: (row) => row.mantle?.available === true,
-      format: (_value, row) => mantleCell(row),
-    },
-    {
-      key: "notes",
-      group: "spec",
-      labelKey: "table.notes",
-      type: "text",
-      sortable: false,
-      format: (_value, row) => notesCell(row),
+      format: (_value, row) => priceCell(row, "output"),
     },
   ];
 }

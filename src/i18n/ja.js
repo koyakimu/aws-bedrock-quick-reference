@@ -93,7 +93,7 @@ export const ja = {
   },
   value: {
     yes: "可",
-    no: "不可",
+    no: "提供なし",
     globalNote: "全世界の対応リージョン、増えうる",
     globalDocs: "公式 docs",
     modalityArrow: "→",
@@ -116,14 +116,22 @@ export const ja = {
 
   // PRICE-001: 価格。単価は USD / 100 万トークン。
   price: {
-    modelCardSource: "AWSモデルカードの補完価格（確認: {date}）",
-    inputColumn: "入力 $/1M",
-    outputColumn: "出力 $/1M",
+    sort: { none: "表示単価で並べ替え ↕", asc: "安い順 ↑", desc: "高い順 ↓" },
+
+    "shortContext": "入力 {count} tokens 以下",
+    "longContext": "入力 {count} tokens 超",
+    "units": {"image": "画像", "second": "秒", "request": "リクエスト", "searchUnit": "検索単位"},
+
+    unrecorded: "価格未収録",
+    referenceRegion: "参考: {region}",
+    modelCardSource: "AWS公式情報による補完価格（確認: {date}）",
+    inputColumn: "入力単価",
+    outputColumn: "出力単価",
     heading: "価格",
     kindColumn: "種別",
     input: "入力",
     output: "出力",
-    unit: "USD / 100 万トークン（{place}）。標準価格で、割引・契約価格・無料枠は含まない",
+    unit: "USD / 100 万トークン（{place}）。画像・秒などは各行の単位。標準価格で、割引・契約価格・無料枠は含まない",
     geoSame: "Geo の推論プロファイルは標準価格と同じ",
     globalMissing: "Global 用のバッチ・キャッシュ価格は未収録",
     unavailableLane: "価格は掲載されているが、この使い方では呼べない",
@@ -219,8 +227,8 @@ export const ja = {
     sumUnavailable: "提供なし",
     sumGeo: "国内 {domestic} ・ 国外 {foreign}",
     sumGeoUnknown: "推論先 {count}",
-    sumGlobal: "世界中 ・ 限定不可",
-    specifiedId: "指定する ID",
+    sumGlobal: "世界の対応リージョン",
+    specifiedId: "呼び出し ID",
     destinations: "推論先",
     destSeparator: "・",
     destNotOffered: "提供なし（{place}では推論プロファイル経由のみ）",
@@ -228,10 +236,10 @@ export const ja = {
     destForeign: "国外 {count}",
     destAny: "推論先 {count}",
     destScopeLabel: "範囲",
-    destGlobalScope: "全商用リージョン（国外を含む・限定できない）",
+    destGlobalScope: "世界の対応リージョン（AWSが自動選択）",
     destGeoNote: "起点が{place}のときの推論先。起点が変わると推論先も変わる",
-    destGlobalNote: "個別のリージョン名は API から取得できないため、図の地名は例示",
-    noLane: "この起点リージョンからは呼べません",
+    destGlobalNote: "図の地名は例示。AWSが世界の対応リージョンから推論先を選択",
+    noLane: "この起点リージョンでの提供状況を確認してください",
   },
   share: {
     copy: "この表示の URL をコピー",
@@ -278,11 +286,11 @@ export const ja = {
     foreignCount: "国外 {count}",
     destinationCount: "推論先 {count}",
     somewhereIn: "{area} 内のどこかで処理",
-    cannotChoose: "どれが選ばれるかは指定できない",
-    worldTitle: "全商用リージョン ・ 境界なし",
+    cannotChoose: "AWSが推論先を自動選択",
+    worldTitle: "世界の対応リージョン",
     globalInnerTitle: "{place} ・ 記録が残る場所",
-    includesForeign: "国外を含む ・ 限定できない",
-    noRightWall: "右に壁がない ＝ 範囲を限定できない",
+    includesForeign: "国外を含む ・ AWSが自動選択",
+    noRightWall: "世界の対応リージョンが推論先",
     andMore: "ほか…",
     abuseDetection: "不正利用検知で保存される入出力は推論先に置かれうる",
     ariaInRegion:
@@ -294,7 +302,7 @@ export const ja = {
     ariaGeoUnknown:
       "{place}に送ったデータは {area} の外には出ない。起点の国が分からないため国内・国外には切り分けない。応答は同じ経路で戻る。CloudTrail・CloudWatch・呼び出しログ・請求は{place}に残る。",
     ariaGlobal:
-      "{place}に送ったデータには境界がなく、全商用リージョンのどこでも処理されうる。国外を含む範囲を限定する手段はない。応答は同じ経路で戻る。CloudTrail・CloudWatch・呼び出しログ・請求は{place}に残る。",
+      "{place}に送ったデータは、AWSが世界の対応リージョンから選んだ推論先で処理される。応答は同じ経路で戻る。CloudTrail・CloudWatch・呼び出しログ・請求は{place}に残る。",
     captionInRegion:
       "{place}に送ったデータは{place}リージョンの外に出ない。CloudTrail・CloudWatch・呼び出しログ・請求は{place}に残る。",
     captionInRegionOff:
@@ -304,7 +312,7 @@ export const ja = {
     captionGeoUnknown:
       "{place}に送ったデータは {area} の外には出ない（起点の国が分からないため国内・国外には切り分けない）。CloudTrail・CloudWatch・呼び出しログ・請求は{place}に残る。",
     captionGlobal:
-      "境界がなく、全商用リージョンのどこでも処理されうる（右に壁がないのは範囲を限定できないことを表す。地名は例示）。CloudTrail・CloudWatch・呼び出しログ・請求は{place}に残る。",
+      "AWSが世界の対応リージョンから推論先を選択します（地名は例示）。CloudTrail・CloudWatch・呼び出しログ・請求は{place}に残る。",
     sources:
       "出典: AWS docs（cross-region-inference / global-cross-region-inference / inference-profiles-support）。呼び出しログの所在は「出力先は同一リージョン限定」からの推定。",
     // AC-008 の主張と根拠の対応表。図に出せる主張はこの 8 つだけ。

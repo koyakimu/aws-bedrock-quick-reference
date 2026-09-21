@@ -81,5 +81,56 @@
   "usagetype:TitanTextG1-Lite": null,
   "usagetype:TitanEmbeddingV2-Text": ["amazon.titan-embed-text-v2:0", "amazon.titan-embed-text-v2:0:8k"],
   "usagetype:TitanEmbeddingsG1-Text": ["amazon.titan-embed-text-v1", "amazon.titan-embed-text-v1:2:8k"],
-  "usagetype:TitanTextG1-Express": null
+  "usagetype:TitanTextG1-Express": null,
+  "Nova Canvas": [
+    "amazon.nova-canvas-v1:0"
+  ],
+  "Nova Reel": [
+    "amazon.nova-reel-v1:0",
+    "amazon.nova-reel-v1:1"
+  ],
+  "usagetype:AmazonRerank-v1-searchunits": [
+    "amazon.rerank-v1:0"
+  ],
+  "Cohere Rerank v3.5": [
+    "cohere.rerank-v3-5:0"
+  ],
+  "Luma Ray2": [
+    "luma.ray-v2:0"
+  ],
+  "Stable Diffusion 3.5 Large v1.0": [
+    "stability.sd3-5-large-v1:0"
+  ],
+  "Stable Diffusion 3 Large v1.0": null,
+  "Stable Image Core": [
+    "stability.stable-image-core-v1:1"
+  ],
+  "Stable Image Ultra": [
+    "stability.stable-image-ultra-v1:1"
+  ],
+  "TwelveLabs Marengo Embed 2.7": [
+    "twelvelabs.marengo-embed-2-7-v1:0"
+  ],
+  "TwelveLabs Marengo Embed 3.0": [
+    "twelvelabs.marengo-embed-3-0-v1:0"
+  ],
+  "usagetype:NovaMultiModalEmbeddings": [
+    "amazon.nova-2-multimodal-embeddings-v1:0"
+  ],
+  "usagetype:TitanImageGeneratorG1-T2I-512-Standard": null,
+  "usagetype:TitanImageGeneratorG1-T2I-512-Premium": null,
+  "usagetype:TitanImageGeneratorG1-T2I-1024-Standard": null,
+  "usagetype:TitanImageGeneratorG1-T2I-1024-Premium": null,
+  "usagetype:TitanImageGeneratorG1-I2I-512-Standard": null,
+  "usagetype:TitanImageGeneratorG1-I2I-512-Premium": null,
+  "usagetype:TitanImageGeneratorG1-I2I-1024-Standard": null,
+  "usagetype:TitanImageGeneratorG1-I2I-1024-Premium": null,
+  "usagetype:TitanImageGeneratorV2-T2I-512-Standard": null,
+  "usagetype:TitanImageGeneratorV2-T2I-512-Premium": null,
+  "usagetype:TitanImageGeneratorV2-T2I-1024-Standard": null,
+  "usagetype:TitanImageGeneratorV2-T2I-1024-Premium": null,
+  "usagetype:TitanImageGeneratorV2-I2I-512-Standard": null,
+  "usagetype:TitanImageGeneratorV2-I2I-512-Premium": null,
+  "usagetype:TitanImageGeneratorV2-I2I-1024-Standard": null,
+  "usagetype:TitanImageGeneratorV2-I2I-1024-Premium": null
 }

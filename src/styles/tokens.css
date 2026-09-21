@@ -6,49 +6,57 @@
  */
 :root {
   color-scheme: dark;
+  --brand-orange: #ff9900;
+  --chrome-bg: #232f3e;
+  --chrome-fg: #f5f7fa;
+  --chrome-muted: #becada;
+  --chrome-line: #4a596c;
+  --panel-shadow: 0 4px 20px #00000018;
+  --table-group-bg: #202f40;
+  --table-group-fg: #c8d4e2;
 
   /* 面 */
-  --bg: #161719;
-  --bg-panel: #161719;
-  --bg-raised: #1b1d20;
-  --bg-hover: #1c1e22;
-  --bg-inset: #1e2023;
-  --bg-active: #2b2d31;
+  --bg: #101820;
+  --bg-panel: #182330;
+  --bg-raised: #1d2b3a;
+  --bg-hover: #233446;
+  --bg-inset: #121c27;
+  --bg-active: #293c50;
 
   /* 罫線 */
-  --line: #2a2c30;
-  --line-soft: #222428;
-  --line-head: #2a2c30;
+  --line: #354557;
+  --line-soft: #293848;
+  --line-head: #46596c;
 
   /* 文字 */
-  --fg: #d4d6da;
-  --fg-strong: #f2f3f5;
-  --fg-muted: #8b8f97;
-  --fg-dim: #5c6068;
+  --fg: #d5deea;
+  --fg-strong: #f4f7fa;
+  --fg-muted: #a6b5c7;
+  --fg-dim: #8b9bb0;
 
   /* アクセント */
-  --accent: #f5b95a;
-  --accent-bg: #231f14;
-  --accent-line: #3d3a2e;
-  --sorted-cell-bg: #1a1916;
+  --accent: #ffb454;
+  --accent-bg: #33291c;
+  --accent-line: #94602c;
+  --sorted-cell-bg: #24251f;
 
-  --focus-ring: #f5b95a;
+  --focus-ring: #ff9900;
 
   /* 可否 */
-  --yes-fg: #8fd39a;
-  --yes-bg: #172219;
-  --yes-line: #2a4530;
-  --no-fg: #6b6f77;
+  --yes-fg: #8ed7ba;
+  --yes-bg: #193b32;
+  --yes-line: #355d4e;
+  --no-fg: #a6b5c7;
 
   /* チップ (destination リージョン) */
-  --chip-fg: #9db8ff;
-  --chip-bg: #1b2233;
-  --chip-line: #2c3a5f;
+  --chip-fg: #a9c9f2;
+  --chip-bg: #21354b;
+  --chip-line: #3e5875;
 
   /* データなしバナー */
-  --warn-fg: #f0b37e;
-  --warn-bg: #241c14;
-  --warn-line: #4a3720;
+  --warn-fg: #efc48d;
+  --warn-bg: #322a1f;
+  --warn-line: #705438;
 
   /* lifecycle */
   --legacy-fg: #a9adb5;
@@ -74,55 +82,58 @@
   --font-sans: -apple-system, "Inter", "Hiragino Sans", "Segoe UI", sans-serif;
   --font-mono: "SF Mono", Menlo, "JetBrains Mono", ui-monospace, monospace;
 
-  --radius: 5px;
-  --radius-lg: 7px;
+  --radius: 8px;
+  --radius-lg: 16px;
 
-  --cell-pad-y: 6px;
-  --cell-pad-x: 10px;
+  --cell-pad-y: 12px;
+  --cell-pad-x: 14px;
   --row-height: 28px;
 
   /* 固定列。Provider が左端、その右に Model ID を貼り付ける (AC-NFR-001) */
-  --col-provider-w: 86px;
+  --col-provider-w: 100px;
 }
 
 [data-theme="light"] {
   color-scheme: light;
+  --panel-shadow: 0 4px 20px #182a3e06;
+  --table-group-bg: #edf1f5;
+  --table-group-fg: #43566c;
 
-  --bg: #f7f7f8;
+  --bg: #f5f6f8;
   --bg-panel: #ffffff;
-  --bg-raised: #fafafb;
-  --bg-hover: #f6f6f8;
-  --bg-inset: #ebebee;
+  --bg-raised: #f8f9fb;
+  --bg-hover: #f5f7fa;
+  --bg-inset: #eef1f5;
   --bg-active: #ffffff;
 
-  --line: #dcdde2;
-  --line-soft: #eeeff2;
-  --line-head: #e1e2e6;
+  --line: #d5dce5;
+  --line-soft: #e9edf2;
+  --line-head: #c6d0dc;
 
-  --fg: #2b2d31;
-  --fg-strong: #16171a;
-  --fg-muted: #6b6f77;
-  --fg-dim: #a0a4ab;
+  --fg: #35465a;
+  --fg-strong: #182a3e;
+  --fg-muted: #5d6e81;
+  --fg-dim: #68788b;
 
-  --accent: #a35f00;
-  --accent-bg: #fff6e6;
-  --accent-line: #e8c58a;
-  --sorted-cell-bg: #fffaf1;
+  --accent: #985000;
+  --accent-bg: #fff5e6;
+  --accent-line: #edc38a;
+  --sorted-cell-bg: #fffbf4;
 
-  --focus-ring: #a35f00;
+  --focus-ring: #b35c00;
 
-  --yes-fg: #1f7a3d;
-  --yes-bg: #eefaf0;
-  --yes-line: #c3e6cc;
-  --no-fg: #a0a4ab;
+  --yes-fg: #21684f;
+  --yes-bg: #edf6f1;
+  --yes-line: #bddacb;
+  --no-fg: #65758a;
 
-  --chip-fg: #2f5bd9;
-  --chip-bg: #eef3fe;
-  --chip-line: #cfdafa;
+  --chip-fg: #365f8b;
+  --chip-bg: #edf3fa;
+  --chip-line: #c9d8ea;
 
-  --warn-fg: #8a4b00;
-  --warn-bg: #fff6e6;
-  --warn-line: #e8c58a;
+  --warn-fg: #845117;
+  --warn-bg: #fff6e8;
+  --warn-line: #e9c890;
 
   --legacy-fg: #5c6068;
   --legacy-bg: #f0f0f3;

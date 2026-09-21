@@ -1,0 +1,128 @@
+/* Final visual layer: navy surfaces, orange accents, and a compact comparison table. */
+body { padding: 0 36px 40px; line-height: 1.6; }
+.app { max-width: 1720px; }
+.top { position: relative; min-height: 108px; padding: 22px 0; background: var(--chrome-bg); box-shadow: 0 0 0 100vmax var(--chrome-bg); clip-path: inset(0 -100vmax); border: 0; }
+.brand { position: relative; padding-left: 58px; gap: 6px 18px; }
+.brand::before { content: 'B'; position: absolute; left: 0; top: 1px; width: 40px; height: 44px; display: grid; place-items: center; border: 1px solid var(--chrome-line); border-bottom: 3px solid var(--brand-orange); border-radius: 10px; color: var(--brand-orange); font: 650 24px var(--font-sans); }
+.brand h1 { color: var(--chrome-fg); font-size: 21px; font-weight: 650; letter-spacing: -.5px; }
+.brand #build-meta { color: var(--chrome-muted); font-size: 10px; }
+.top .ctl { color: var(--chrome-fg); background: transparent; border-color: var(--chrome-line); border-radius: 8px; min-height: 34px; }
+.top .ctl:hover { border-color: var(--brand-orange); }
+.top .lang-toggle { background: transparent; border-color: var(--chrome-line); border-radius: 9px; padding: 3px; }
+.top .lang-toggle .ctl { border: 0; color: var(--chrome-muted); }
+.top .lang-toggle .ctl.on { background: var(--brand-orange); color: var(--chrome-bg); }
+.top :focus-visible { outline-color: var(--brand-orange); }
+.tabs-row { padding: 18px 0 0; margin: 0 0 24px; align-items: center; border-bottom: 1px solid var(--line); }
+nav.tabs { gap: 28px; }
+nav.tabs .tab { padding: 8px 2px 17px; font-size: 13px; color: var(--fg-muted); }
+nav.tabs .tab[aria-selected=true] { color: var(--fg-strong); border-bottom-color: var(--brand-orange); font-weight: 650; }
+.share-copy { padding: 7px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-panel); margin-bottom: 9px; }
+.region-overview { position: relative; padding: 27px 28px 0; border-radius: 16px; border-color: var(--line); box-shadow: var(--panel-shadow); gap: 0 36px; margin-bottom: 20px; }
+.origin-heading { margin-bottom: 16px; gap: 12px; }
+.origin-heading h2 { font-size: 36px; font-weight: 650; letter-spacing: -.9px; }
+.region-code { font-size: 11px; }
+.origin-context { border-color: var(--line-soft); padding-right: 28px; }
+.availability-summary { gap: 8px 24px; }
+.availability-stat { row-gap: 7px; }
+.stat-label { font-size: 12px; font-weight: 600; }
+.stat-label::before { background: var(--brand-orange); width: 6px; height: 6px; }
+.stat-global .stat-label::before { background: var(--fg-muted); }
+.stat-value { color: var(--fg-strong); font-size: 42px; font-weight: 550; letter-spacing: -1.5px; }
+.stat-description, .context-note { color: var(--fg-muted); font-size: 11px; }
+.context-note { padding-top: 6px; }
+.region-overview > .connection-details { margin-top: 22px; padding: 9px 0; border-color: var(--line-soft); }
+.connection-details > summary { font-size: 11px; }
+#source-region { background: var(--bg-raised); border-color: var(--line); border-radius: 8px; min-height: 37px; }
+.filter-bar { border-radius: 14px; padding: 18px 20px 0; margin-bottom: 16px; box-shadow: var(--panel-shadow); }
+.filter-heading { font-size: 13px; letter-spacing: 0; }
+.filter-label { font-size: 11px; }
+.filter-search, .filter-select, .multi-picker summary { min-height: 40px; height: 40px; background: var(--bg-panel); border: 1px solid var(--line); border-radius: 8px; }
+.filter-search:hover, .filter-select:hover, .multi-picker summary:hover { border-color: var(--fg-dim); }
+.filter-search:focus, .filter-select:focus { border-color: var(--accent); }
+.filter-summary { background: var(--bg-raised); border-radius: 0 0 14px 14px; }
+.filter-count { color: var(--fg-strong); font-variant-numeric: tabular-nums; }
+.row-sort-controls { margin: 16px 0 12px; }
+.row-sort-controls select { border-radius: 8px; }
+.compare-guide { font-size: 11px; gap: 6px 20px; padding-bottom: 12px; }
+.compare-guide .global-help { font-size: 10px; }
+.price-sort-help { font-size: 10px; }
+.table-frame, .compare-guide + .table-frame { border-radius: 12px; box-shadow: var(--panel-shadow); }
+.table-frame > table > thead tr.column-groups th { background: var(--table-group-bg); color: var(--table-group-fg); font-size: 10px; letter-spacing: .05em; padding: 10px 14px; }
+.table-frame > table > thead tr.column-groups th:nth-child(2) { background: var(--chrome-bg); color: var(--chrome-fg); border-bottom: 2px solid var(--brand-orange); }
+.table-frame > table > thead tr:not(.column-groups) th { padding: 12px 14px; background: var(--bg-panel); color: var(--fg-muted); font-size: 11px; }
+.table-frame > table > thead tr:not(.column-groups) th:is([data-key=inRegion],[data-key=geo],[data-key=global]) { color: var(--fg-strong); background: var(--bg-raised); }
+.table-frame > table > tbody > tr:not(.detail-row) > td { padding-top: 13px; padding-bottom: 13px; }
+.table-frame th.sticky-name, .table-frame td.sticky-name { min-width: 230px; width: 230px; max-width: 260px; white-space: normal; }
+.model-name-text { font-size: 13px; font-weight: 600; letter-spacing: -.1px; }
+.provider-text { color: var(--fg-muted); font-size: 10px; }
+.flag-yes { padding: 2px 7px; border-radius: 5px; font-weight: 500; }
+.flag-no { color: var(--fg-muted); }
+.geo-area { color: var(--fg-strong); font-weight: 550; }
+.geo-places { line-height: 1.8; }
+.comparison-price { grid-template-columns: minmax(0,1fr); gap: 3px; }
+.comparison-price-label { font-size: 9px; text-align: right; color: var(--fg-muted); }
+.comparison-price > .price-value { grid-row: 1; font-size: 12px; letter-spacing: -.2px; }
+.comparison-price-region { font-size: 9px; white-space: normal; max-width: 155px; text-align: right; }
+.table-frame th:is([data-key=priceInput],[data-key=priceOutput]) { min-width: 135px; }
+.table-frame td.sorted .price-value { color: var(--accent); }
+.table-frame tr.expanded > td, .table-frame tr.expanded > td.sticky { background: var(--accent-bg); border-bottom-color: var(--accent-line); }
+.detail-toggle[aria-expanded=true] { color: var(--accent); }
+.detail-panel { padding: 26px; border-left: 3px solid var(--brand-orange); background: var(--bg-inset); }
+.lane-tabs { gap: 10px; }
+.lane-tabs [role=tab] { border-radius: 10px; min-width: 175px; padding: 12px 17px; background: var(--bg-panel); border-color: var(--line); }
+.lane-tabs [role=tab][aria-selected=true] { background: var(--accent-bg); border-color: var(--accent); box-shadow: inset 0 -2px var(--brand-orange); }
+.lane-tabs [role=tab][aria-selected=true] .lane-title, .lane-tabs [role=tab][aria-selected=true] .lane-sum { color: var(--fg-strong); }
+.lane-block > section { border-radius: 12px; padding: 18px; }
+.detail-panel h4 { font-weight: 600; }
+.detail-connection { padding-top: 16px; }
+.detail-connection > summary { padding: 5px 0; color: var(--fg-strong); font-size: 12px; }
+.copy-btn { border-radius: 6px; background: var(--bg-panel); }
+.copy-btn:hover { color: var(--accent); border-color: var(--accent-line); }
+.region-map { border-radius: 12px; border-color: var(--chrome-line); background: #162434; }
+.map-land { fill: #283e53; stroke: #57718a; }
+.map-header { padding: 16px 20px 10px; }
+.map-title { font-size: 16px; }
+.map-count { color: #ffbd65; }
+.map-legend { padding-left: 20px; padding-right: 20px; }
+.notes { margin-top: 30px; font-size: 11px; color: var(--fg-muted); }
+@media (max-width: 1100px) {
+  body { padding-left: 24px; padding-right: 24px; }
+  .region-overview { gap: 0 22px; padding-left: 22px; padding-right: 22px; }
+  .availability-summary { gap: 8px 15px; }
+  .stat-value { font-size: 36px; }
+}
+@media (max-width: 768px) {
+  body { padding: 0 14px 24px; }
+  .top { min-height: 0; padding: 19px 0 15px; gap: 15px !important; }
+  .brand { padding-left: 44px; }
+  .brand::before { width: 32px; height: 36px; font-size: 20px; border-radius: 8px; }
+  .brand h1 { font-size: 17px; }
+  .brand #build-meta { font-size: 9px; }
+  .app .top-controls { width: auto; margin-left: auto; }
+  .tabs-row { padding-top: 13px; margin-bottom: 16px; }
+  nav.tabs { gap: 24px; }
+  nav.tabs .tab { padding-bottom: 13px; font-size: 12px; }
+  .share-copy { font-size: 10px; padding: 6px 8px; }
+  .region-overview { padding: 20px 18px 0; gap: 14px; border-radius: 14px; }
+  .origin-context { padding: 0; }
+  .origin-heading { margin-bottom: 12px; }
+  .origin-heading h2 { font-size: 30px; }
+  .availability-summary { padding-top: 14px; gap: 6px 12px; }
+  .availability-stat { row-gap: 4px; }
+  .stat-value { font-size: 24px; letter-spacing: -.5px; }
+  .stat-label { font-size: 11px; }
+  .stat-description, .context-note { font-size: 10px; }
+  .region-overview > .connection-details { margin-top: 0; }
+  .filter-bar { padding: 15px 14px 0; }
+  .filter-summary { margin: 0 -14px; padding: 10px 14px; }
+  .filter-search, .filter-select, .multi-picker summary { min-height: 40px; height: 40px; }
+  .compare-guide { font-size: 10px; }
+  .table-frame th.sticky-name, .table-frame td.sticky-name { min-width: 150px; width: 150px; max-width: 150px; }
+  .table-frame > table > thead tr:not(.column-groups) th { padding-left: 10px; padding-right: 10px; }
+  .detail-panel { padding: 16px; }
+  .lane-tabs [role=tab] { min-width: 145px; }
+  .detail-connection .head-grid { gap: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

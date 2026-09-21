@@ -1,18 +1,12 @@
 // MANTLE-001 の描画 (jsdom)。エンドポイント行・注記・Mantle 列・詳細パネルの接続先節。
 import { describe, it, expect, beforeEach } from "vitest";
-import { mountFixtureApp, bodyRows, rowFor, cells, $, regionNotes } from "./app-harness.js";
+import { mountFixtureApp, rowFor, $, regionNotes } from "./app-harness.js";
 import { mountTableView } from "../src/scripts/table-view.js";
 import { TOKYO, NON_MANTLE_REGION } from "./fixtures/bedrock-fixture.js";
 
 const MANTLE_MODEL = "nvidia.nemotron-nano-12b-v2"; // docs で mantle 対応
 const RUNTIME_ONLY = "anthropic.claude-sonnet-4-5-20250929-v1:0"; // docs で mantle 非対応
 const UNLISTED = "amazon.titan-embed-text-v1:2:8k"; // docs の表にモデル名が載っている (非対応)
-
-// Mantle 列は 備考 の 1 つ手前 = 最後から 2 番目。
-const mantleCellOf = (modelId) => {
-  const row = cells(rowFor(modelId));
-  return row[row.length - 2];
-};
 
 let app;
 beforeEach(() => {
@@ -56,53 +50,14 @@ describe("AC-002 Mantle 提供外のリージョン", () => {
   });
 });
 
-describe("AC-003 Mantle 列", () => {
-  it("列は 備考 の 1 つ手前 (最後から 2 番目)", () => {
-    const keys = [...document.querySelectorAll("thead th")].map((th) => th.dataset.key);
-    expect(keys[keys.length - 2]).toBe("mantle");
-    expect(keys[keys.length - 1]).toBe("notes");
-  });
-
-  it("mantle 対応モデル × 提供リージョンは ✓", () => {
-    const cell = mantleCellOf(MANTLE_MODEL);
-    expect(cell.textContent).toContain("✓");
-    expect(cell.querySelector(".flag-yes")).not.toBeNull();
-  });
-
-  it("✓ のセルは素のモデル ID をツールチップに持つ", () => {
-    const wrap = mantleCellOf(MANTLE_MODEL).querySelector(".cell-mantle");
-    expect(wrap.dataset.mantleModelId).toBe(MANTLE_MODEL);
-    expect(wrap.title).toContain(MANTLE_MODEL);
-    // 接頭辞付きのプロファイル ID は出さない。
-    expect(wrap.title).not.toMatch(/\b(us|eu|apac|au|jp|global)\./);
-  });
-
-  it("mantle 非対応モデルは「—」", () => {
-    const cell = mantleCellOf(RUNTIME_ONLY);
-    expect(cell.textContent).toBe("—");
-    expect(cell.querySelector(".flag-yes")).toBeNull();
-  });
-
-  it("起点が Mantle 提供外なら、対応モデルでも「—」", () => {
-    app.view.setRegion(NON_MANTLE_REGION);
-    expect(mantleCellOf(MANTLE_MODEL).textContent).toBe("—");
-  });
-
-  it("「—」のセルは理由をツールチップに持つ", () => {
-    expect(mantleCellOf(RUNTIME_ONLY).querySelector(".cell-mantle").title).toBe(
-      "このモデルは bedrock-mantle では提供されていません",
-    );
-    app.view.setRegion(NON_MANTLE_REGION);
-    expect(mantleCellOf(MANTLE_MODEL).querySelector(".cell-mantle").title).toBe(
-      "Mantle: このリージョンでは提供なし",
-    );
-  });
-
-  it("全ての行に Mantle 列のセルがある", () => {
-    for (const tr of bodyRows()) {
-      const row = cells(tr);
-      expect(row[row.length - 2].querySelector(".cell-mantle"), tr.dataset.modelId).not.toBeNull();
-    }
+describe("Mantleは詳細で確認する", () => {
+  it("一覧にMantle列を出さず、詳細にモデルIDと利用可否を表示する", () => {
+    expect(document.querySelector('thead th[data-key="mantle"]')).toBeNull();
+    app.detail.openRow(MANTLE_MODEL);
+    expect(document.querySelector('.detail-mantle-model-id').textContent).toContain(MANTLE_MODEL);
+    app.detail.closeRow(MANTLE_MODEL);
+    app.detail.openRow(RUNTIME_ONLY);
+    expect(document.querySelector('.detail-mantle-none').textContent).toContain('提供されていません');
   });
 });
 
@@ -211,7 +166,7 @@ describe("AC-006 出典リンク", () => {
 });
 
 describe("AC-007 mantle データが無いとき", () => {
-  it("列は全て「—」、エンドポイント行は「提供なし」、落ちない", () => {
+  it("エンドポイント行は「提供なし」で、比較表は8列のまま描画される", () => {
     // mantle を渡さずに組み立て直す (データが用意されていない状態)。
     const host = document.createElement("main");
     document.body.replaceChildren(host);
@@ -229,7 +184,7 @@ describe("AC-007 mantle データが無いとき", () => {
     );
     for (const tr of host.querySelectorAll("tbody tr[data-model-id]")) {
       const tds = [...tr.children];
-      expect(tds[tds.length - 2].textContent, tr.dataset.modelId).toBe("—");
+      expect(tds, tr.dataset.modelId).toHaveLength(8);
     }
   });
 });

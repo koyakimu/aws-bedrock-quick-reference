@@ -74,6 +74,33 @@ export function priceOf(offerFile, sku) {
   return null;
 }
 
+// トークン以外のオンデマンド推論料金を単位付きで保持する。
+export function meteredPriceOf(product, price) {
+  if (!price || !Number.isFinite(Number(price.usd)) || Number(price.usd) < 0) return null;
+  const a = product.attributes ?? {};
+  const usage = a.usagetype ?? "";
+  if (/custom|provision|batch|storage|training|DataAutomation|Guardrail/i.test(usage)) return null;
+  const dimension = bfmDimension(usage) ?? a.inferenceType ?? usagetypeBody(usage);
+  const lower = dimension.toLowerCase();
+  let unit, axis, label;
+  if (price.unit === "Search Units") {
+    unit = "searchUnit"; axis = "input"; label = "Rerank";
+  } else if (["Input Images", "Images Processed"].includes(price.unit)) {
+    unit = "image"; axis = "input"; label = a.modality || "Image";
+  } else if (price.unit === "Text Requests") {
+    unit = "request"; axis = "input"; label = "Text";
+  } else if (price.unit === "image") {
+    unit = "image"; axis = "output";
+    label = a.inferenceType ?? "Image";
+  } else if (price.unit === "seconds" || (price.unit === "video" && a.model === "Nova Reel")) {
+    unit = "second";
+    axis = /(^input|-input-)/.test(lower) ? "input" : "output";
+    label = lower.includes("audio") ? "Audio" : lower.includes("hdres") || lower.includes("hd resolution")
+      ? "Video · HD" : lower.includes("standardres") ? "Video · Standard" : "Video";
+  } else return null;
+  return { label, axis, unit, value: roundPrice(Number(price.usd)), scope: /global/i.test(usage) ? "global" : "standard" };
+}
+
 // --- 価格の軸と種別の判定 -------------------------------------------------
 
 // 比較用に記号を落とした小文字。"Prompt cache read input tokens" → "promptcachereadinputtokens"
@@ -292,9 +319,9 @@ export function normalizePrices({ files, models, map = {}, generatedAt }) {
         const read = readProduct(offer, product);
         const price = priceOf(file, product.sku);
         const perMillion = price ? toPerMillion(price.usd, price.unit) : null;
-        // トークン単位でない SKU はそもそも価格列の対象外。数えない。
-        if (perMillion == null) continue;
-        if (read.mantle || read.kind == null) {
+        const metered = perMillion == null ? meteredPriceOf(product, price) : null;
+        if (perMillion == null && !metered) continue;
+        if (read.mantle || (read.kind == null && !metered)) {
           outOfScope += 1;
           continue;
         }
@@ -319,7 +346,10 @@ export function normalizePrices({ files, models, map = {}, generatedAt }) {
         for (const modelId of modelIds) {
           const regions = (byModel[modelId] ??= {});
           const bucket = (regions[region] ??= {});
-          setPrice(bucket, read.kind, axis, perMillion);
+          if (metered) {
+            const rates = bucket.metered ??= [];
+            if (!rates.some((rate) => JSON.stringify(rate) === JSON.stringify(metered))) rates.push(metered);
+          } else setPrice(bucket, read.kind, axis, perMillion);
         }
       }
     }
@@ -335,6 +365,7 @@ export function normalizePrices({ files, models, map = {}, generatedAt }) {
       for (const kind of PRICE_KINDS) {
         if (bucket[kind]) kinds[kind] = sortObject(bucket[kind]);
       }
+      if (bucket.metered) kinds.metered = bucket.metered.sort((a, b) => a.axis.localeCompare(b.axis) || a.label.localeCompare(b.label) || a.value - b.value);
       regions[region] = kinds;
     }
     sorted[modelId] = regions;

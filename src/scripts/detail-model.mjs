@@ -36,13 +36,22 @@ export function buildPriceRows(modelId, { prices, region, lane = LANE_IN_REGION 
   const entry = priceFor(prices, modelId, region);
   if (!entry) return [];
   const kinds = LANE_PRICE_KINDS[lane] ?? LANE_PRICE_KINDS[LANE_IN_REGION];
-  return kinds
+  const rows = kinds
     .filter((kind) => entry[kind] != null)
     .map((kind) => ({
       kind,
       input: entry[kind]?.input ?? null,
       output: entry[kind]?.output ?? null,
+      ...(entry[kind]?.maxInputTokens ? { maxInputTokens: entry[kind].maxInputTokens } : {}),
     }));
+  for (const kind of kinds) {
+    if (entry[kind]?.longContext) rows.push({ kind, ...entry[kind].longContext, minInputTokens: entry[kind].maxInputTokens });
+  }
+  for (const rate of entry.metered ?? []) {
+    if ((rate.scope ?? "standard") !== (lane === LANE_GLOBAL ? "global" : "standard")) continue;
+    rows.push({ kind: "metered", label: rate.label, unit: rate.unit, [rate.axis]: rate.value });
+  }
+  return rows;
 }
 
 /** Global のレーンで「バッチ・キャッシュの単価が価格表に無い」かどうか (AC-013 の注記)。 */

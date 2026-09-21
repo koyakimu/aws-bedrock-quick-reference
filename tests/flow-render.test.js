@@ -142,7 +142,7 @@ describe("AC-004 Geo の図", () => {
     expect(svgText(svg)).toContain("国外 6");
     expect(svgText(svg)).toContain("国内 2");
     expect(svgText(svg)).toContain("アジア太平洋 内のどこかで処理");
-    expect(svgText(svg)).toContain("どれが選ばれるかは指定できない");
+    expect(svgText(svg)).toContain("AWSが推論先を自動選択");
   });
 
   it("国外 0 件ならチップ群ごと省く", () => {
@@ -194,12 +194,12 @@ describe("AC-005 Global の図", () => {
     expect(d.match(/824,/g)).toHaveLength(2);
   });
 
-  it("見出しは「全商用リージョン ・ 境界なし」、内側は記録が残る場所", () => {
+  it("見出しは「世界の対応リージョン」、内側は記録が残る場所", () => {
     const texts = svgText(globalSvg());
-    expect(texts).toContain("全商用リージョン ・ 境界なし");
+    expect(texts).toContain("世界の対応リージョン");
     expect(texts).toContain("東京 ・ 記録が残る場所");
-    expect(texts).toContain("国外を含む ・ 限定できない");
-    expect(texts).toContain("右に壁がない ＝ 範囲を限定できない");
+    expect(texts).toContain("国外を含む ・ AWSが自動選択");
+    expect(texts).toContain("世界の対応リージョンが推論先");
   });
 
   it("サンプルのチップに fade クラスが付く", () => {
@@ -245,8 +245,8 @@ describe("AC-016 呼べないレーンの図（淡色の範囲）", () => {
     const off = svg.querySelector("g.s-off");
     expect(off).not.toBeNull();
     // 「限定できない」「右に壁がない」も淡色の中に入る。
-    expect(off.textContent).toContain("国外を含む ・ 限定できない");
-    expect(off.textContent).toContain("右に壁がない ＝ 範囲を限定できない");
+    expect(off.textContent).toContain("国外を含む ・ AWSが自動選択");
+    expect(off.textContent).toContain("世界の対応リージョンが推論先");
   });
 
   it("可の Global の常設の淡色グループは .s-faint で、.s-off ではない", () => {

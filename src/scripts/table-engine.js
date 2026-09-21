@@ -128,6 +128,13 @@ function buildHeaderCell(column, state, i18n) {
     content.appendChild(arrow);
   }
 
+  if (typeof column.sortHint === "function") {
+    const hint = document.createElement("span");
+    hint.className = "column-sort-hint";
+    hint.textContent = column.sortHint(state.sortKey === column.key ? state.sortDir : null);
+    th.appendChild(hint);
+    content.setAttribute("aria-label", `${i18n(column.labelKey)}: ${hint.textContent}`);
+  }
   return th;
 }
 

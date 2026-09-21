@@ -161,6 +161,28 @@ export function priceFor(prices, modelId, region) {
   return entry && typeof entry === "object" ? entry : null;
 }
 
+// 一覧用の比較価格。起点の価格を優先し、無ければリージョン付きの参考価格。
+export function comparisonPrices(prices, modelId, region, globalAvailable = true) {
+  const entries = prices?.byModel?.[modelId] ?? {};
+  const regions = [region, ...Object.keys(entries).filter((key) => key !== region).sort()];
+  for (const source of regions) {
+    const rows = (globalAvailable ? ["global", "standard"] : ["standard"]).flatMap((kind) => {
+      const value = entries[source]?.[kind];
+      return value && [value.input, value.output].some((amount) => formatPrice(amount) !== null)
+        ? [{ ...value, kind, region: source, reference: source !== region }]
+        : [];
+    });
+    const selected = rows.slice(0, 1);
+    const scope = selected[0]?.kind ?? (globalAvailable && entries[source]?.metered?.some(rate => rate.scope === "global") ? "global" : "standard");
+    for (const rate of entries[source]?.metered ?? []) {
+      if ((rate.scope ?? "standard") !== scope) continue;
+      selected.push({ ...rate, kind: "metered", region: source, reference: source !== region });
+    }
+    if (selected.length) return selected;
+  }
+  return [];
+}
+
 /**
  * 単価の表示 (TABLE-001 v7 AC-013)。
  * $1 以上は小数 2 桁、$1 未満は有効数字 3 桁。値が無ければ null。
@@ -229,6 +251,7 @@ export function buildRow({ modelId, model, profiles, region, overrides, mantle =
   const geo = judgeGeo(profiles, modelId, region);
   const globalProfile = judgeGlobal(profiles, modelId, region);
   const price = priceFor(prices, modelId, region);
+  const comparison = comparisonPrices(prices, modelId, region, Boolean(globalProfile));
   return {
     // MANTLE-001 AC-003。判定材料が無ければ null (画面では「—」)。
     mantle: judgeMantle(mantle, modelId, region),
@@ -246,11 +269,11 @@ export function buildRow({ modelId, model, profiles, region, overrides, mantle =
     inRegion: judgeInRegion({ [modelId]: model }, modelId, region),
     geo,
     global: globalProfile,
-    // 起点リージョンの単価 (USD / 100 万トークン)。並べ替えに使えるよう
-    // 標準の入力・出力だけは行の直下にも置く (PRICE-001 AC-007)。
+    // 一覧は先頭に表示する比較価格で並べ替える。詳細は起点の価格を使う。
     price,
-    priceInput: price?.standard?.input ?? null,
-    priceOutput: price?.standard?.output ?? null,
+    comparisonPrices: comparison,
+    priceInput: comparison[0]?.input ?? null,
+    priceOutput: comparison[0]?.output ?? null,
     // 備考はモデル ID のものに、そのモデルに紐づくプロファイル ID のものを続ける。
     notes: [
       { id: modelId, note: noteFor(overrides, modelId) },

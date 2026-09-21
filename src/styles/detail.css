@@ -247,3 +247,8 @@ tr.expanded > td {
     word-break: break-all;
   }
 }
+
+.detail-notes { margin: 0 0 20px; font-size: 12px; }
+.detail-notes ul { margin: 8px 0 0; padding-left: 20px; }
+.detail-note + .detail-note { margin-top: 8px; }
+.detail-note-profile { display: block; font-size: 10px; color: var(--fg-muted); overflow-wrap: anywhere; }

@@ -40,7 +40,7 @@ export const decorateRegionMaps = (() => {
       const lane=figure.dataset.lane, off=!!original.querySelector('.s-off');
       if(off){
         const empty=h('div','map-unavailable');
-        empty.append(h('strong','',en?'Unavailable':'利用できません'),h('span','',en?'No inference route is available for this model and source Region.':'このモデル・送信元リージョンでは、この推論方式を利用できません。'));
+        empty.append(h('strong','',en?'Not offered':'提供なし'),h('span','',en?'Check the inference modes offered for this model and source Region.':'このモデル・送信元リージョンでの提供状況です。他の推論方式やリージョンも確認できます。'));
         figure.replaceChildren(empty);
         continue;
       }
@@ -51,7 +51,7 @@ export const decorateRegionMaps = (() => {
       const shell=h('div','region-map');
       figure.replaceChildren(shell);
       const header=h('div','map-header');
-      const title=h('div','');title.append(h('span','map-eyebrow',global?'GLOBAL INFERENCE':'INFERENCE REGIONS'),h('strong','map-title',off?(en?'Unavailable':'利用できません'):global?(en?'Worldwide routing':'世界の対応リージョンへ'):lane==='geo'?(en?'Regional routing':'地域内の推論先'):name(origin)));
+      const title=h('div','');title.append(h('span','map-eyebrow',global?'GLOBAL INFERENCE':'INFERENCE REGIONS'),h('strong','map-title',off?(en?'Not offered':'提供なし'):global?(en?'Worldwide routing':'世界の対応リージョンへ'):lane==='geo'?(en?'Regional routing':'地域内の推論先'):name(origin)));
       header.append(title,h('span','map-count',off?'—':global?'GLOBAL':`${destinations.length} ${en?'REGIONS':'リージョン'}`));shell.append(header);
       const svg=s('svg',{viewBox:'0 0 900 520',role:'img','aria-label':en?'Schematic map of origin and inference regions':'地図から矢印で推論先と監査ログなどの保存先を示す概念図',class:'inference-map'});
       const viewport=h('div','map-diagram-scroll');viewport.tabIndex=0;viewport.setAttribute('aria-label',en?'Map diagram; scroll horizontally on narrow screens':'地図と保存先の図。狭い画面では横にスクロールできます');viewport.append(svg);shell.append(viewport);
@@ -190,7 +190,7 @@ export const decorateRegionMaps = (() => {
         };list.append(b);}
       }
       shell.append(list);
-      const description=off?(en?'No inference route is available for this selection.':'この条件では推論経路を利用できません。'):global?(en?'AWS routes to a supported region worldwide. Destinations can change.':'世界の対応リージョンへAWSが振り分けます。推論先は固定されず、追加される場合があります。'):lane==='geo'?(en?'Each request is processed in one of these regions. Lines show possible routes.':'各リクエストは、推論先のいずれか1か所で処理されます。線は経路の候補です。'):(en?'Inference stays in the origin region.':'送信元リージョン内で推論します。');
+      const description=off?(en?'Check other inference modes or source Regions.':'他の推論方式やリージョンの提供状況を確認できます。'):global?(en?'AWS routes to a supported region worldwide. Destinations can change.':'世界の対応リージョンへAWSが振り分けます。推論先はリクエストごとに選択され、対応リージョンは追加される場合があります。'):lane==='geo'?(en?'Each request is processed in one of these regions. Lines show possible routes.':'各リクエストは、推論先のいずれか1か所で処理されます。線は経路の候補です。'):(en?'Inference stays in the origin region.':'送信元リージョン内で推論します。');
       shell.append(h('p','map-explanation',global&&!off?(en?'Illustrative worldwide routes; destinations are not fixed.':'世界への振り分けを示す概念図です。地点・経路は模式表現です。'):description));
       if(!off){
         const summary=lane==='inRegion'
