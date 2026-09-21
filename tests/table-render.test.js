@@ -30,7 +30,7 @@ function mount(overrides = {}) {
 
 const select = () => document.getElementById("source-region");
 const headerTexts = () =>
-  [...document.querySelectorAll("thead th")].map((th) => th.textContent.replace(/[▼▲]/g, "").trim());
+  [...document.querySelectorAll("thead th")].map((th) => (th.querySelector(".sort-btn") ?? th).textContent.replace(/[▼▲]/g, "").trim());
 const bodyRows = () => [...document.querySelectorAll("tbody tr")];
 const rowFor = (modelId) => document.querySelector(`tbody tr[data-model-id="${CSS.escape(modelId)}"]`);
 const cells = (tr) => [...tr.children];
@@ -99,7 +99,7 @@ describe("AC-002 エンドポイント", () => {
 
 // --- AC-006 表の列構成 ---
 describe("AC-006 列構成と 1 行の中身", () => {
-  it("列が左から プロバイダ / モデル名 / モダリティ / In-Region / Geo / Global / 入力 / 出力 / Mantle / 備考", () => {
+  it("列が左から プロバイダ / モデル名 / モダリティ / In-Region / Geo / Global / 入力 / 出力", () => {
     mount();
     expect(headerTexts()).toEqual([
       "プロバイダ",
@@ -108,10 +108,8 @@ describe("AC-006 列構成と 1 行の中身", () => {
       "In-Region",
       "Geo",
       "Global",
-      "入力 $/1M",
-      "出力 $/1M",
-      "Mantle",
-      "備考",
+      "入力単価",
+      "出力単価",
     ]);
   });
 
@@ -130,8 +128,6 @@ describe("AC-006 列構成と 1 行の中身", () => {
       "global",
       "priceInput",
       "priceOutput",
-      "mantle",
-      "notes",
     ]);
   });
 
@@ -173,10 +169,10 @@ describe("AC-006 列構成と 1 行の中身", () => {
     expect(cell.querySelector(".copyable")).toBeNull();
   });
 
-  it("In-Region が不可のモデルは「不可」 (AC-003)", () => {
+  it("In-Region が不可のモデルは「提供なし」 (AC-003)", () => {
     mount();
     const cell = cells(rowFor("anthropic.claude-sonnet-4-5-20250929-v1:0"))[3];
-    expect(cell.textContent).toContain("不可");
+    expect(cell.textContent).toContain("提供なし");
     expect(cell.querySelector(".copyable")).toBeNull();
   });
 
@@ -277,9 +273,9 @@ describe("AC-006 列構成と 1 行の中身", () => {
     expect(areas).toContain("日本国内");
   });
 
-  it("Geo が無い行は「不可」", () => {
+  it("Geo が無い行は「提供なし」", () => {
     mount();
-    expect(cells(rowFor("nvidia.nemotron-nano-12b-v2"))[4].textContent).toContain("不可");
+    expect(cells(rowFor("nvidia.nemotron-nano-12b-v2"))[4].textContent).toContain("提供なし");
   });
 
   it("Global 列は ✓ と注記とリンクだけで、プロファイル ID は出ない (AC-005)", () => {
@@ -302,10 +298,12 @@ describe("AC-006 列構成と 1 行の中身", () => {
     }
   });
 
-  it("備考は overrides.json のエントリ、無ければ空", () => {
-    mount(buildOverrides("cohere.embed-v4:0"));
-    expect(cells(rowFor("cohere.embed-v4:0"))[9].textContent).toBe("モデルの備考");
-    expect(cells(rowFor("amazon.nova-lite-v1:0"))[9].textContent).toBe("—");
+  it("一覧にMantle・備考列を出さず、備考データを詳細向けに保持する", () => {
+    const view = mount(buildOverrides("cohere.embed-v4:0"));
+    expect(headerTexts()).not.toContain("備考");
+    expect(headerTexts()).not.toContain("Mantle");
+    expect(cells(rowFor("cohere.embed-v4:0"))).toHaveLength(8);
+    expect(view.getModel().rows.find(row => row.modelId === "cohere.embed-v4:0").notes[0].note.ja).toBe("モデルの備考");
   });
 });
 

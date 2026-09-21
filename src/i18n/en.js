@@ -116,14 +116,22 @@ export const en = {
 
   // PRICE-001: pricing. All unit prices are USD per 1M tokens.
   price: {
-    modelCardSource: "Supplemental AWS model-card price (verified: {date})",
-    inputColumn: "Input $/1M",
-    outputColumn: "Output $/1M",
+    sort: { none: "Sort by displayed price ↕", asc: "Low to high ↑", desc: "High to low ↓" },
+
+    "shortContext": "Input ≤ {count} tokens",
+    "longContext": "Input > {count} tokens",
+    "units": {"image": "image", "second": "second", "request": "request", "searchUnit": "search unit"},
+
+    unrecorded: "Price not recorded",
+    referenceRegion: "Reference: {region}",
+    modelCardSource: "Supplemental AWS price (verified: {date})",
+    inputColumn: "Input price",
+    outputColumn: "Output price",
     heading: "Pricing",
     kindColumn: "Kind",
     input: "Input",
     output: "Output",
-    unit: "USD per 1M tokens ({place}). List price; discounts, commitments and free tiers not included",
+    unit: "USD per 1M tokens ({place}); other units are shown per row. List price; discounts, commitments and free tiers not included",
     geoSame: "Geo inference profiles are billed at the standard price",
     globalMissing: "Global batch and cache prices are not included in this dataset",
     unavailableLane: "Prices are published, but this model cannot be called this way",
@@ -220,7 +228,7 @@ export const en = {
     sumUnavailable: "Not available",
     sumGeo: "In country {domestic} · Abroad {foreign}",
     sumGeoUnknown: "Destinations {count}",
-    sumGlobal: "Worldwide · cannot be limited",
+    sumGlobal: "Worldwide supported Regions",
     specifiedId: "ID to specify",
     destinations: "Inference destinations",
     destSeparator: " · ",
@@ -229,12 +237,12 @@ export const en = {
     destForeign: "Abroad {count}",
     destAny: "Destinations {count}",
     destScopeLabel: "Scope",
-    destGlobalScope: "All commercial Regions (includes abroad, cannot be limited)",
+    destGlobalScope: "Worldwide supported Regions (selected by AWS)",
     destGeoNote:
       "Destinations when the source is {place}. Change the source and the destinations change too",
     destGlobalNote:
-      "Individual Region names cannot be fetched from the API, so the place names in the figure are examples",
-    noLane: "This source Region cannot call this model",
+      "Place names are examples. AWS selects from supported Regions worldwide",
+    noLane: "Check model availability in this source Region",
   },
   share: {
     copy: "Copy the URL of this view",
@@ -281,11 +289,11 @@ export const en = {
     foreignCount: "Abroad {count}",
     destinationCount: "Destinations {count}",
     somewhereIn: "Processed somewhere within {area}",
-    cannotChoose: "You cannot choose which one is used",
-    worldTitle: "All commercial Regions · no boundary",
+    cannotChoose: "AWS selects the inference Region",
+    worldTitle: "Worldwide supported Regions",
     globalInnerTitle: "{place} · where the records stay",
-    includesForeign: "Includes abroad · cannot be limited",
-    noRightWall: "No wall on the right = the scope cannot be limited",
+    includesForeign: "Includes abroad · selected by AWS",
+    noRightWall: "Inference across worldwide supported Regions",
     andMore: "and more…",
     abuseDetection:
       "Inputs and outputs stored for abuse detection may be placed in the destination Region",
@@ -298,7 +306,7 @@ export const en = {
     ariaGeoUnknown:
       "Data sent to {place} does not leave {area}. The country of the source Region is unknown, so destinations are not split into in-country and abroad. The response comes back along the same path. CloudTrail, CloudWatch, invocation logs and billing stay in {place}.",
     ariaGlobal:
-      "Data sent to {place} has no boundary and may be processed in any commercial Region. There is no way to limit the scope, which includes Regions abroad. The response comes back along the same path. CloudTrail, CloudWatch, invocation logs and billing stay in {place}.",
+      "Data sent to {place} is processed in a supported Region selected by AWS worldwide. The response comes back along the same path. CloudTrail, CloudWatch, invocation logs and billing stay in {place}.",
     captionInRegion:
       "Data sent to {place} does not leave the {place} Region. CloudTrail, CloudWatch, invocation logs and billing stay in {place}.",
     captionInRegionOff:
@@ -308,7 +316,7 @@ export const en = {
     captionGeoUnknown:
       "Data sent to {place} does not leave {area} (the country of the source Region is unknown, so destinations are not split into in-country and abroad). CloudTrail, CloudWatch, invocation logs and billing stay in {place}.",
     captionGlobal:
-      "There is no boundary: the request may be processed in any commercial Region (the missing wall on the right means the scope cannot be limited; the place names are examples). CloudTrail, CloudWatch, invocation logs and billing stay in {place}.",
+      "AWS selects the inference destination from supported Regions worldwide (place names are examples). CloudTrail, CloudWatch, invocation logs and billing stay in {place}.",
     sources:
       "Sources: AWS docs (cross-region-inference / global-cross-region-inference / inference-profiles-support). Where invocation logs land is inferred from “the destination must be in the same Region”.",
     // AC-008: the claims a figure may make, with how well each is evidenced.

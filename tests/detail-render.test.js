@@ -89,7 +89,7 @@ describe("AC-014 レーンのタブと常時見える要約", () => {
   it("要約はタブを開かなくても読める", () => {
     const panel = open(CLAUDE_45);
     const sums = tabsOf(panel).map((tab) => tab.querySelector(".lane-sum").textContent);
-    expect(sums).toEqual(["提供なし", "国内 2 ・ 国外 6", "世界中 ・ 限定不可"]);
+    expect(sums).toEqual(["提供なし", "国内 2 ・ 国外 6", "世界の対応リージョン"]);
   });
 
   it("Geo の見出しは地理圏名を「 ・ 」で連ねる", () => {
@@ -133,7 +133,7 @@ describe("AC-014 レーンのタブと常時見える要約", () => {
     expect(tabsOf(panel).map((tab) => tab.querySelector(".lane-sum").textContent)).toEqual([
       "Not available",
       "In country 2 · Abroad 6",
-      "Worldwide · cannot be limited",
+      "Worldwide supported Regions",
     ]);
   });
 });
@@ -203,8 +203,8 @@ describe("AC-016 使えない Geo / Global のレーン", () => {
     expect(lane.querySelector(".detail-id")).toBeNull();
     const lines = [...lane.querySelectorAll(".dest-list li")];
     expect(lines.map((line) => line.dataset.kind)).toEqual(["unavailable"]);
-    // 「範囲: 全商用リージョン（国外を含む・限定できない）」の行を出さない。
-    // 図の見出し（「全商用リージョン ・ 境界なし」）は AC-016 の指示どおり残す。
+    // 「範囲: 世界の対応リージョン（AWSが自動選択）」の行を出さない。
+    // 図の見出し（「世界の対応リージョン」）は AC-016 の指示どおり残す。
     expect(lane.querySelector(".detail-dest").textContent).not.toContain("全商用リージョン");
   });
 
@@ -240,23 +240,22 @@ describe("AC-016 使えない Geo / Global のレーン", () => {
   });
 
   it("In-Region が不可でも「指定する ID」（モデル ID）は残る", () => {
-    const lane = laneOf(open(CLAUDE_45), "inRegion");
-    expect(lane.querySelector(".detail-id .id").textContent).toBe(CLAUDE_45);
+    const panel = open(CLAUDE_45);
+    expect(panel.querySelector(".connection-ids > .copyable .id").textContent).toBe(CLAUDE_45);
+    expect(laneOf(panel, "inRegion").querySelector(".detail-id")).toBeNull();
   });
 });
 
 describe("AC-017 レーンのパネルの中身の順番", () => {
-  it("図 → 指定する ID → 推論先 → 価格", () => {
+  it("図 → 推論先 → 価格。IDはAPI接続情報に集約", () => {
     const lane = visibleLane(open(CLAUDE_45));
     const order = [...lane.querySelectorAll("figure.flow, section")].map(
       (element) => element.tagName.toLowerCase() + ":" + (element.className || ""),
     );
     expect(order).toEqual([
       "figure:flow",
-      "section:detail-id",
       "section:detail-dest",
       "figure:flow",
-      "section:detail-id",
       "section:detail-dest",
       "section:detail-price",
     ]);
@@ -264,13 +263,13 @@ describe("AC-017 レーンのパネルの中身の順番", () => {
 
   it("In-Region の「指定する ID」はモデル ID", () => {
     const panel = open(NOVA);
-    const id = laneOf(panel, "inRegion").querySelector(".detail-id .id");
+    const id = panel.querySelector(".connection-ids > .copyable .id");
     expect(id.textContent).toBe(NOVA);
   });
 
   it("Global の「指定する ID」はプロファイル ID", () => {
     const panel = open(CLAUDE_45);
-    expect(laneOf(panel, "global").querySelector(".detail-id .id").textContent).toBe(
+    expect([...panel.querySelectorAll(".connection-ids .detail-id .id")].find(node => node.textContent.startsWith("global.")).textContent).toBe(
       `global.${CLAUDE_45}`,
     );
   });
@@ -291,10 +290,12 @@ describe("AC-018 Geo に複数のプロファイルがあるとき", () => {
     ]);
   });
 
-  it("図が 2 枚・ID が 2 つ・価格の節は 1 つ", () => {
+  it("図が2枚・価格が1つ、全プロファイルIDは接続情報に1回ずつ表示", () => {
     const lane = laneOf(open(CLAUDE_45), "geo");
     expect(lane.querySelectorAll("figure.flow")).toHaveLength(2);
-    expect(lane.querySelectorAll(".detail-id")).toHaveLength(2);
+    expect(lane.querySelectorAll(".detail-id")).toHaveLength(0);
+    const ids = [...panelOf(CLAUDE_45).querySelectorAll(".connection-ids .detail-id .id")].map(node => node.textContent);
+    expect(ids).toEqual([`jp.${CLAUDE_45}`, `apac.${CLAUDE_45}`, `global.${CLAUDE_45}`]);
     expect(lane.querySelectorAll(".detail-price")).toHaveLength(1);
   });
 });
@@ -343,7 +344,7 @@ describe("AC-019 推論先の表示", () => {
     const lines = [...dest.querySelectorAll(".dest-list li")];
     expect(lines).toHaveLength(1);
     expect(lines[0].querySelector(".v-warn").textContent).toBe(
-      "全商用リージョン（国外を含む・限定できない）",
+      "世界の対応リージョン（AWSが自動選択）",
     );
     expect(dest.querySelector(".dest-note").textContent).toContain("例示");
   });
@@ -438,7 +439,7 @@ describe("AC-021 どのレーンも使えない", () => {
     const panel = open(NO_LANE_MODEL);
     expect(tabsOf(panel).every((tab) => tab.classList.contains("is-dim"))).toBe(true);
     expect(visibleLane(panel).querySelector(".detail-no-lane").textContent).toBe(
-      "この起点リージョンからは呼べません",
+      "この起点リージョンでの提供状況を確認してください",
     );
   });
 
@@ -495,5 +496,27 @@ describe("コピーは ID の文字列だけ", () => {
     button.click();
     await Promise.resolve();
     expect(writeText).toHaveBeenCalledWith(NVIDIA);
+  });
+});
+
+
+describe("詳細パネルの備考", () => {
+  it("モデルとプロファイルの備考を保持し、言語切替で更新する", () => {
+    const profileId = `global.${CLAUDE_45}`;
+    mountFixtureApp({ overrides: {
+      [CLAUDE_45]: { ja: "モデルの注意事項", en: "Model note" },
+      [profileId]: { ja: "Globalの注意事項", en: "Global note" },
+    } });
+    let panel = open(CLAUDE_45);
+    expect(panel.querySelector('td').colSpan).toBe(8);
+    expect(panel.querySelector('.detail-notes').textContent).toContain('モデルの注意事項');
+    expect(panel.querySelector('.detail-notes').textContent).toContain('Globalの注意事項');
+    setLang('en');
+    panel = panelOf(CLAUDE_45);
+    expect(panel.querySelector('.detail-notes').textContent).toContain('Model note');
+    expect(panel.querySelector('.detail-note-profile').textContent).toBe(profileId);
+  });
+  it("備考がないモデルに空の備考欄を作らない", () => {
+    expect(open(NOVA).querySelector('.detail-notes')).toBeNull();
   });
 });

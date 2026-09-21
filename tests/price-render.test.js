@@ -17,7 +17,7 @@ const GLOBAL = 5;
 
 const panelOf = (modelId) => document.getElementById(panelId(modelId));
 const headerTexts = () =>
-  [...document.querySelectorAll("thead th")].map((th) => th.textContent.replace(/[▼▲]/g, "").trim());
+  [...document.querySelectorAll("thead th")].map((th) => (th.querySelector(".sort-btn") ?? th).textContent.replace(/[▼▲]/g, "").trim());
 
 beforeEach(() => {
   Object.defineProperty(navigator, "language", { value: "ja-JP", configurable: true });
@@ -25,19 +25,19 @@ beforeEach(() => {
 
 // --- AC-007 価格列 ---
 describe("AC-007 入力 / 出力 の価格列", () => {
-  it("Global の右に 入力 $/1M と 出力 $/1M の 2 列が並ぶ", () => {
+  it("Global の右に 入力単価 と 出力単価 の 2 列が並ぶ", () => {
     mountFixtureApp();
     const headers = headerTexts();
     expect(headers[GLOBAL]).toBe("Global");
-    expect(headers[PRICE_INPUT]).toBe("入力 $/1M");
-    expect(headers[PRICE_OUTPUT]).toBe("出力 $/1M");
+    expect(headers[PRICE_INPUT]).toBe("入力単価");
+    expect(headers[PRICE_OUTPUT]).toBe("出力単価");
   });
 
   it("単価は $ 付きで出て、セルは右寄せ (num) になる", () => {
     mountFixtureApp();
     const row = rowFor(CLAUDE);
-    expect(cells(row)[PRICE_INPUT].textContent).toBe("$3.30");
-    expect(cells(row)[PRICE_OUTPUT].textContent).toBe("$16.50");
+    expect(cells(row)[PRICE_INPUT].querySelector(".price-value").textContent).toBe("$3.00");
+    expect(cells(row)[PRICE_OUTPUT].querySelector(".price-value").textContent).toBe("$15.00");
     expect(cells(row)[PRICE_INPUT].classList.contains("num")).toBe(true);
     expect(cells(row)[PRICE_OUTPUT].classList.contains("num")).toBe(true);
   });
@@ -57,8 +57,8 @@ describe("AC-007 入力 / 出力 の価格列", () => {
 
   it("画面でも $1 未満のモデルは有効数字 3 桁で出る", () => {
     mountFixtureApp();
-    expect(cells(rowFor(NOVA_LITE))[PRICE_INPUT].textContent).toBe("$0.072");
-    expect(cells(rowFor(NOVA_LITE))[PRICE_OUTPUT].textContent).toBe("$0.288");
+    expect(cells(rowFor(NOVA_LITE))[PRICE_INPUT].querySelector(".price-value").textContent).toBe("$0.072");
+    expect(cells(rowFor(NOVA_LITE))[PRICE_OUTPUT].querySelector(".price-value").textContent).toBe("$0.288");
   });
 
   it("価格列は並べ替えできる (数値として比べる)", () => {
@@ -68,22 +68,34 @@ describe("AC-007 入力 / 出力 の価格列", () => {
     expect(th.classList.contains("sortable")).toBe(true);
     th.querySelector("button.sort-btn").click();
     const values = [...document.querySelectorAll("tbody tr[data-model-id]")]
-      .map((tr) => cells(tr)[PRICE_INPUT].textContent)
-      .filter((text) => text !== "—")
+      .map((tr) => cells(tr)[PRICE_INPUT].querySelector(".price-value")?.textContent)
+      .filter((text) => text && text !== "—")
       .map((text) => Number(text.slice(1)));
     expect(values).toEqual([...values].sort((a, b) => b - a));
   });
 });
 
 // --- AC-008 Global セルの単価 ---
-describe("AC-008 Global セルに Global の単価を添える", () => {
-  it("Global 価格があるモデルは「$入力 / $出力」が Global セルに出る", () => {
+describe("Global の単価も入力・出力の価格欄に表示する", () => {
+  it("Globalが使えるモデルはGlobalの1組だけを表示する", () => {
     mountFixtureApp();
     const globalCell = cells(rowFor(CLAUDE))[GLOBAL];
-    expect(globalCell.querySelector(".global-price").textContent).toBe("$3.00 / $15.00");
+    expect(globalCell.querySelector(".global-price")).toBeNull();
+    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].textContent).toBe("Global$3.00");
+    expect(cells(rowFor(CLAUDE))[PRICE_OUTPUT].textContent).toBe("Global$15.00");
     // 判定そのもの (✓ と注記) は変わらない
     expect(globalCell.textContent).toContain("✓");
     expect(globalCell.textContent).toContain("全世界の対応リージョン");
+  });
+
+  it("Globalが使えないモデルではGlobal価格が収録されていても採用しない", () => {
+    const prices = buildPrices();
+    prices.byModel[NOVA_LITE][TOKYO].global = { input: .001, output: .002 };
+    mountFixtureApp({ prices });
+    const input = cells(rowFor(NOVA_LITE))[PRICE_INPUT];
+    expect(input.textContent).toBe("In-Region / Geo$0.072");
+    expect(input.querySelectorAll(".price-value")).toHaveLength(1);
+    expect(input.querySelector(".price-sort-badge")).toBeNull();
   });
 
   it("Global 価格が無いモデルの Global セルには単価を出さない", () => {
@@ -172,11 +184,11 @@ describe("AC-010 詳細パネルの価格", () => {
 
 // --- AC-011 価格が無いとき ---
 describe("AC-011 価格が無いモデル", () => {
-  it("価格が無い起点リージョンでは列が「—」になり、詳細パネルは「価格データなし」", () => {
+  it("価格が未収録なら一覧に明示し、詳細パネルは「価格データなし」", () => {
     // 価格を持たない (空の) prices を渡すと全モデルが「—」
     mountFixtureApp({ prices: {} });
-    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].textContent).toBe("—");
-    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].classList.contains("dim")).toBe(true);
+    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].textContent).toBe("価格未収録");
+    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].querySelector(".dim")).not.toBeNull();
 
     rowFor(CLAUDE).querySelector(".detail-toggle").click();
     const section = panelOf(CLAUDE).querySelector(".detail-price");
@@ -186,8 +198,49 @@ describe("AC-011 価格が無いモデル", () => {
     );
   });
 
+  it("Global だけのモデルも共通の価格欄で比較できる", () => {
+    const prices = { byModel: { [CLAUDE]: { [TOKYO]: { global: { input: 3, output: 15 } } } } };
+    mountFixtureApp({ prices });
+    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].textContent).toBe("Global$3.00");
+    expect(cells(rowFor(CLAUDE))[PRICE_OUTPUT].textContent).toBe("Global$15.00");
+  });
+
+  it("起点に価格がない場合は参考リージョンを明示し、詳細には混ぜない", () => {
+    const prices = { byModel: { [CLAUDE]: { "us-east-1": { standard: { input: 2, output: 10 } } } } };
+    mountFixtureApp({ prices });
+    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].textContent).toBe("In-Region / Geo$2.00参考: us-east-1");
+    rowFor(CLAUDE).querySelector(".detail-toggle").click();
+    expect(panelOf(CLAUDE).querySelector(".detail-no-price")).not.toBeNull();
+  });
+
   it("価格が無くても表そのものは描画される (行数は変わらない)", () => {
     mountFixtureApp({ prices: {} });
     expect(document.querySelectorAll("tbody tr[data-model-id]")).toHaveLength(5);
+  });
+});
+
+describe("単位付き料金と長文条件の表示", () => {
+  it("画像・秒料金は一覧と詳細に単位付きで出る", () => {
+    mountFixtureApp({ prices: { byModel: { [CLAUDE]: { [TOKYO]: { metered: [
+      { scope: 'standard', label: 'Image', axis: 'output', unit: 'image', value: .04 },
+      { scope: 'global', label: 'Video', axis: 'input', unit: 'second', value: .00049 },
+    ] } } } } });
+    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].textContent).toContain('Global$0.00049 / 秒');
+    expect(cells(rowFor(CLAUDE))[PRICE_OUTPUT].textContent).toBe('—');
+    rowFor(CLAUDE).querySelector('.detail-toggle').click();
+    const global = panelOf(CLAUDE).querySelector('[data-lane="global"] .detail-price');
+    expect(global.textContent).toContain('$0.00049 / 秒');
+    expect(global.textContent).not.toContain('$0.04 / 画像');
+  });
+  it("一覧は短文条件、詳細は短文と長文の両方を表示する", () => {
+    mountFixtureApp({ prices: { byModel: { [CLAUDE]: { [TOKYO]: { global: {
+      input: 10, output: 50, maxInputTokens: 272000, longContext: { input: 20, output: 75 },
+    } } } } } });
+    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].textContent).toContain('入力 272,000 tokens 以下');
+    rowFor(CLAUDE).querySelector('.detail-toggle').click();
+    const global = panelOf(CLAUDE).querySelector('[data-lane="global"] .detail-price');
+    expect(global.textContent).toContain('入力 272,000 tokens 超');
+    expect(global.textContent).toContain('$20.00');
+    expect(global.textContent).toContain('$75.00');
   });
 });

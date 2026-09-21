@@ -320,3 +320,15 @@
 .row-sort-controls{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin:12px 0;font-size:12px;color:var(--fg-muted)}
 .row-sort-controls select{font:inherit;color:var(--fg);background:var(--bg-panel);border:1px solid var(--line);border-radius:6px;padding:7px 10px}
 .row-sort-hint{font-size:10px}.row-sort-hint[hidden]{display:none}
+
+/* 同じ価格欄で標準・Global を比較し、参考価格のリージョンを明示する。 */
+.comparison-prices { display: grid; gap: 6px; }
+.comparison-price { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-items: baseline; }
+.comparison-price-label { text-align: left; font: 10px var(--font-sans); color: var(--fg-muted); }
+.comparison-price-region { grid-column: 1 / -1; min-width: 0; font-size: 9px; color: var(--fg-muted); white-space: normal; overflow-wrap: anywhere; }
+
+.column-sort-hint { display: block; margin-top: 5px; font-size: 10px; font-weight: 400; color: var(--fg-muted); }
+.table-frame th.sorted .column-sort-hint { color: var(--accent); font-weight: 600; }
+.table-frame td.sorted .comparison-price .price-value { color: var(--accent); }
+.price-sort-help { flex-basis: 100%; line-height: 1.7; }
+.comparison-price > .price-value { justify-self: end; text-align: right; }

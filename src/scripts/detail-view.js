@@ -92,9 +92,15 @@ function mantleItem(detail) {
 
 function headGrid(detail) {
   const grid = el("div", "head-grid");
-  grid.appendChild(
-    headItem("detail.modelId", createCopyable(detail.modelId, { labelKey: "copy.modelId" })),
-  );
+  const ids = el("div", "connection-ids");
+  ids.appendChild(createCopyable(detail.modelId, { labelKey: "copy.modelId" }));
+  for (const profile of detail.summaries.geo.profiles ?? []) {
+    ids.appendChild(idSection(profile.profileId, { profile: true, label: `Geo · ${geoAreaLabel(profile.prefix)}` }));
+  }
+  if (detail.summaries.global.available) {
+    ids.appendChild(idSection(detail.summaries.global.id, { profile: true, label: "Global" }));
+  }
+  grid.appendChild(headItem("detail.modelId", ids));
   const runtime = el("div", "head-runtime");
   runtime.appendChild(el("span", "endpoint-value detail-endpoint-value mono", detail.endpoint));
   // MANTLE-001 v2 AC-005 項目 2: FQDN と、そこで呼べる API。
@@ -132,9 +138,9 @@ function laneSummaryText(lane, summary) {
 
 // --- AC-017 各レーンのパネルの中身 -----------------------------------------
 
-function idSection(id, { profile }) {
+function idSection(id, { profile, label }) {
   const section = el("section", "detail-id");
-  section.appendChild(el("h4", null, t("detail.specifiedId")));
+  section.appendChild(el("h4", null, label));
   section.appendChild(
     createCopyable(id, { labelKey: profile ? "copy.profileId" : "copy.modelId" }),
   );
@@ -226,11 +232,14 @@ function priceSection(modelId, { prices, region, regionNotes, lane, available })
   for (const row of rows) {
     const tr = el("tr", `detail-price-row detail-price-${row.kind}`);
     tr.dataset.kind = row.kind;
-    tr.appendChild(el("td", "detail-price-kind", t(`price.kind.${row.kind}`)));
+    let label = row.kind === "metered" ? row.label : t(`price.kind.${row.kind}`);
+    if (row.maxInputTokens) label += ` · ${t("price.shortContext", { count: row.maxInputTokens.toLocaleString("en-US") })}`;
+    if (row.minInputTokens) label += ` · ${t("price.longContext", { count: row.minInputTokens.toLocaleString("en-US") })}`;
+    tr.appendChild(el("td", "detail-price-kind", label));
     for (const value of [row.input, row.output]) {
       const text = formatPrice(value);
       // 出力側の単価が無い種別は「—」(AC-013)。
-      tr.appendChild(el("td", "detail-price-value v num mono", text == null ? "—" : `$${text}`));
+      tr.appendChild(el("td", "detail-price-value v num mono", text == null ? "—" : `$${text}${row.unit ? ` / ${t(`price.units.${row.unit}`)}` : ""}`));
     }
     tbody.appendChild(tr);
   }
@@ -247,9 +256,10 @@ function priceSection(modelId, { prices, region, regionNotes, lane, available })
   if (!available) notes.push(t("price.unavailableLane"));
   section.appendChild(el("p", "detail-price-unit price-unit", notes.join(" ")));
   const supplement = prices?.byModel?.[modelId]?.[region]?.supplementSources?.[lane === LANE_GLOBAL ? "global" : "standard"];
-  if (supplement) {
-    const source = el("a", "detail-price-source", t("price.modelCardSource", { date: supplement.verifiedAt }));
-    source.href = supplement.url;
+  const meteredSupplement = prices?.byModel?.[modelId]?.[region]?.supplementSources?.metered;
+  for (const sourceInfo of [supplement, ...(lane === LANE_GLOBAL ? [] : [meteredSupplement])].filter(Boolean)) {
+    const source = el("a", "detail-price-source", t("price.modelCardSource", { date: sourceInfo.verifiedAt }));
+    source.href = sourceInfo.url;
     source.target = "_blank";
     source.rel = "noreferrer";
     section.appendChild(source);
@@ -271,14 +281,6 @@ function laneBlock(lane, { modelId, detail, regionNotes, profile, available, hea
       prefix: profile?.prefix ?? null,
     }),
   );
-  // AC-016: 使えない Geo / Global のレーンでは「指定する ID」を出さない。
-  // 対応するプロファイルが無いので指定できる ID がそもそも無い。
-  // In-Region はモデル ID がそのまま指定する ID なので、不可でも出す。
-  if (available || lane === LANE_IN_REGION) {
-    block.appendChild(
-      idSection(profile ? profile.profileId : modelId, { profile: Boolean(profile) }),
-    );
-  }
   block.appendChild(
     destinationSection(lane, {
       destinations: profile?.destinations ?? [],
@@ -449,6 +451,20 @@ export function mountDetailView({
     }
 
     panel.appendChild(headGrid(detail));
+    const notes = view.getModel().rows.find(row => row.modelId === modelId)?.notes ?? [];
+    const localizedNotes = notes.filter(entry => entry.note?.[getLang()]?.trim());
+    if (localizedNotes.length) {
+      const section = el("section", "detail-notes");
+      section.appendChild(el("h4", null, t("table.notes")));
+      const list = el("ul");
+      for (const entry of localizedNotes) {
+        const item = el("li", "detail-note", entry.note[getLang()]);
+        if (entry.id !== modelId) item.appendChild(el("code", "detail-note-profile", entry.id));
+        list.appendChild(item);
+      }
+      section.appendChild(list);
+      panel.appendChild(section);
+    }
     const tabs = laneTabs(modelId, detail, { onSelect: select });
     panel.appendChild(tabs.tablist);
     for (const lane of LANE_ORDER) {

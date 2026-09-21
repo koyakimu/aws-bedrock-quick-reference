@@ -87,7 +87,14 @@ window.addEventListener('load', () => {
     observer.disconnect();
     write(connectionTitle, words('接続先と API の情報','Endpoints & APIs'));
     write(guideIntro, words('モデル行を開くと、推論先・ID・記録の所在を確認できます','Expand a model for destinations, IDs and log locations'));
-    write(guidePrice, words('価格：USD / 100万トークン','Prices: USD / 1M tokens'));
+    write(guidePrice, words('価格：USD / 100万トークン（画像・秒などは個別表記）','Prices: USD / 1M tokens (other units shown explicitly)'));
+    let priceSortHelp = guide.querySelector('.price-sort-help');
+    if (!priceSortHelp) {
+      priceSortHelp = document.createElement('span');
+      priceSortHelp.className = 'price-sort-help';
+      guide.append(priceSortHelp);
+    }
+    write(priceSortHelp, words('Globalが使えるモデルはGlobal価格、それ以外はIn-Region / Geo価格。表示中のトークン単価で並べ替え、対象単価のない行は末尾。その他の料金は詳細へ。', 'Global prices where available; otherwise In-Region / Geo. Sort by the displayed token price; rows without one go last. Other rates are in details.'));
     write(guideNote, words('Global：世界の対応リージョン。推論先は増えうる ↗','Global: worldwide supported regions; destinations may expand ↗'));
     guide.hidden = $('#vp-origin .table-frame').hidden;
     for(const select of document.querySelectorAll('select[multiple]')) enhanceSelect(select);
@@ -96,11 +103,11 @@ window.addEventListener('load', () => {
       disclosure.className = 'detail-connection';
       const summary = document.createElement('summary');
       disclosure.append(summary);
-      grid.before(disclosure);
+      grid.parentElement.append(disclosure);
       disclosure.append(grid);
     }
     for (const summary of document.querySelectorAll('.detail-connection > summary')) {
-      write(summary, words('モデルID・Runtime / Mantle の接続情報', 'Model ID & Runtime / Mantle endpoints'));
+      write(summary, words('API接続情報', 'API connection details'));
     }
     // A single profile can share the right-hand column with its price table.
     for (const panel of document.querySelectorAll('.lane-panel')) {

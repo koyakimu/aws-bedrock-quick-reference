@@ -59,10 +59,10 @@ export const decorateOverview = (() => {
     let groups=thead.querySelector('.column-groups');
     if(!groups){
       groups=document.createElement('tr');groups.className='column-groups';
-      for(const span of [3,3,2,2]){const th=document.createElement('th');th.colSpan=span;th.scope='colgroup';groups.append(th)}
+      for(const span of [3,3,2]){const th=document.createElement('th');th.colSpan=span;th.scope='colgroup';groups.append(th)}
       thead.prepend(groups);
     }
-    const labels=[t('モデル','MODEL'),t('推論が実行される場所','INFERENCE LOCATION'),t('標準価格 · USD / 1M tokens','STANDARD PRICE · USD / 1M tokens'),t('その他','ADDITIONAL')];
+    const labels=[t('モデル','MODEL'),t('推論が実行される場所','INFERENCE LOCATION'),t('価格 · USD','PRICE · USD')];
     [...groups.children].forEach((th,i)=>text(th,labels[i]));
     for(const row of rows){
       const cell=row.querySelector('.sticky-provider');
