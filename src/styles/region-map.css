@@ -8,7 +8,7 @@
 .map-legend .map-legend-output:before{border-color:#b8acff;border-top-style:dashed}
 .map-legend .map-legend-logs:before{border-color:#f3c783}
 .map-diagram-scroll{overflow-x:auto;overscroll-behavior-x:contain}
-.map-diagram-scroll .inference-map{display:block;width:100%;height:auto;overflow:hidden!important;min-width:720px!important;background:radial-gradient(#8cd4e213 .7px,transparent .8px);background-size:10px 10px}
+.map-diagram-scroll .inference-map{display:block;width:100%;height:auto;overflow:hidden!important;min-width:0!important;background:radial-gradient(#8cd4e213 .7px,transparent .8px);background-size:10px 10px}
 .map-land{fill:#173b4c;stroke:#3c7082;stroke-width:.8;fill-rule:evenodd}
 .map-grid{fill:none;stroke:#80c3dc;stroke-opacity:.08;stroke-dasharray:2 5;stroke-width:.7}
 .map-route,.map-local-route{fill:none;stroke:#62e3f7;stroke-width:2;filter:drop-shadow(0 0 4px #2cd8f766);opacity:.9}
@@ -53,3 +53,6 @@
 .map-zoom button:last-child{border-right:0}.map-zoom button:hover:not(:disabled){background:#164455;color:#fff}.map-zoom button:disabled{opacity:.3;cursor:default}
 .map-zoom button:focus-visible{outline:2px solid #73d9ef;outline-offset:-2px}
 @media(max-width:600px){.map-header{gap:8px}.map-count{font-size:9px}.map-zoom button{min-width:25px;padding:0 5px}}
+
+/* Fit the map and its controls inside narrow detail panels. */
+@media(max-width:600px){.map-header{flex-wrap:wrap}.map-header>div:first-child{flex:1 0 100%}.map-header .map-count{margin-left:0}.map-header .map-zoom{margin-left:auto}}
