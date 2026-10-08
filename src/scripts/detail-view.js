@@ -8,6 +8,7 @@ import {
   LANE_ORDER,
   buildDestinationLines,
   buildDetail,
+  buildMantlePriceRows,
   buildPriceRows,
   globalExtrasMissing,
   resolveLane,
@@ -18,8 +19,8 @@ import { createCopyable } from "./copy.js";
 import { geoAreaLabel } from "./geo-labels.js";
 import { t, getLang, LANG_CHANGED_EVENT } from "./i18n.js";
 import { regionName } from "./region-names.js";
-import { DOCS_BASE, buildFeatureRows } from "./feature-model.mjs";
-import { featureLegend, markNo, markYes } from "./table-view.js";
+import { DOCS_BASE, buildFeatureRows, inferenceMismatches, modelDocsUrl } from "./feature-model.mjs";
+import { featureLegend, markNo, markYes, mismatchText } from "./table-view.js";
 
 // 出典: bedrock-mantle の対応モデル表 (MANTLE-001 AC-006)。
 const MANTLE_AVAILABILITY_DOC =
@@ -208,17 +209,8 @@ function destinationSection(lane, { destinations, region, regionNotes, available
   return section;
 }
 
-// AC-013: レーンごとの価格。
-function priceSection(modelId, { prices, region, regionNotes, lane, available }) {
-  const section = el("section", "detail-price");
-  section.appendChild(el("h4", null, t("price.heading")));
-  const rows = buildPriceRows(modelId, { prices, region, lane });
-
-  if (rows.length === 0) {
-    section.appendChild(el("p", "detail-no-price", t("price.none")));
-    return section;
-  }
-
+// 価格の行を表にする。Runtime と Mantle で同じ形を使う。
+function priceTable(rows) {
   const wrap = el("div", "price-wrap");
   const table = el("table", "detail-price-table price-table");
   const thead = document.createElement("thead");
@@ -237,6 +229,7 @@ function priceSection(modelId, { prices, region, regionNotes, lane, available })
     let label = row.kind === "metered" ? row.label : t(`price.kind.${row.kind}`);
     if (row.maxInputTokens) label += ` · ${t("price.shortContext", { count: row.maxInputTokens.toLocaleString("en-US") })}`;
     if (row.minInputTokens) label += ` · ${t("price.longContext", { count: row.minInputTokens.toLocaleString("en-US") })}`;
+    else if (row.longContext) label += ` · ${t("price.longContextTier")}`;
     tr.appendChild(el("td", "detail-price-kind", label));
     for (const value of [row.input, row.output]) {
       const text = formatPrice(value);
@@ -247,25 +240,75 @@ function priceSection(modelId, { prices, region, regionNotes, lane, available })
   }
   table.append(thead, tbody);
   wrap.appendChild(table);
-  section.appendChild(wrap);
+  return wrap;
+}
+
+// AC-013: レーンごとの価格。bedrock-mantle の単価は Runtime と別に決まるので、別の表にする。
+// D-018: 価格未収録のときに docs のモデルカード (無ければ料金ページ) へ案内するリンク。
+function docsLink(modelId, features) {
+  const wrap = el("p", "detail-price-docs");
+  const link = el("a", "doc-link price-docs-link", t("price.docsLinkDetail"));
+  link.href = modelDocsUrl(features, modelId);
+  link.target = "_blank";
+  link.rel = "noreferrer";
+  wrap.appendChild(link);
+  return wrap;
+}
+
+function priceSection(modelId, { prices, features, region, regionNotes, lane, available, summaries }) {
+  const section = el("section", "detail-price");
+  section.appendChild(el("h4", null, t("price.heading")));
+  const rows = buildPriceRows(modelId, { prices, region, lane });
+  const mantleRows = buildMantlePriceRows(modelId, { prices, region });
+
+  // AC-016 (2026-10-08 変更): 呼べないレーンには単価の表を出さない。東京の標準の単価は Geo で呼んだときの価格でも
+  // あるので、In-Region の不可のタブに並べると「提供なしなのに価格がある」と読める。同じ標準の単価を使えるレーンを案内する。
+  if (!available && (rows.length > 0 || mantleRows.length > 0)) {
+    const alternatives = lane === LANE_GLOBAL ? [] : [LANE_IN_REGION, LANE_GEO].filter((other) => other !== lane && summaries?.[other]?.available);
+    const text = alternatives.length > 0
+      ? t("price.unavailableLaneSeeOther", { lane: alternatives.map((other) => laneTitle(other, summaries[other])).join(" / ") })
+      : t("price.unavailableLaneHidden");
+    section.appendChild(el("p", "detail-price-unavailable note-muted", text));
+    return section;
+  }
+
+  if (rows.length === 0 && mantleRows.length === 0) {
+    section.appendChild(el("p", "detail-no-price", t("price.none")));
+    section.appendChild(docsLink(modelId, features));
+    return section;
+  }
+
+  const runtime = el("div", "detail-price-runtime");
+  // Mantle の表があるときだけ、どちらの接続先の単価かを見出しで分ける。
+  if (mantleRows.length > 0) runtime.appendChild(el("h5", "detail-price-endpoint mono", t("price.runtimeHeading")));
+  if (rows.length > 0) {
+    runtime.appendChild(priceTable(rows));
+  } else {
+    runtime.appendChild(el("p", "detail-no-price", t("price.none")));
+    runtime.appendChild(docsLink(modelId, features));
+  }
+  // D-018: Price List に無く、AWS Marketplace の offer の単価を出しているときは出典を書く。
+  const source = prices?.byModel?.[modelId]?.[region]?.source;
+  if (rows.length > 0 && source?.type === "marketplace") {
+    runtime.appendChild(el("p", "note-muted detail-price-source", t("price.sourceMarketplaceDetail", { offerId: source.offerId ?? "—" })));
+  }
+  section.appendChild(runtime);
+
+  if (mantleRows.length > 0) {
+    const mantle = el("div", "detail-price-mantle");
+    mantle.appendChild(el("h5", "detail-price-endpoint mono", t("price.mantleHeading")));
+    mantle.appendChild(priceTable(mantleRows));
+    mantle.appendChild(el("p", "note-muted detail-price-mantle-note", t("price.mantleNote")));
+    section.appendChild(mantle);
+  }
 
   const notes = [t("price.unit", { place: regionName(region, getLang(), regionNotes) })];
   if (lane === LANE_GEO) notes.push(t("price.geoSame"));
   if (lane === LANE_GLOBAL && globalExtrasMissing(modelId, { prices, region })) {
-    notes.push(t("price.globalMissing"));
+    // Mantle の表にはバッチ・キャッシュが並ぶことがあるので、Runtime に限った文言にする。
+    notes.push(t(mantleRows.length > 0 ? "price.globalMissingRuntime" : "price.globalMissing"));
   }
-  // AC-016: 使えないレーンでも単価があれば表は出す。呼べないことを注記で足す。
-  if (!available) notes.push(t("price.unavailableLane"));
   section.appendChild(el("p", "detail-price-unit price-unit", notes.join(" ")));
-  const supplement = prices?.byModel?.[modelId]?.[region]?.supplementSources?.[lane === LANE_GLOBAL ? "global" : "standard"];
-  const meteredSupplement = prices?.byModel?.[modelId]?.[region]?.supplementSources?.metered;
-  for (const sourceInfo of [supplement, ...(lane === LANE_GLOBAL ? [] : [meteredSupplement])].filter(Boolean)) {
-    const source = el("a", "detail-price-source", t("price.modelCardSource", { date: sourceInfo.verifiedAt }));
-    source.href = sourceInfo.url;
-    source.target = "_blank";
-    source.rel = "noreferrer";
-    section.appendChild(source);
-  }
   return section;
 }
 
@@ -405,7 +448,20 @@ function laneBlock(lane, { modelId, detail, regionNotes, profile, available, hea
   return block;
 }
 
-function lanePanel(lane, { modelId, detail, regionNotes, prices }) {
+// docs のモデルカードと ListInferenceProfiles の推論 ID の食い違い。表の判定は API に従い、ここで注釈する。
+function mismatchNote(modelId, lane, { features, profiles }) {
+  const mismatch = inferenceMismatches(features, profiles, modelId)[lane === LANE_GEO ? "geo" : "global"];
+  if (!mismatch) return null;
+  const note = el("p", "note-warn inference-mismatch", `${t("mismatch.heading")} ${mismatchText(mismatch)} `);
+  const link = el("a", "doc-link", t("mismatch.docs"));
+  link.href = modelDocsUrl(features, modelId);
+  link.target = "_blank";
+  link.rel = "noreferrer";
+  note.appendChild(link);
+  return note;
+}
+
+function lanePanel(lane, { modelId, detail, regionNotes, prices, features, profiles }) {
   const summary = detail.summaries[lane];
   const panel = el("div", "lane-panel");
   panel.id = laneId(modelId, lane);
@@ -454,14 +510,21 @@ function lanePanel(lane, { modelId, detail, regionNotes, prices }) {
     );
   }
 
+  if (lane === LANE_GEO || lane === LANE_GLOBAL) {
+    const note = mismatchNote(modelId, lane, { features, profiles });
+    if (note) panel.appendChild(note);
+  }
+
   // AC-018: 価格の節はブロックごとに繰り返さず、パネルの末尾に 1 つだけ。
   panel.appendChild(
     priceSection(modelId, {
       prices,
+      features,
       region: detail.region,
       regionNotes,
       lane,
       available: summary.available,
+      summaries: detail.summaries,
     }),
   );
   return panel;
@@ -582,7 +645,7 @@ export function mountDetailView({
     const tabs = laneTabs(modelId, detail, { onSelect: select });
     panel.appendChild(tabs.tablist);
     for (const lane of LANE_ORDER) {
-      const element = lanePanel(lane, { modelId, detail, regionNotes, prices });
+      const element = lanePanel(lane, { modelId, detail, regionNotes, prices, features, profiles });
       panels.set(lane, element);
       panel.appendChild(element);
     }

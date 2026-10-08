@@ -2,9 +2,8 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { meteredPriceOf, normalizePrices } from '../scripts/lib/prices.mjs';
-import { applyPriceSupplements } from '../scripts/lib/price-supplements.mjs';
 import { comparisonPrices, buildRow } from '../src/scripts/bedrock-view-model.mjs';
-import { buildPriceRows } from '../src/scripts/detail-model.mjs';
+import { buildMantlePriceRows, buildPriceRows } from '../src/scripts/detail-model.mjs';
 
 const product = (attributes) => ({ sku: 'example', attributes });
 const rate = (attributes, usd, unit) => meteredPriceOf(product(attributes), { usd, unit });
@@ -53,23 +52,86 @@ describe('トークン以外の課金単位', () => {
   });
 });
 
-it('補完は指定リージョン限定、既存API価格を保持する', () => {
-  const prices = { byModel: { model: { 'us-east-1': { metered: [{ axis: 'output', unit: 'image', value: .05 }] } } } };
-  applyPriceSupplements(prices, {}, { byModel: { model: { regions: ['us-east-1', 'us-west-2'], metered: [{ axis: 'output', unit: 'image', value: .07 }], sourceUrl: 'https://aws.amazon.com/bedrock/pricing/', verifiedAt: '2026-09-21' } } });
-  expect(prices.byModel.model['us-east-1'].metered[0].value).toBe(.05);
-  expect(prices.byModel.model['us-west-2'].metered[0].value).toBe(.07);
-  expect(prices.byModel.model['ap-northeast-1']).toBeUndefined();
-  expect(prices.byModel.model['us-west-2'].supplementSources.metered.url).toContain('aws.amazon.com');
-});
-
-it('実データは公式価格との対応が未確認の旧Titan ID以外を収録する', () => {
+describe('実データ (件数・モデル名を固定せず、取り直しに追従する)', () => {
   const read = (name) => JSON.parse(readFileSync(new URL(`../data/${name}.json`, import.meta.url)));
   const models = read('models'), prices = read('prices');
-  const missing = Object.keys(models).filter(id => comparisonPrices(prices, id, 'ap-northeast-1').length === 0);
-  expect(missing).toEqual(['amazon.titan-embed-g1-text-02']);
-  const rows = buildPriceRows('openai.gpt-6-astra', { prices, region: 'ap-northeast-1', lane: 'global' });
-  expect(rows).toEqual([
-    { kind: 'global', input: 10, output: 50, maxInputTokens: 272000 },
-    { kind: 'global', input: 20, output: 75, minInputTokens: 272000 },
-  ]);
+
+  // bedrock-runtime の単価の種別。mantle の下は bedrock-mantle の単価で、一覧の価格列には使わない
+  const RUNTIME_KINDS = ['standard', 'global', 'batch', 'cacheRead', 'cacheWrite', 'priority', 'flex', 'metered'];
+  const hasRuntime = (id) => Object.values(prices.byModel[id] ?? {}).some((entry) => RUNTIME_KINDS.some((kind) => entry[kind]));
+  const hasMantle = (id) => Object.values(prices.byModel[id] ?? {}).some((entry) => entry.mantle);
+
+  it('一覧で価格が出ないモデルは、prices.json のどのリージョンにも Runtime の単価が無い (取り込みの不具合ではない)', () => {
+    const missing = Object.keys(models).filter(id => comparisonPrices(prices, id, 'ap-northeast-1').length === 0);
+    if (missing.length > 0) console.info(`Runtime の単価が無いモデル: ${missing.join(', ')}`);
+    for (const id of missing) expect(hasRuntime(id), id).toBe(false);
+  });
+
+  it('Runtime か Mantle の単価があるモデルが 4 分の 3 以上 (価格の大量消失を検出する)', () => {
+    const ids = Object.keys(models);
+    const priced = ids.filter((id) => hasRuntime(id) || hasMantle(id));
+    expect(priced.length / ids.length).toBeGreaterThanOrEqual(0.75);
+    expect(ids.filter(hasMantle).length).toBeGreaterThan(0);
+  });
+
+  it('prices.json のモデル ID はすべて models.json にある', () => {
+    for (const id of Object.keys(prices.byModel)) expect(models, id).toHaveProperty([id]);
+  });
+
+  it('長文コンテキストの単価があれば、詳細の価格行にそのまま出る', () => {
+    let checked = 0;
+    for (const [id, regions] of Object.entries(prices.byModel)) {
+      for (const [region, entry] of Object.entries(regions)) {
+        for (const [kind, lane] of [['standard', 'inRegion'], ['global', 'global']]) {
+          const longContext = entry[kind]?.longContext;
+          if (!longContext) continue;
+          expect(buildPriceRows(id, { prices, region, lane }), `${id} ${region} ${kind}`)
+            .toContainEqual({ kind, ...longContext, longContext: true });
+          checked += 1;
+        }
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+
+  it('Mantle の単価があれば、詳細の Mantle の価格行にそのまま出て、Runtime の行には混ざらない', () => {
+    let checked = 0;
+    for (const [id, regions] of Object.entries(prices.byModel)) {
+      for (const [region, entry] of Object.entries(regions)) {
+        if (!entry.mantle?.standard) continue;
+        const { longContext, ...standard } = entry.mantle.standard;
+        expect(buildMantlePriceRows(id, { prices, region }), `${id} ${region}`)
+          .toContainEqual({ kind: 'standard', input: standard.input ?? null, output: standard.output ?? null });
+        const runtime = buildPriceRows(id, { prices, region }).find((row) => row.kind === 'standard');
+        expect(runtime ?? null, `${id} ${region}`).toEqual(entry.standard ? expect.objectContaining({ input: entry.standard.input ?? null }) : null);
+        checked += 1;
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+});
+
+describe('実データ: AWS Marketplace の offer で補った単価 (D-018)', () => {
+  const read = (name) => JSON.parse(readFileSync(new URL(`../data/${name}.json`, import.meta.url)));
+  const prices = read('prices'), marketplace = read('marketplace-prices');
+
+  it('出典が marketplace のリージョンは、prices.marketplace.models のモデルだけにあり、offerId を持つ', () => {
+    const listed = new Set(prices.marketplace?.models ?? []);
+    let checked = 0;
+    for (const [id, regions] of Object.entries(prices.byModel)) {
+      for (const [region, entry] of Object.entries(regions)) {
+        if (entry.source?.type !== 'marketplace') continue;
+        expect(listed.has(id), `${id} ${region}`).toBe(true);
+        expect(entry.source.offerId, `${id} ${region}`).toBe(marketplace.byModel[id]?.offerId);
+        checked += 1;
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+
+  it('marketplace-prices.json に offer のトークンやアカウント ID が入っていない', () => {
+    const text = JSON.stringify(marketplace);
+    expect(text).not.toMatch(/offerToken/);
+    expect(text).not.toMatch(/\b\d{12}\b/);
+  });
 });

@@ -10,6 +10,7 @@ import {
   bfmDimension,
   buildNameIndex,
   kindOf,
+  checkPriceGuard,
   normalizePrices,
   priceFileUrl,
   readProduct,
@@ -61,8 +62,11 @@ describe("AC-001 取得対象は fetch-log.json の status: ok のリージョ�
     expect(regions).toEqual(["ap-northeast-1", "us-east-1"]);
   });
 
-  it("実データの fetch-log.json では 17 リージョンが対象になる", () => {
-    expect(okRegions(read("../data/fetch-log.json"))).toHaveLength(17);
+  it("実データの fetch-log.json では status: ok のリージョンがすべて対象になる", () => {
+    const fetchLog = read("../data/fetch-log.json");
+    const ok = Object.entries(fetchLog.regions).filter(([, entry]) => entry.status === "ok").map(([region]) => region);
+    expect(okRegions(fetchLog)).toEqual(ok.sort());
+    expect(ok.length).toBeGreaterThan(0);
   });
 
   it("--regions で対象を絞れる。省くと既定 (ok のリージョン全件)", () => {
@@ -116,6 +120,11 @@ describe("AC-004 USD / 100 万トークンに揃える", () => {
     expect(toPerMillion("0.0000180000", "1K tokens")).toBe(0.018);
   });
 
+  it("単位の大文字小文字は問わない (Nova 2.5 Sonic は 1k tokens)", () => {
+    expect(toPerMillion("0.0003300000", "1k tokens")).toBe(0.33);
+    expect(toPerMillion("5.5000000000", "1m tokens")).toBe(5.5);
+  });
+
   it("1M tokens の単価はそのまま", () => {
     expect(toPerMillion("5.5000000000", "1M tokens")).toBe(5.5);
   });
@@ -150,8 +159,13 @@ describe("AC-004 USD / 100 万トークンに揃える", () => {
     expect(kindOf("input", { flex: true })).toBe("flex");
     expect(kindOf("cacheRead", {})).toBe("cacheRead");
     // Global と batch / flex / priority の組み合わせは v1 の範囲外
-    expect(kindOf("input", { global: true, batch: true })).toBeNull();
-    expect(kindOf("cacheRead", { global: true })).toBeNull();
+    // Global のバッチ・キャッシュは別の種別として持つ。Global と priority / flex の組み合わせは範囲外
+    expect(kindOf("input", { global: true, batch: true })).toBe("globalBatch");
+    expect(kindOf("cacheRead", { global: true })).toBe("globalCacheRead");
+    expect(kindOf("cacheWrite", { global: true })).toBe("globalCacheWrite");
+    expect(kindOf("cacheRead", { global: true, batch: true })).toBeNull();
+    expect(kindOf("input", { global: true, priority: true })).toBeNull();
+    expect(kindOf("input", { global: true, flex: true })).toBeNull();
     expect(kindOf(null, {})).toBeNull();
   });
 
@@ -196,6 +210,22 @@ describe("AC-004 USD / 100 万トークンに揃える", () => {
       },
     });
     expect(row).toMatchObject({ sourceName: "Claude Opus 5", axis: "output", kind: "global" });
+    // 長文コンテキスト (long_ctx) は standard / global の longContext として読む。
+    // キャッシュの long_ctx は範囲外 (読む順で cache の値に混ざらないように)
+    const longOut = readProduct("AmazonBedrockFoundationModels", {
+      attributes: { servicename: "OpenAI GPT-6 Astra (Amazon Bedrock Edition)", usagetype: "USE1-MP:USE1_output_tokens_long_ctx_standard-Units" },
+    });
+    expect(longOut).toMatchObject({ axis: "output", kind: "standard", longContext: true });
+    const longGlobal = readProduct("AmazonBedrockFoundationModels", {
+      attributes: { servicename: "OpenAI GPT-6 Astra (Amazon Bedrock Edition)", usagetype: "USE1-MP:USE1_input_tokens_long_ctx_global_standard-Units" },
+    });
+    expect(longGlobal).toMatchObject({ axis: "input", kind: "global", longContext: true });
+    for (const dimension of ["cache_read_tokens_long_ctx_standard", "cache_write_tokens_30m_long_ctx_standard"]) {
+      const longCache = readProduct("AmazonBedrockFoundationModels", {
+        attributes: { servicename: "OpenAI GPT-6 Astra (Amazon Bedrock Edition)", usagetype: `USE1-MP:USE1_${dimension}-Units` },
+      });
+      expect(longCache.kind, dimension).toBeNull();
+    }
     // 旧い Claude は CamelCase の寸法
     expect(
       readProduct("AmazonBedrockFoundationModels", {
@@ -276,10 +306,11 @@ describe("AC-004 / AC-006 prices.json の中身", () => {
     expect(prices.byModel[TITAN][TOKYO].standard).toEqual({ input: 0.2 });
   });
 
-  it("Mantle の SKU と トークン以外の単位は載らない", () => {
-    // Mantle も NovaCanvas (image) も同じ fixture に入っているが byModel には現れない
-    const values = JSON.stringify(prices.byModel);
-    expect(values).not.toContain("mantle");
+  it("Mantle の SKU は Runtime の単価に混ざらず、mantle の下に別に入る", () => {
+    // fixture の Mantle SKU は NVIDIA Nemotron Nano 2 VL の 1 件
+    const entry = prices.byModel[NVIDIA][TOKYO];
+    expect(entry.standard).toEqual({ input: 0.24, output: 0.73 });
+    expect(Object.keys(entry.mantle ?? {}).length).toBeGreaterThan(0);
     expect(prices.outOfScope).toBeGreaterThan(0);
   });
 
@@ -311,6 +342,166 @@ describe("AC-004 / AC-006 prices.json の中身", () => {
       output: 27.5,
     });
     expect(real.byModel["anthropic.claude-opus-5"][TOKYO].global).toEqual({ input: 5, output: 25 });
+  });
+});
+
+// --- 価格表の書き方の揺れ (2026-10-07 の取得で見つかったもの) ---
+describe("AC-004 / AC-005 価格表の揺れを API の値のまま取り込む", () => {
+  // 最小の offer ファイルを組み立てる。rows は [sku 属性, USD, 単位]
+  const offerFile = (rows) => {
+    const products = {};
+    const OnDemand = {};
+    rows.forEach(([attributes, usd, unit], index) => {
+      const sku = `SKU${index}`;
+      products[sku] = { sku, attributes };
+      OnDemand[sku] = { [`${sku}.T`]: { priceDimensions: { [`${sku}.T.D`]: { pricePerUnit: { USD: usd }, unit } } } };
+    });
+    return { publicationDate: "2026-10-06T00:00:00Z", products, terms: { OnDemand } };
+  };
+  const normalize = (files, models) => normalizePrices({ files, models, map: {}, generatedAt: "x" });
+
+  it("long_ctx の SKU は standard / global の longContext に入り、標準の単価を上書きしない", () => {
+    const bfm = (dimension) => ({ servicename: "OpenAI GPT-6 Astra (Amazon Bedrock Edition)", usagetype: `USE1-MP:USE1_${dimension}-Units` });
+    const rows = [
+      [bfm("output_tokens_long_ctx_standard"), "82.5", "1M tokens"],
+      [bfm("output_tokens_standard"), "55", "1M tokens"],
+      [bfm("input_tokens_long_ctx_standard"), "22", "1M tokens"],
+      [bfm("input_tokens_standard"), "11", "1M tokens"],
+      [bfm("input_tokens_long_ctx_global_standard"), "20", "1M tokens"],
+      [bfm("input_tokens_global_standard"), "10", "1M tokens"],
+      [bfm("output_tokens_long_ctx_global_standard"), "75", "1M tokens"],
+      [bfm("output_tokens_global_standard"), "50", "1M tokens"],
+      [bfm("cache_read_tokens_long_ctx_standard"), "2.2", "1M tokens"],
+      [bfm("cache_read_tokens_standard"), "1.1", "1M tokens"],
+    ];
+    const { prices } = normalize(
+      { AmazonBedrockFoundationModels: { "us-east-1": offerFile(rows) } },
+      { "openai.gpt-6-astra": { provider: "OpenAI", name: "GPT-6 Astra" } },
+    );
+    expect(prices.byModel["openai.gpt-6-astra"]["us-east-1"]).toEqual({
+      standard: { input: 11, output: 55, longContext: { input: 22, output: 82.5 } },
+      global: { input: 10, output: 50, longContext: { input: 20, output: 75 } },
+      cacheRead: { input: 1.1 },
+    });
+    expect(prices.unmapped).toBe(0);
+  });
+
+  it("価格表の名前の先頭にプロバイダ名が付いていても自動で引ける", () => {
+    const models = { "openai.gpt-6-astra": { provider: "OpenAI", name: "GPT-6 Astra" } };
+    expect(resolveModelIds("OpenAI GPT-6 Astra", { nameIndex: buildNameIndex(models) })).toEqual(["openai.gpt-6-astra"]);
+  });
+
+  it("model 属性がモデル ID そのもの (xai.grok-4.6) でも引ける", () => {
+    const models = { "xai.grok-4.6": { provider: "xAI", name: "Grok 4.6" } };
+    expect(resolveModelIds("xai.grok-4.6", { nameIndex: buildNameIndex(models) })).toEqual(["xai.grok-4.6"]);
+  });
+
+  it("Runtime と Mantle の単価は別々に持ち、値が違っても混ぜない (Qwen3 Next 80B)", () => {
+    const sku = (tail, service_tier) => ({ model: "Qwen3 Next 80B A3B", usagetype: `APS3-${tail}`, service_tier });
+    const rows = [
+      [sku("qwen.qwen3-next-80b-a3b-input-tokens-standard", "standard"), "0.18", "1M tokens"],
+      [sku("qwen.qwen3-next-80b-a3b-output-tokens-standard", "standard"), "1.41", "1M tokens"],
+      [sku("qwen.qwen3-next-80b-a3b-mantle-input-tokens-standard", "standard"), "0.168", "1M tokens"],
+      [sku("qwen.qwen3-next-80b-a3b-mantle-output-tokens-standard", "standard"), "1.44", "1M tokens"],
+      [sku("qwen.qwen3-next-80b-a3b-mantle-input-tokens-batch", "batch"), "0.084", "1M tokens"],
+    ];
+    const { prices } = normalize(
+      { AmazonBedrock: { "ap-south-1": offerFile(rows) } },
+      { "qwen.qwen3-next-80b-a3b": { provider: "Qwen", name: "Qwen3 Next 80B A3B" } },
+    );
+    expect(prices.byModel["qwen.qwen3-next-80b-a3b"]["ap-south-1"]).toEqual({
+      standard: { input: 0.18, output: 1.41 },
+      mantle: { standard: { input: 0.168, output: 1.44 }, batch: { input: 0.084 } },
+    });
+  });
+
+  it("Mantle の SKU しか無いモデルは Runtime の単価を持たず、mantle だけを持つ (Grok 4.7)", () => {
+    const sku = (tail, service_tier) => ({ model: "Grok 4.7", usagetype: `USE1-xai.grok-4.7-mantle-${tail}`, service_tier });
+    const rows = [
+      [sku("input-tokens-standard", "standard"), "2.2", "1M tokens"],
+      [sku("output-tokens-standard", "standard"), "6.6", "1M tokens"],
+      [sku("input-tokens-global-standard", "global-standard"), "2", "1M tokens"],
+    ];
+    const { prices } = normalize(
+      { AmazonBedrock: { "us-east-1": offerFile(rows) } },
+      { "xai.grok-4.7": { provider: "xAI", name: "Grok 4.7" } },
+    );
+    expect(prices.byModel["xai.grok-4.7"]["us-east-1"]).toEqual({
+      mantle: { standard: { input: 2.2, output: 6.6 }, global: { input: 2 } },
+    });
+  });
+
+  it("Mantle の long_ctx も mantle の下の longContext に入る", () => {
+    const rows = [
+      [{ model: "M", usagetype: "USE1-x.m-mantle-input-tokens-standard", service_tier: "standard" }, "1", "1M tokens"],
+      [{ model: "M", usagetype: "USE1-x.m-mantle-input-tokens-long_ctx-standard", service_tier: "standard" }, "2", "1M tokens"],
+    ];
+    const { prices } = normalize({ AmazonBedrock: { "us-east-1": offerFile(rows) } }, { "x.m": { provider: "X", name: "M" } });
+    expect(prices.byModel["x.m"]["us-east-1"]).toEqual({ mantle: { standard: { input: 1, longContext: { input: 2 } } } });
+  });
+
+  it("models.json に無いモデルの Mantle の SKU は unmapped に数えない (Mantle 専用モデル)", () => {
+    const rows = [[{ model: "xai.grok-4.3", usagetype: "USE1-xai.grok-4.3-mantle-input-tokens-standard", service_tier: "standard" }, "1", "1M tokens"]];
+    const { prices } = normalize({ AmazonBedrock: { "us-east-1": offerFile(rows) } }, {});
+    expect(prices.unmapped).toBe(0);
+    expect(prices.outOfScope).toBe(1);
+    expect(prices.byModel).toEqual({});
+  });
+
+  it("地図が models.json に無い ID を指していても書き出さない (API から消えたモデル)", () => {
+    const rows = [[{ model: "Nova Canvas", usagetype: "USE1-NovaCanvas-input-tokens", inferenceType: "Input tokens" }, "0.001", "1K tokens"]];
+    const { prices } = normalizePrices({
+      files: { AmazonBedrock: { "us-east-1": offerFile(rows) } },
+      models: {},
+      map: { "Nova Canvas": ["amazon.nova-canvas-v1:0"] },
+      generatedAt: "x",
+    });
+    expect(prices.byModel).toEqual({});
+    expect(prices.ignored).toBe(1);
+    expect(prices.unmapped).toBe(0);
+  });
+
+  it("long_ctx だけで標準の SKU が無い組も longContext を残す", () => {
+    const rows = [[{ servicename: "M (Amazon Bedrock Edition)", usagetype: "USE1-MP:USE1_input_tokens_long_ctx_standard-Units" }, "2", "1M tokens"]];
+    const { prices } = normalize({ AmazonBedrockFoundationModels: { "us-east-1": offerFile(rows) } }, { "x.m": { provider: "X", name: "M" } });
+    expect(prices.byModel["x.m"]["us-east-1"]).toEqual({ standard: { longContext: { input: 2 } } });
+  });
+
+  it("単位が読めない SKU (Units など) は範囲外に数える", () => {
+    const rows = [[{ servicename: "M (Amazon Bedrock Edition)", usagetype: "USE1-MP:USE1_cache_write_tokens_long_ctx_standard-Units" }, "1", "Units"]];
+    const { prices } = normalize({ AmazonBedrockFoundationModels: { "us-east-1": offerFile(rows) } }, { "x.m": { provider: "X", name: "M" } });
+    expect(prices.byModel).toEqual({});
+    expect(prices.outOfScope).toBe(1);
+  });
+
+  it("単位が小文字の 1k tokens でも単価が入る (Nova 2.5 Sonic)", () => {
+    const rows = [
+      [{ model: "Nova 2.5 Sonic", usagetype: "USE1-NovaSonic2.5-text-input-tokens", inferenceType: "Text Input Token" }, "0.00033", "1k tokens"],
+      [{ model: "Nova 2.5 Sonic", usagetype: "USE1-NovaSonic2.5-speech-input-tokens", inferenceType: "Speech Understanding input token" }, "0.003", "1k tokens"],
+    ];
+    const { prices } = normalize(
+      { AmazonBedrock: { "us-east-1": offerFile(rows) } },
+      { "amazon.nova-2-5-sonic": { provider: "Amazon", name: "Nova 2.5 Sonic" } },
+    );
+    expect(prices.byModel["amazon.nova-2-5-sonic"]["us-east-1"]).toEqual({ standard: { input: 0.33 } });
+  });
+});
+
+// --- 安全弁: 価格表の書式変更などで単価が大量に消えたら書き出さない ---
+describe("PRICE-001 安全弁 (checkPriceGuard)", () => {
+  const withModels = (n) => ({ byModel: Object.fromEntries(Array.from({ length: n }, (_, i) => [`m${i}`, {}])) });
+
+  it("価格のあるモデルが前回の半分以上なら通す", () => {
+    expect(checkPriceGuard(withModels(100), withModels(50))).toBeNull();
+    expect(checkPriceGuard(withModels(100), withModels(130))).toBeNull();
+  });
+
+  it("前回の半分未満なら理由を返す", () => {
+    expect(checkPriceGuard(withModels(100), withModels(49))).toMatch(/100.*49/);
+  });
+
+  it("前回が無い (初回) なら通す", () => {
+    expect(checkPriceGuard(null, withModels(1))).toBeNull();
   });
 });
 

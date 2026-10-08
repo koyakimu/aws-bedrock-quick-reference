@@ -115,17 +115,42 @@ export const ja = {
     docs: "Endpoint availability (公式 docs)",
   },
 
+  // In-Region / Geo / Global を接続先ごとに (2026-10-08)。
+  endpoint: {
+    runtimeTitle: "bedrock-runtime: API (ListFoundationModels / ListInferenceProfiles) の判定",
+    mantleTitle: "bedrock-mantle: docs のモデルカードの地域の表",
+    mantleShared: "bedrock-mantle: docs のモデルカードの地域の表 (接続先を分けていない表)",
+    mantleUnknown: "bedrock-mantle: docs に記載なし",
+  },
+
+  // docs のモデルカードと ListInferenceProfiles の推論 ID の食い違い。
+  mismatch: {
+    mark: "docs と相違",
+    heading: "docs のモデルカードと食い違いがあります（表の判定は API に従う）。",
+    detail: "ListInferenceProfiles: {api} / docs（bedrock-runtime）: {docs}",
+    none: "なし",
+    notSupported: "記載なし（Not supported）",
+    docs: "モデルカード（docs）",
+  },
+
   // PRICE-001: 価格。単価は USD / 100 万トークン。
   price: {
     sort: { none: "表示単価で並べ替え ↕", asc: "安い順 ↑", desc: "高い順 ↓" },
 
     "shortContext": "入力 {count} tokens 以下",
     "longContext": "入力 {count} tokens 超",
+    "longContextTier": "長文コンテキスト",
+    runtimeHeading: "bedrock-runtime",
+    sourceMarketplace: "出典: Marketplace",
+    sourceMarketplaceDetail: "出典: AWS Marketplace の offer（{offerId}）。Price List に未掲載のため、Bedrock の ListFoundationModelAgreementOffers が返す単価表の値を出している",
+    docsLink: "docs",
+    docsLinkDetail: "docs で価格を確認",
+    mantleHeading: "bedrock-mantle",
+    mantleNote: "bedrock-mantle の単価は価格表の Mantle 用 SKU の値で、bedrock-runtime とは別に決まる",
     "units": {"image": "画像", "second": "秒", "request": "リクエスト", "searchUnit": "検索単位"},
 
     unrecorded: "価格未収録",
     referenceRegion: "参考: {region}",
-    modelCardSource: "AWS公式情報による補完価格（確認: {date}）",
     inputColumn: "入力単価",
     outputColumn: "出力単価",
     heading: "価格",
@@ -135,7 +160,9 @@ export const ja = {
     unit: "USD / 100 万トークン（{place}）。画像・秒などは各行の単位。標準価格で、割引・契約価格・無料枠は含まない",
     geoSame: "Geo の推論プロファイルは標準価格と同じ",
     globalMissing: "Global 用のバッチ・キャッシュ価格は未収録",
-    unavailableLane: "価格は掲載されているが、この使い方では呼べない",
+    globalMissingRuntime: "bedrock-runtime の Global 用のバッチ・キャッシュ価格は未収録",
+    unavailableLaneHidden: "この使い方では呼べないため、価格は出していません",
+    unavailableLaneSeeOther: "この使い方では呼べないため、価格は出していません。同じ標準の単価は「{lane}」のタブに出ています",
     none: "この起点リージョンの価格データがありません",
     globalHint: "Global で推論したときの 入力 / 出力 の単価（USD / 100 万トークン）",
     fetchedAt: "価格の取得日: {date}",
@@ -149,6 +176,9 @@ export const ja = {
       cacheWrite: "キャッシュ書き",
       priority: "優先",
       flex: "Flex",
+      globalBatch: "Global バッチ",
+      globalCacheRead: "Global キャッシュ読み",
+      globalCacheWrite: "Global キャッシュ書き",
     },
   },
   // FEATURE-001: 機能 (Capabilities and Features)。機能名そのものは docs の英語名のまま出すので辞書に置かない。

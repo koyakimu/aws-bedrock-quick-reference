@@ -290,9 +290,10 @@ describe("AC-006 値の 3 状態と byModel", () => {
     expect(confirmed.features.unmatchedCards).toEqual([]);
   });
 
-  it("bedrock-runtime の行が無いカードは no-runtime-id。未知の機能名は ID が引けなくても数える", () => {
+  it("bedrock-runtime の行が無く、mantle の行の ID も models.json に無いカードは no-runtime-id。未知の機能名は ID が引けなくても数える", () => {
     const md = markdownOf(LUNA)
       .replace(/\n\| bedrock-runtime \| openai\.gpt-6-luna[^\n]*/, "")
+      .replace("| bedrock-mantle | openai.gpt-6-luna |", "| bedrock-mantle | openai.gpt-6-luna-mantle-only |")
       .replace("[Projects](projects.html)", "[Foo bar](foo.html)");
     const { features } = build({ cards: { ...allCards(), [LUNA]: md } });
     expect(features.unmatchedCards).toEqual([{ card: LUNA, modelId: null, reason: "no-runtime-id" }]);
@@ -443,5 +444,116 @@ describe("Explicit Prompt Caching を Prompt caching の表から補う", () => 
     expect(features.byModel[ID].mantle.explicitPromptCaching).toBe(true);
     expect(summary).toContain("### Conflicts");
     expect(summary).toContain(`- ${CARD}: runtime:Explicit Prompt Caching`);
+  });
+});
+
+// 推論 ID の食い違いの注釈 (2026-10-08): Programmatic Access の表から、接続先ごとの Geo / Global の推論 ID を読む。
+describe("parseModelCard: 接続先ごとの Geo / Global の推論 ID", () => {
+  const card = (rows) => [
+    "## Programmatic Access",
+    "",
+    "| **Endpoint** | **Model ID** | **In-Region endpoint URL** | **Geo inference ID** | **Global inference ID** | ",
+    "| --- | --- | --- | --- | --- | ",
+    ...rows,
+    "",
+  ].join("\n");
+
+  it("bedrock-runtime / bedrock-mantle の行ごとに Geo と Global の ID を持つ。Not supported / N/A は空", () => {
+    const parsed = parseModelCard(markdownOf(LUNA));
+    expect(parsed.endpoints).toEqual({
+      "bedrock-mantle": { modelId: "openai.gpt-6-luna", geo: [], global: [] },
+      "bedrock-runtime": { modelId: "openai.gpt-6-luna", geo: ["us.openai.gpt-6-luna"], global: ["global.openai.gpt-6-luna"] },
+    });
+  });
+
+  it("<br /> 区切りと、文の中に書かれた ID (Kimi K3) を拾う", () => {
+    const parsed = parseModelCard(card([
+      "| bedrock-runtime | moonshotai.kimi-k3 | https://bedrock-runtime.{region}.amazonaws.com | us.moonshotai.kimi-k3 in the commercial AWS Regions, in.moonshotai.kimi-k3 in the India Regions | global.moonshotai.kimi-k3 | ",
+    ]));
+    expect(parsed.endpoints["bedrock-runtime"]).toEqual({
+      modelId: "moonshotai.kimi-k3",
+      geo: ["us.moonshotai.kimi-k3", "in.moonshotai.kimi-k3"],
+      global: ["global.moonshotai.kimi-k3"],
+    });
+    const nova = parseModelCard(markdownOf(NOVA)).endpoints["bedrock-runtime"];
+    expect(nova.geo.length).toBeGreaterThan(1);
+  });
+
+  it("bedrock-runtime の行が無いカード (GPT-5.4) は mantle の行だけ", () => {
+    const parsed = parseModelCard(card(["| bedrock-mantle | openai.gpt-5.4 | https://bedrock-mantle.{region}.api.aws/openai/v1 | Not supported | Not supported | "]));
+    expect(parsed.endpoints).toEqual({ "bedrock-mantle": { modelId: "openai.gpt-5.4", geo: [], global: [] } });
+    expect(parsed.ids.runtime).toBeNull();
+  });
+});
+
+describe("resolveModelIds: bedrock-runtime の行が無いカードは bedrock-mantle の行のモデル ID で引く", () => {
+  it("models.json にある ID なら結び付ける。無ければ結び付けない", () => {
+    const parsed = { ids: { runtime: null, inference: [] }, endpoints: { "bedrock-mantle": { modelId: "openai.gpt-5.4", geo: [], global: [] } } };
+    expect(resolveModelIds("model-card-openai-gpt-54.html", parsed, { models: { "openai.gpt-5.4": {} }, map: {} })).toEqual(["openai.gpt-5.4"]);
+    expect(resolveModelIds("model-card-openai-gpt-54.html", parsed, { models: {}, map: {} })).toEqual([]);
+  });
+});
+
+// In-Region / Geo / Global を接続先ごとに出す (2026-10-08): Regional Availability / Supported Regions の表を読む。
+describe("parseModelCard: 接続先ごとの地域の表 (regions)", () => {
+  const YES = "![Green circle with white checkmark icon.](https://docs.aws.amazon.com/bedrock/latest/userguide/images/icons/icon-yes.png)";
+  const NO = "![Red circle with white X icon.](https://docs.aws.amazon.com/bedrock/latest/userguide/images/icons/icon-no.png)";
+  const ids = (rows) => ["## Programmatic Access", "", "| **Endpoint** | **Model ID** | **In-Region endpoint URL** | **Geo inference ID** | **Global inference ID** | ", "| --- | --- | --- | --- | --- | ", ...rows, ""];
+
+  it("古い書式: 接続先の見出しごとの表。値はアイコン", () => {
+    const md = [
+      ...ids(["| bedrock-runtime | m | x | us.m | global.m | ", "| bedrock-mantle | m | x | N/A | N/A | "]),
+      "## Regional Availability", "", "Availability differs by endpoint.", "",
+      "**Availability using the `bedrock-runtime` endpoint**", "", "",
+      "| **Region** | **In-Region** | **Geo** | **Global** | ", "| --- | --- | --- | --- | ",
+      `| us-east-1 (N. Virginia) | ${YES} | ${YES} | ${YES} | `,
+      `| ap-northeast-1 (Tokyo) | ${NO} | ${NO} | ${YES} | `, "",
+      "**Availability using the `bedrock-mantle` endpoint**", "", "",
+      "| **Region** | **In-Region** | **Geo** | **Global** | ", "| --- | --- | --- | --- | ",
+      `| ap-northeast-1 (Tokyo) | ${YES} | ${NO} | ${NO} | `, "",
+      "## Quotas and Limits", "",
+    ].join("\n");
+    expect(parseModelCard(md).regions).toEqual({
+      "bedrock-runtime": { inRegion: ["us-east-1"], geo: ["us-east-1"], global: ["ap-northeast-1", "us-east-1"] },
+      "bedrock-mantle": { inRegion: ["ap-northeast-1"], geo: [], global: [] },
+    });
+  });
+
+  it("新しい書式: Supported Regions の節で、値は Supported / Not supported、列名は US Geo CRIS / Global CRIS", () => {
+    const md = [
+      ...ids(["| bedrock-mantle | m | x | Not supported | Not supported | ", "| bedrock-runtime | m | Not supported | us.m | global.m | "]),
+      "## Supported Regions", "",
+      "**The `bedrock-mantle` endpoint**", "", "",
+      "| **Region** | **In-Region** | **Geo** | **Global** | ", "| --- | --- | --- | --- | ",
+      "| us-east-1 (US East (N. Virginia)) | Supported | Not supported | Not supported | ", "",
+      "**The `bedrock-runtime` endpoint**", "", "",
+      "| **Source Region** | **In-Region** | **US Geo CRIS** | **Global CRIS** | ", "| --- | --- | --- | --- | ",
+      "| us-east-1 | Not supported | Supported | Supported | ",
+      "| eu-central-1 | Not supported | Not supported | Supported | ", "",
+    ].join("\n");
+    expect(parseModelCard(md).regions).toEqual({
+      "bedrock-mantle": { inRegion: ["us-east-1"], geo: [], global: [] },
+      "bedrock-runtime": { inRegion: [], geo: ["us-east-1"], global: ["eu-central-1", "us-east-1"] },
+    });
+  });
+
+  it("接続先の見出しが無い表は、Programmatic Access に接続先が 1 つだけならその接続先の表とする", () => {
+    const md = [
+      ...ids(["| bedrock-runtime | m | x | us.m | Not supported | "]),
+      "## Regional Availability", "",
+      "| **Region** | **In-Region** | **Geo** | **Global** | ", "| --- | --- | --- | --- | ",
+      `| us-east-1 (N. Virginia) | ${YES} | ${YES} | ${NO} | `, "",
+    ].join("\n");
+    expect(parseModelCard(md).regions).toEqual({ "bedrock-runtime": { inRegion: ["us-east-1"], geo: ["us-east-1"], global: [] } });
+  });
+
+  it("接続先が 2 つあるのに見出しの無い表は、どちらか決めず shared (接続先を分けていない表) として読む", () => {
+    const md = [
+      ...ids(["| bedrock-runtime | m | x | us.m | global.m | ", "| bedrock-mantle | m | x | N/A | N/A | "]),
+      "## Regional Availability", "",
+      "| **Region** | **In-Region** | **Geo** | **Global** | ", "| --- | --- | --- | --- | ",
+      `| us-east-1 (N. Virginia) | ${YES} | ${YES} | ${YES} | `, "",
+    ].join("\n");
+    expect(parseModelCard(md).regions).toEqual({ shared: { inRegion: ["us-east-1"], geo: ["us-east-1"], global: ["us-east-1"] } });
   });
 });

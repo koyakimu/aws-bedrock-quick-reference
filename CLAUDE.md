@@ -11,6 +11,9 @@ Amazon Bedrock の **モデル × リージョン × 推論が実際に行われ
 - フレームワーク無しの DOM 描画。`package.json` の `dependencies` は**空のまま**にする (AC-009)
 - テストは vitest。DOM を触るテストは jsdom、ファイルを読むテストは先頭に
   `// @vitest-environment node` を書いて node 環境で走らせる
+- **実データ (`data/*.json`) を読むテストに件数・モデル名・単価の固定値を書かない**。取り直しで変わるので、
+  性質 (行数がビューモデルと一致、並びが日時の降順、価格の無いモデルはどのリージョンにも単価が無い、
+  確かめた件数が 0 より多い など) で確かめる。固定値は fixture (`tests/fixtures/`) を使うテストに書く (2026-10-08)
 
 ```
 data/
@@ -18,6 +21,7 @@ data/
 ├── overrides.json      # 手書き。モデル ID / プロファイル ID ごとの備考 (ja/en)
 ├── mantle.json         # 手書き。bedrock-mantle の提供リージョンと対応モデル (D-010)
 ├── price-model-map.json # 手書き。価格表のモデル名 → モデル ID (D-009)
+├── marketplace-prices.json # 生成物。手編集禁止。Marketplace の offer の単価 (D-018)
 ├── feature-names.json  # 手書き。docs の機能名 → 正規化キー・表示名・既定の列 (D-015)
 ├── feature-model-map.json # 手書き。自動で引けないモデルカード → モデル ID (D-015)
 ├── models.json         # 生成物。手編集禁止
@@ -29,11 +33,13 @@ data/
 scripts/
 ├── fetch-bedrock-snapshot.mjs  # 薄い CLI。引数を読んで lib/ を呼ぶだけ
 ├── fetch-bedrock-prices.mjs    # 価格の CLI。引数・fetch・書き出しだけを持つ
+├── fetch-bedrock-marketplace-prices.mjs # Marketplace の offer の CLI (SSO 必須。D-018)
 ├── fetch-bedrock-features.mjs  # 機能表の CLI。同上
 └── lib/
     ├── cli-args.mjs    # 引数解析 (純関数)
     ├── normalize.mjs   # 正規化 (純関数。I/O・時刻・ネットワークを持たない)
     ├── prices.mjs      # 価格の正規化 (純関数。同上)
+    ├── marketplace-prices.mjs # Marketplace の rateCard の正規化 (純関数。同上)
     ├── features.mjs    # モデルカードのパースと機能表の正規化 (純関数。同上)
     ├── aws-cli.mjs     # aws を子プロセスで起動する唯一のモジュール
     └── snapshot.mjs    # 取得の段取りとファイル書き出し (唯一の I/O 層)
@@ -110,6 +116,20 @@ Bash のサンドボックスを外す必要がある。
 
 ### 価格の取り直し方 (PRICE-001 / D-009)
 
+Price List の JSON の構造と、Bedrock の価格表での書き方 (usagetype・unit の揺れ、検証のしかた) は
+`docs/price-list-api.md` にまとめてある。読み方を変える前に読む。
+
+Price List に bedrock-runtime の単価が無いモデルは、AWS Marketplace の offer の単価で補う (D-018)。
+こちらは**認証が要る**ので、Price List の取り直しの前に手元の SSO で走らせる:
+
+```
+node scripts/fetch-bedrock-marketplace-prices.mjs --profile <名前>
+node scripts/fetch-bedrock-prices.mjs
+```
+
+`aws` を呼ぶので、エージェントから実行するときは Bash のサンドボックスを外す。Marketplace 経由でないモデルは
+`Agreement not supported for this model` になり、数えるだけで失敗にしない。
+
 価格は AWS Price List Bulk API から取る。**認証は要らない**ので `aws sso login` も
 `--profile` も不要。判定データ (`models.json` 等) を取り直した後に走らせる。
 
@@ -135,6 +155,11 @@ node scripts/fetch-bedrock-prices.mjs
   `AmazonBedrockFoundationModels` の `1M tokens` はそのまま
 - 取り込むのは 2 offer (`AmazonBedrock` / `AmazonBedrockFoundationModels`)。
   `AmazonBedrockService` と `AmazonBedrockAgentCore` はトークン単価を持たないので対象外
+- **価格は Price List を優先し、手書きの補完 JSON は作らない**。Price List に bedrock-runtime の単価が無いモデルは
+  Marketplace の offer で補い出典を出す (D-018)。それでも無いモデルは「価格未収録」と docs のリンクにし、
+  なぜ無いかは生 JSON の全文検索で確かめる (Marketplace 製品は掲載が遅れることがある)。`-mantle-` の SKU は
+  `byModel[M][R].mantle` に Runtime と分けて入れ (D-017)、`long_ctx` は `longContext` として読む
+  (spec-price.md の「Price List の書き方の揺れ」)。価格のあるモデルが前回の半分未満なら書き出さずに失敗する
 
 #### price-model-map.json を直すとき
 
@@ -265,8 +290,10 @@ source region R、モデル M について:
 | In-Region | R の `models.json[M].availability[R]` が `ON_DEMAND` を含む |
 | Geo | `profiles.json` に接頭辞が `global` **以外**で M を対象とし `sources[R]` を持つものがある（接頭辞の固定リストは持たない、D-012） |
 | Global | 同じく接頭辞 `global`。destination は API から取れないので `["*"]` で、画面では注記にする |
+| 接続先 (セルの下段) | Runtime は上の判定と同じ API。Mantle は `features.json` の `regions["bedrock-mantle"]` (無ければ `shared`)、Programmatic Access に mantle の行が無ければ不可、地域の表が無ければ In-Region だけ `mantle.json`。記載なしは「—」(D-020) |
+| docs と相違 | Geo / Global の推論 ID が、`features.json` の `endpoints` (docs のモデルカードの Programmatic Access の bedrock-runtime の行) と食い違う。判定は API のまま変えず、注釈だけ出す (D-019) |
 | データなし | `fetch-log.json.regions[R].status` が `denied` |
-| 入力 / 出力 $/1M | `prices.json.byModel[M][R].standard` の `input` / `output`。無ければ「—」 |
+| 入力 / 出力 $/1M | `prices.json.byModel[M][R].standard` の `input` / `output` (bedrock-runtime)。無ければ「—」。`.mantle` の下は bedrock-mantle の単価で、詳細パネルにだけ出す (D-017) |
 | 機能列 | `features.json.byModel[M].runtime[K]` / `.mantle[K]` が true / false / キーなし (記載なし)。記載なしを false に倒さない。起点リージョンには依らない |
 
 `PROVISIONED` は `availability` に保持するが、3 列の判定には使わない。

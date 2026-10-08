@@ -20,11 +20,12 @@ export const LANE_GEO = "geo";
 export const LANE_GLOBAL = "global";
 export const LANE_ORDER = Object.freeze([LANE_IN_REGION, LANE_GEO, LANE_GLOBAL]);
 
-// レーンごとの価格の種別 (AC-013)。In-Region / Geo は標準系、Global は global 行のみ。
+// レーンごとの価格の種別 (AC-013)。In-Region / Geo は標準系 (サービス階層の priority / flex を含む)、
+// Global は global 行のみ。priority / flex しか無いモデル (Qwen3 Next 80B の東京) もある。
 const LANE_PRICE_KINDS = Object.freeze({
-  [LANE_IN_REGION]: Object.freeze(["standard", "batch", "cacheRead", "cacheWrite"]),
-  [LANE_GEO]: Object.freeze(["standard", "batch", "cacheRead", "cacheWrite"]),
-  [LANE_GLOBAL]: Object.freeze(["global"]),
+  [LANE_IN_REGION]: Object.freeze(["standard", "batch", "cacheRead", "cacheWrite", "priority", "flex"]),
+  [LANE_GEO]: Object.freeze(["standard", "batch", "cacheRead", "cacheWrite", "priority", "flex"]),
+  [LANE_GLOBAL]: Object.freeze(["global", "globalBatch", "globalCacheRead", "globalCacheWrite"]),
 });
 
 /**
@@ -36,6 +37,28 @@ export function buildPriceRows(modelId, { prices, region, lane = LANE_IN_REGION 
   const entry = priceFor(prices, modelId, region);
   if (!entry) return [];
   const kinds = LANE_PRICE_KINDS[lane] ?? LANE_PRICE_KINDS[LANE_IN_REGION];
+  const rows = tokenRows(entry, kinds);
+  for (const rate of entry.metered ?? []) {
+    if ((rate.scope ?? "standard") !== (lane === LANE_GLOBAL ? "global" : "standard")) continue;
+    rows.push({ kind: "metered", label: rate.label, unit: rate.unit, [rate.axis]: rate.value });
+  }
+  return rows;
+}
+
+// bedrock-mantle の単価の種別。Runtime とは別の SKU で、値も別に決まる。レーンには依らない。
+const MANTLE_PRICE_KINDS = Object.freeze(["standard", "global", "batch", "cacheRead", "cacheWrite", "priority", "flex", "globalBatch", "globalCacheRead", "globalCacheWrite"]);
+
+/**
+ * 起点 R のモデル M の bedrock-mantle の単価を行にする。Runtime の単価は含めない。
+ * 単価が無ければ空配列 (画面では Mantle の表を出さない)。
+ */
+export function buildMantlePriceRows(modelId, { prices, region } = {}) {
+  const mantle = priceFor(prices, modelId, region)?.mantle;
+  return mantle && typeof mantle === "object" ? tokenRows(mantle, MANTLE_PRICE_KINDS) : [];
+}
+
+// 種別ごとのトークン単価の行。長文コンテキストの単価は同じ種別の後ろにまとめて並べる。
+function tokenRows(entry, kinds) {
   const rows = kinds
     .filter((kind) => entry[kind] != null)
     .map((kind) => ({
@@ -43,13 +66,14 @@ export function buildPriceRows(modelId, { prices, region, lane = LANE_IN_REGION 
       input: entry[kind]?.input ?? null,
       output: entry[kind]?.output ?? null,
       ...(entry[kind]?.maxInputTokens ? { maxInputTokens: entry[kind].maxInputTokens } : {}),
-    }));
+    }))
+    // long_ctx だけで標準の単価が無い種別は、標準の行を出さない。
+    .filter((row) => row.input != null || row.output != null);
   for (const kind of kinds) {
-    if (entry[kind]?.longContext) rows.push({ kind, ...entry[kind].longContext, minInputTokens: entry[kind].maxInputTokens });
-  }
-  for (const rate of entry.metered ?? []) {
-    if ((rate.scope ?? "standard") !== (lane === LANE_GLOBAL ? "global" : "standard")) continue;
-    rows.push({ kind: "metered", label: rate.label, unit: rate.unit, [rate.axis]: rate.value });
+    // 長文コンテキストの単価。境界のトークン数は価格表に無いので、あるときだけ添える。
+    if (entry[kind]?.longContext) {
+      rows.push({ kind, ...entry[kind].longContext, longContext: true, ...(entry[kind].maxInputTokens ? { minInputTokens: entry[kind].maxInputTokens } : {}) });
+    }
   }
   return rows;
 }
@@ -58,7 +82,7 @@ export function buildPriceRows(modelId, { prices, region, lane = LANE_IN_REGION 
 export function globalExtrasMissing(modelId, { prices, region } = {}) {
   const entry = priceFor(prices, modelId, region);
   if (!entry) return false;
-  return ["batch", "cacheRead", "cacheWrite"].every((kind) => entry[kind] == null);
+  return ["globalBatch", "globalCacheRead", "globalCacheWrite"].every((kind) => entry[kind] == null);
 }
 
 /**

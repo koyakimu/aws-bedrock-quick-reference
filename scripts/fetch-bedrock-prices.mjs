@@ -8,11 +8,10 @@
 //
 // --regions を省くと data/fetch-log.json の status: "ok" のリージョン全件。
 
-import { applyPriceSupplements } from "./lib/price-supplements.mjs";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { PRICE_OFFERS, normalizePrices, priceFileUrl } from "./lib/prices.mjs";
+import { PRICE_OFFERS, applyMarketplacePrices, buildPrefixIndex, checkPriceGuard, normalizePrices, priceFileUrl } from "./lib/prices.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..");
@@ -149,14 +148,32 @@ async function main(argv) {
     generatedAt: new Date().toISOString(),
   });
 
-  const supplementPath = join(dataDir, "price-supplements.json");
-  if (existsSync(supplementPath)) {
-    applyPriceSupplements(prices, readJson(join(dataDir, "profiles.json")), readJson(supplementPath));
+  // Price List に bedrock-runtime の単価が無いモデルだけ、Marketplace の offer の単価で埋める (D-018)。
+  // data/marketplace-prices.json は scripts/fetch-bedrock-marketplace-prices.mjs の出力 (SSO で手動取得)。
+  const marketplacePath = join(dataDir, "marketplace-prices.json");
+  if (existsSync(marketplacePath)) {
+    applyMarketplacePrices(prices, {
+      marketplace: readJson(marketplacePath),
+      models,
+      profiles: readJson(join(dataDir, "profiles.json")),
+      regions: Object.keys(files.AmazonBedrock ?? {}),
+      prefixIndex: buildPrefixIndex(files),
+    });
+    log(`filled from Marketplace offers: ${prices.marketplace?.models?.length ?? 0} models\n`);
   }
 
   // 未マッピングの SKU はメンテナが地図を足すための材料。生データ側に残す (AC-006)。
   mkdirSync(rawDir, { recursive: true });
   writeFileSync(join(rawDir, "prices-unmapped.json"), serialize(unmappedList));
+
+  // 安全弁: 価格のあるモデルが前回の半分未満なら書き出さずに失敗する。
+  const previousPath = join(dataDir, "prices.json");
+  const guard = checkPriceGuard(existsSync(previousPath) ? readJson(previousPath) : null, prices);
+  if (guard) {
+    log(`\n${guard}\n`);
+    process.exitCode = 1;
+    return;
+  }
 
   if (!options.dryRun) writeFileSync(join(dataDir, "prices.json"), serialize(prices));
 

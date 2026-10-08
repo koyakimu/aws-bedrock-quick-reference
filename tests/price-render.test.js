@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { mountFixtureApp, rowFor, cells, buildPrices } from "./app-harness.js";
 import { panelId } from "../src/scripts/detail-view.js";
 import { formatPrice } from "../src/scripts/bedrock-view-model.mjs";
-import { buildPriceRows } from "../src/scripts/detail-model.mjs";
+import { buildMantlePriceRows, buildPriceRows } from "../src/scripts/detail-model.mjs";
 import { setLang } from "../src/scripts/i18n.js";
 import { TOKYO } from "./fixtures/bedrock-fixture.js";
 
@@ -187,7 +187,9 @@ describe("AC-011 価格が無いモデル", () => {
   it("価格が未収録なら一覧に明示し、詳細パネルは「価格データなし」", () => {
     // 価格を持たない (空の) prices を渡すと全モデルが「—」
     mountFixtureApp({ prices: {} });
-    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].textContent).toBe("価格未収録");
+    // D-018: 「価格未収録」の後ろに docs へのリンクが付く
+    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].querySelector(".dim").textContent).toBe("価格未収録");
+    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].querySelector("a.price-docs-link")).not.toBeNull();
     expect(cells(rowFor(CLAUDE))[PRICE_INPUT].querySelector(".dim")).not.toBeNull();
 
     rowFor(CLAUDE).querySelector(".detail-toggle").click();
@@ -242,5 +244,184 @@ describe("単位付き料金と長文条件の表示", () => {
     expect(global.textContent).toContain('入力 272,000 tokens 超');
     expect(global.textContent).toContain('$20.00');
     expect(global.textContent).toContain('$75.00');
+  });
+});
+
+// Runtime と Mantle は別の接続先で、単価も別に決まる。混ぜずにそれぞれ出す。
+describe("Runtime と Mantle の価格を分けて出す", () => {
+  const both = { byModel: { [CLAUDE]: { [TOKYO]: {
+    standard: { input: 0.18, output: 1.41 },
+    mantle: { standard: { input: 0.168, output: 1.44 }, batch: { input: 0.084 } },
+  } } } };
+  const inRegionPrice = () => panelOf(CLAUDE).querySelector('[data-lane="inRegion"] .detail-price');
+  // fixture の Claude は東京で In-Region 不可・Geo 可。呼べるレーン (Geo) の価格の節で確かめる (AC-016)。
+  const geoPrice = () => panelOf(CLAUDE).querySelector('[data-lane="geo"] .detail-price');
+
+  it("buildMantlePriceRows は mantle の種別を PRICE_KINDS の順で返し、Runtime の単価を含まない", () => {
+    expect(buildMantlePriceRows(CLAUDE, { prices: both, region: TOKYO })).toEqual([
+      { kind: "standard", input: 0.168, output: 1.44 },
+      { kind: "batch", input: 0.084, output: null },
+    ]);
+    expect(buildPriceRows(CLAUDE, { prices: both, region: TOKYO })[0]).toEqual({ kind: "standard", input: 0.18, output: 1.41 });
+    expect(buildMantlePriceRows(CLAUDE, { prices: { byModel: {} }, region: TOKYO })).toEqual([]);
+  });
+
+  it("詳細の価格の節に bedrock-runtime と bedrock-mantle の表が別々に出る", () => {
+    mountFixtureApp({ prices: both });
+    rowFor(CLAUDE).querySelector(".detail-toggle").click();
+    const section = geoPrice();
+    const runtime = section.querySelector(".detail-price-runtime");
+    const mantle = section.querySelector(".detail-price-mantle");
+    expect(runtime.textContent).toContain("bedrock-runtime");
+    expect(runtime.textContent).toContain("$0.18");
+    expect(runtime.textContent).not.toContain("$0.168");
+    expect(mantle.textContent).toContain("bedrock-mantle");
+    expect(mantle.textContent).toContain("$0.168");
+    expect(mantle.textContent).toContain("$1.44");
+    expect(mantle.textContent).not.toContain("$1.41");
+  });
+
+  it("Mantle の単価しか無いモデルは、Runtime は「価格データなし」で Mantle の表だけ出る。一覧の価格列は Runtime のまま", () => {
+    mountFixtureApp({ prices: { byModel: { [CLAUDE]: { [TOKYO]: { mantle: { standard: { input: 2.2, output: 6.6 } } } } } } });
+    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].textContent).not.toContain("$2.20");
+    rowFor(CLAUDE).querySelector(".detail-toggle").click();
+    const section = geoPrice();
+    expect(section.querySelector(".detail-price-runtime").textContent).toContain("この起点リージョンの価格データがありません");
+    expect(section.querySelector(".detail-price-mantle").textContent).toContain("$2.20");
+  });
+
+  it("Mantle の単価が無ければ Mantle の表は出さない", () => {
+    mountFixtureApp({ prices: { byModel: { [CLAUDE]: { [TOKYO]: { standard: { input: 3, output: 15 } } } } } });
+    rowFor(CLAUDE).querySelector(".detail-toggle").click();
+    expect(geoPrice().querySelector(".detail-price-table")).not.toBeNull();
+    expect(geoPrice().querySelector(".detail-price-mantle")).toBeNull();
+  });
+});
+
+describe("長文コンテキストの単価 (境界のトークン数が価格表に無いとき)", () => {
+  const prices = { byModel: { [CLAUDE]: { [TOKYO]: { global: { input: 10, output: 50, longContext: { input: 20, output: 75 } } } } } };
+
+  it("「長文コンテキスト」の行に単価が出て、トークン数の条件は出ない (ja)", () => {
+    mountFixtureApp({ prices });
+    rowFor(CLAUDE).querySelector(".detail-toggle").click();
+    const global = panelOf(CLAUDE).querySelector('[data-lane="global"] .detail-price');
+    const rows = [...global.querySelectorAll(".detail-price-row")].map((row) => row.textContent);
+    expect(rows).toHaveLength(2);
+    expect(rows[1]).toContain("長文コンテキスト");
+    expect(rows[1]).toContain("$20.00");
+    expect(rows[1]).toContain("$75.00");
+    expect(global.textContent).not.toContain("tokens 超");
+    expect(global.textContent).not.toContain("tokens 以下");
+  });
+
+  it("英語では long context と出る (en)", () => {
+    mountFixtureApp({ prices });
+    setLang("en");
+    rowFor(CLAUDE).querySelector(".detail-toggle").click();
+    const global = panelOf(CLAUDE).querySelector('[data-lane="global"] .detail-price');
+    expect(global.textContent).toContain("long context");
+    expect(global.textContent).not.toContain("Input >");
+    expect(global.textContent).not.toContain("Input ≤");
+    setLang("ja");
+  });
+});
+
+describe("詳細の価格: レビュー (2026-10-08) で見つかった表示の問題", () => {
+  it("Runtime に priority / flex しか無くても標準系のレーンに表を出す (Qwen3 Next 80B の東京)", () => {
+    const prices = { byModel: { [CLAUDE]: { [TOKYO]: { priority: { input: 0.32, output: 2.54 }, flex: { input: 0.09, output: 0.72 } } } } };
+    expect(buildPriceRows(CLAUDE, { prices, region: TOKYO }).map((row) => row.kind)).toEqual(["priority", "flex"]);
+    mountFixtureApp({ prices });
+    rowFor(CLAUDE).querySelector(".detail-toggle").click();
+    const section = panelOf(CLAUDE).querySelector('[data-lane="geo"] .detail-price');
+    expect(section.textContent).toContain("優先");
+    expect(section.textContent).toContain("$0.32");
+    expect(section.textContent).not.toContain("この起点リージョンの価格データがありません");
+  });
+
+  it("Mantle の表があるとき、Global のバッチ・キャッシュ未収録の注記は bedrock-runtime に限った文言にする", () => {
+    const prices = { byModel: { [CLAUDE]: { [TOKYO]: { mantle: { global: { input: 2, output: 6 }, batch: { input: 1.1 } } } } } };
+    mountFixtureApp({ prices });
+    rowFor(CLAUDE).querySelector(".detail-toggle").click();
+    const global = panelOf(CLAUDE).querySelector('[data-lane="global"] .detail-price');
+    const notes = global.querySelector(".detail-price-unit").textContent;
+    expect(notes).toContain("bedrock-runtime の Global 用のバッチ・キャッシュ価格は未収録");
+    expect(notes.split("Global 用のバッチ・キャッシュ価格は未収録")).toHaveLength(2);
+  });
+});
+
+// D-018: Price List に無いモデルは AWS Marketplace の offer の単価を出し、出典を書く。
+// それでも単価が無いモデルは、docs のモデルカードへのリンクを出す。
+describe("Marketplace の単価の出典と、価格未収録のときの docs リンク", () => {
+  const marketplace = { byModel: { [CLAUDE]: { [TOKYO]: {
+    standard: { input: 2.2, output: 13.2 }, global: { input: 2, output: 12 },
+    source: { type: "marketplace", offerId: "offer-3dvyrx3okd4lq" },
+  } } } };
+
+  it("一覧の価格に「出典: Marketplace」が添えられる", () => {
+    mountFixtureApp({ prices: marketplace });
+    const cell = cells(rowFor(CLAUDE))[PRICE_INPUT];
+    expect(cell.querySelector(".price-value").textContent).toBe("$2.00");
+    expect(cell.querySelector(".price-source").textContent).toBe("出典: Marketplace");
+  });
+
+  it("Price List の単価には出典の注記を付けない", () => {
+    mountFixtureApp();
+    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].querySelector(".price-source")).toBeNull();
+  });
+
+  it("詳細の価格の節に、offer ID 付きの出典が出る", () => {
+    mountFixtureApp({ prices: marketplace });
+    rowFor(CLAUDE).querySelector(".detail-toggle").click();
+    const source = panelOf(CLAUDE).querySelector('[data-lane="geo"] .detail-price .detail-price-source');
+    expect(source.textContent).toContain("AWS Marketplace");
+    expect(source.textContent).toContain("offer-3dvyrx3okd4lq");
+    expect(source.textContent).toContain("Price List");
+  });
+
+  it("価格未収録のモデルは、一覧と詳細に docs のモデルカードへのリンクが出る", () => {
+    const features = { byModel: { [CLAUDE]: { card: "model-card-xai-grok-4-7.html", runtime: {}, mantle: {} } } };
+    mountFixtureApp({ prices: { byModel: {} }, features });
+    const link = cells(rowFor(CLAUDE))[PRICE_INPUT].querySelector("a.price-docs-link");
+    expect(link.href).toBe("https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-xai-grok-4-7.html");
+    expect(cells(rowFor(CLAUDE))[PRICE_INPUT].textContent).toContain("価格未収録");
+    rowFor(CLAUDE).querySelector(".detail-toggle").click();
+    const detailLink = panelOf(CLAUDE).querySelector('[data-lane="inRegion"] .detail-price a.price-docs-link');
+    expect(detailLink.href).toBe("https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-xai-grok-4-7.html");
+  });
+
+  it("モデルカードが分からないモデルは、Bedrock の料金ページへのリンクにする", () => {
+    mountFixtureApp({ prices: { byModel: {} } });
+    const link = cells(rowFor(CLAUDE))[PRICE_INPUT].querySelector("a.price-docs-link");
+    expect(link.href).toBe("https://aws.amazon.com/bedrock/pricing/");
+  });
+});
+
+describe("Global のバッチ・キャッシュ (2026-10-08 から取り込む)", () => {
+  const prices = { byModel: { [CLAUDE]: { [TOKYO]: {
+    global: { input: 5, output: 25 },
+    globalBatch: { input: 2.5, output: 12.5 },
+    globalCacheRead: { input: 0.5 },
+    globalCacheWrite: { input: 6.25 },
+  } } } };
+
+  it("buildPriceRows の Global のレーンに、Global のバッチ・キャッシュの行が並ぶ", () => {
+    expect(buildPriceRows(CLAUDE, { prices, region: TOKYO, lane: "global" }).map((row) => row.kind)).toEqual([
+      "global", "globalBatch", "globalCacheRead", "globalCacheWrite",
+    ]);
+  });
+
+  it("詳細の Global のタブに出て、「未収録」の注記は出ない", () => {
+    mountFixtureApp({ prices });
+    rowFor(CLAUDE).querySelector(".detail-toggle").click();
+    const global = panelOf(CLAUDE).querySelector('[data-lane="global"] .detail-price');
+    expect(global.textContent).toContain("Global バッチ");
+    expect(global.textContent).toContain("$12.50");
+    expect(global.textContent).toContain("Global キャッシュ読み");
+    expect(global.textContent).toContain("Global キャッシュ書き");
+    expect(global.textContent).not.toContain("バッチ・キャッシュ価格は未収録");
+  });
+
+  it("In-Region のタブには Global の行を出さない", () => {
+    expect(buildPriceRows(CLAUDE, { prices, region: TOKYO, lane: "inRegion" })).toEqual([]);
   });
 });

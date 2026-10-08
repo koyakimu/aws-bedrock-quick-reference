@@ -211,6 +211,18 @@ tr.expanded > td {
 .price-wrap {
   overflow-x: auto;
 }
+/* bedrock-runtime と bedrock-mantle の価格表の区切り */
+.detail-price-endpoint {
+  margin: 8px 0 0;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+.detail-price-mantle {
+  margin-top: 12px;
+}
+.detail-price-mantle-note {
+  margin: 4px 0 0;
+}
 .detail-price-table {
   border-collapse: collapse;
   margin-top: 6px;
@@ -274,3 +286,5 @@ tr.expanded > td {
 .detail-feature-mark.feature-none { color: var(--fg-muted); }
 .detail-no-feature { color: var(--fg-muted); }
 .detail-feature-source { margin-top: 6px; }
+
+.inference-mismatch { margin: 8px 0 0; font-size: 0.85em; color: var(--warn, #b45309); }

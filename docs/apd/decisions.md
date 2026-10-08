@@ -2,6 +2,10 @@
 
 技術選択の記録。**新しい判断ほど上に積む。** 最終決定はユーザーが行い、AI の推奨は参考情報。
 
+D-020 は同日、判定の列に接続先 (bedrock-runtime / bedrock-mantle) を出すためにオーナーが決定した。
+D-019 は同日、Global のバッチ・キャッシュの取り込みと、docs と API の食い違いの扱いとしてオーナーが決定した。
+D-018 は同日、Price List に無いモデルの単価の取り方としてオーナーが決定した。
+D-017 は 2026-10-08 の価格の取り直しで、Mantle と Runtime の単価が違うモデルが見つかったことを受けてオーナーが決定した。
 D-015・D-016 はモデル別の機能表（FEATURE-001、設計 `docs/superpowers/specs/2026-10-06-model-features-design.md`）の取り込みに伴って 2026-10-06 に決定した。
 D-011〜D-014 は Design v3（画面ビュー・リージョン行列・データの流れ図・並び順）に伴って
 2026-09-15 に起案し、同日ユーザーが推奨案どおりに決定した。
@@ -9,6 +13,64 @@ D-009 は Design v2 で価格が範囲に入ったことを受けて 2026-09-14 
 D-001〜D-005 は brainstorming の対話で内容が固まり、技術設計
 （`docs/superpowers/specs/2026-09-14-bedrock-quick-reference-design.md`）から転記したものを
 2026-09-14 にユーザーが確定した。D-006・D-007 は Spec フェーズで決定した。D-008 は Build 中に発生した矛盾の解消で、暫定決定 B をオーナーの指示で D に差し替えた。
+
+---
+
+## D-020: In-Region / Geo / Global の列に、bedrock-runtime と bedrock-mantle のどちらで使えるかを出す
+
+- **Date**: 2026-10-08
+- **Context**: 表の In-Region / Geo / Global は bedrock-runtime の API（ListFoundationModels / ListInferenceProfiles）で判定している。bedrock-mantle で使えるかは、2026-09-14 に docs を手で転記した `mantle.json`（In-Region だけ、新しいモデルが載っていない）にしか無かった。docs のモデルカードの Regional Availability（新しい書式では Supported Regions）には、接続先ごと・リージョンごとに In-Region / Geo / Global の表がある
+- **Decision**（2026-10-08、オーナー指示「In-Region・Geo推論・Global推論それぞれ Runtime でできるのか Mantle でできるのかも列に記載してほしい」）:
+  - 判定の 3 列の各セルの下段に「Runtime ✓/✕」「Mantle ✓/✕/—」を出す。上段の判定・並べ替え・絞り込みは bedrock-runtime の API のまま
+  - Mantle の値は、機能表の取得処理がモデルカードの地域の表を接続先ごとに読んだもの（`features.json` の `regions`）。Programmatic Access に bedrock-mantle の行が無ければ不可。地域の表が無ければ In-Region だけ `mantle.json` で決める。どれにも記載が無ければ「—」
+  - 接続先の見出しが無く、接続先が 2 つあるカード（DeepSeek・Mistral・GLM など 30 件）の表は、どちらかに割り当てず `shared`（接続先を分けていない表）として持ち、Mantle の値に使うときは title にその旨を出す
+- **Refs**: `scripts/lib/features.mjs`（`parseRegions`）、`src/scripts/feature-model.mjs`（`endpointAvailability`）、`spec-table.md` v12
+
+---
+
+## D-019: Global のバッチ・キャッシュを取り込み、docs と API の推論 ID の食い違いを注釈する
+
+- **Date**: 2026-10-08
+- **Context**: PRICE-001 v1 では Global とバッチ・キャッシュの組み合わせを範囲外にしていたが、Price List（東京だけで 91 SKU）と Marketplace の rateCard に値がある。また GPT-5.4 / 5.5 は ListInferenceProfiles に `us.` / `global.` があるのに、docs のモデルカードでは bedrock-mantle 専用（Geo / Global は Not supported）。Nova Lite / Micro は API に `apac.`（Lite は `ca.` も）があるが、docs の表は `us.` / `eu.` だけ
+- **Decision**（2026-10-08、オーナー指示「Global のバッチ・キャッシュも取り込んで」「食い違いがある場合は注釈をいれてほしい」）:
+  - 価格の種別に `globalBatch` / `globalCacheRead` / `globalCacheWrite` を足し、詳細の Global のタブに出す。Global と priority / flex の組み合わせは引き続き範囲外
+  - 表の Geo / Global の判定は API（ListInferenceProfiles）に従ったまま変えない。docs のモデルカードの Programmatic Access の表（bedrock-runtime の行）と推論 ID が食い違うときは、一覧のセルに「docs と相違」、詳細の Geo / Global のタブに両方の ID とモデルカードへのリンクを出す
+  - 比べない: カードの行が別の ID（文脈長の付いた Provisioned 専用の ID）、GovCloud（`us-gov.`）の ID、カードの表が読めないモデル
+- **Refs**: `spec-price.md`、`scripts/lib/features.mjs`（`parseEndpoints`）、`src/scripts/feature-model.mjs`（`inferenceMismatches`）
+
+---
+
+## D-018: Price List に無いモデルの単価を AWS Marketplace の offer から取る
+
+- **Date**: 2026-10-08
+- **Context**: 2026-10-08 時点で、GPT-5.4 / 5.5 / 5.6 系 / 6 系と Stability の画像編集系 13 件は、商用リージョンの Price List（Bulk API・Query API とも）に SKU が無い。docs のモデルカードと料金ページには価格がある。手書きの補完 JSON は D-017 と同日に廃止した。Bedrock の `ListFoundationModelAgreementOffers` と Marketplace Discovery の `GetOfferTerms` を実際に呼ぶと、同じ単価表（rateCard）が返り、Price List にある GPT-6 Astra では値が Price List と完全に一致した
+- **Options**:
+  - A: Price List だけを使い、無いモデルは価格未収録にする
+  - B: docs のモデルカードの Pricing の節をパースして補う
+  - C: **Price List を優先し、Price List に bedrock-runtime の単価が無いモデルだけ Marketplace の offer の rateCard で補う。出典を書く。それでも無いモデルは docs のモデルカードへリンクする**
+- **Decision**: **C**（2026-10-08、オーナー承認）
+- **Reason**: AWS の API が返す値で、Price List と同じ値になることを確かめられた。docs のパースより機械的で、表の書式変更に左右されない
+- **運用**:
+  - `scripts/fetch-bedrock-marketplace-prices.mjs` が models.json の全モデルに `ListFoundationModelAgreementOffers` を呼び、`data/marketplace-prices.json` を出す。認証が要るので手元の SSO で手動実行する（D-002。CI では走らせない）
+  - `scripts/fetch-bedrock-prices.mjs` が `data/marketplace-prices.json` を読み、Price List に bedrock-runtime の単価が 1 つも無いモデルだけを埋める。埋めたリージョンには `source: { type: "marketplace", offerId }` を付け、画面に出典を出す
+  - rateCard の単位は "Units" としか書かれないが、値は docs の USD / 100 万トークンと一致する。リージョンの区別が無い単価は、In-Region（ON_DEMAND）か Geo のプロファイルの起点に標準系を、Global のプロファイルの起点に global を当てる。リージョンの略号付きの単価（GPT-5.4 / 5.5）は Price List の usagetype から作った略号の索引でリージョンに戻す
+  - Marketplace 経由でないモデル（Grok、Kimi、GLM、Titan など）は `Agreement not supported for this model` で offer が無い。これらで Runtime の単価が無いものは、表と詳細に docs のモデルカード（無ければ料金ページ）へのリンクを出す
+- **Refs**: `spec-price.md`（「AWS Marketplace の offer による補完」）、`docs/price-list-api.md`、D-002、D-017
+
+---
+
+## D-017: bedrock-runtime と bedrock-mantle の価格を分けて持つ
+
+- **Date**: 2026-10-08
+- **Context**: D-009 では `-mantle-` の SKU を「通常の接続先と同じ単価の別 SKU」として取り込まなかった（Design FAQ Q14）。2026-10-08 の Price List で、Qwen3 Next 80B は Runtime と Mantle で単価が違った（ap-south-1 の standard: Runtime 0.18 / 1.41、Mantle 0.168 / 1.44）。また Grok 4.6 / 4.7 と Kimi K3 は `-mantle-` の SKU しか無い。手書きの補完 JSON は同日に廃止した（Price List の値だけを使う）
+- **Options**:
+  - A: `-mantle-` の SKU を捨てる（D-009 のまま）。Mantle の単価が見えず、Mantle しか SKU の無いモデルは価格未収録になる
+  - B: Runtime の SKU が無い軸だけ Mantle の単価で埋める。単価が違うモデルで、Mantle の値が Runtime の値として表に出る
+  - C: **Runtime と Mantle の単価を別々に持ち、別々に表示する**。`prices.json` の `byModel[M][R]` の種別は Runtime、`byModel[M][R].mantle` の種別は Mantle
+- **Decision**: **C**（2026-10-08、オーナー指示「Runtime と Mantle はそれぞれ別の価格、機能」）
+- **Reason**: Runtime と Mantle は別の接続先で、機能（FEATURE-001 の runtime / mantle）と同じく価格も別に決まる。混ぜると、片方の値をもう片方の値として見せてしまう
+- **運用**: 表の価格列・並べ替え・参考価格は Runtime の単価だけを使う。詳細パネルの価格の節に、bedrock-runtime と bedrock-mantle の表を分けて出す。Mantle の SKU しか無いモデル（Grok 4.6 / 4.7、Kimi K3）は、表では価格未収録、詳細では Mantle の表だけになる
+- **Refs**: `spec-price.md`（「Price List の書き方の揺れ」）、D-009、Design FAQ Q14
 
 ---
 
@@ -138,7 +200,7 @@ D-001〜D-005 は brainstorming の対話で内容が固まり、技術設計
 - **AI Recommendation**: **A**。AWS 自身が機械可読な形で配信しており、認証が要らないので CI からでも取れる。人の解釈を挟まない点で Success Criteria（人の解釈による差分ゼロ）とも合う
 - **Decision**: **A**
 - **Reason**: 公開・機械可読で、オーナーが 2026-09-14 に承認した。認証情報が要らないので取得の再現性が高い（D-002 の `aws` CLI 経路と違い、誰でも同じ結果を得られる）
-- **取り込みの範囲**: offer は `AmazonBedrock` と `AmazonBedrockFoundationModels` の 2 つ。`AmazonBedrockService`（Mantle / cross-region / 予約 TPM）と `AmazonBedrockAgentCore` はトークン単価を持たないため対象外。単価はすべて **USD / 100 万トークン**に揃える（`1K tokens` は 1000 倍）。`-mantle-` の SKU は通常の接続先と同じ単価の別 SKU なので載せない（Design FAQ Q14）
+- **取り込みの範囲**: offer は `AmazonBedrock` と `AmazonBedrockFoundationModels` の 2 つ。`AmazonBedrockService`（Mantle / cross-region / 予約 TPM）と `AmazonBedrockAgentCore` はトークン単価を持たないため対象外。単価はすべて **USD / 100 万トークン**に揃える（`1K tokens` は 1000 倍）。`-mantle-` の SKU は通常の接続先と同じ単価の別 SKU なので載せない（Design FAQ Q14）。**2026-10-08 に D-017 で変更**: 単価が違うモデルがあるため、bedrock-mantle の単価として別に持つ
 - **モデル名の対応**: `AmazonBedrockFoundationModels` には `model` 属性が無く、モデル名は `servicename`（`Claude Opus 5 (Amazon Bedrock Edition)`）に入る。自動一致（接尾辞を外して `models.json` の `name` と大文字小文字・記号を無視して比較）で当たらないものは、手書きの `data/price-model-map.json` で対応させる。どちらでも引けない SKU は `data/raw/<日付>/prices-unmapped.json` に書き出して `prices.json` の `unmapped` に数え、メンテナが地図を足せるようにする（推測で結び付けない）
 - **Refs**: `spec-price.md`（PRICE-001）、`spec-table.md`（TABLE-001 v8 AC-005 / AC-008 / AC-013）、`spec-detail.md`（DETAIL-001 v7 AC-013）、実装は `scripts/lib/prices.mjs` と `scripts/fetch-bedrock-prices.mjs`
 

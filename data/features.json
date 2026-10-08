@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-10-06T08:02:50.232Z",
+  "generatedAt": "2026-10-08T05:04:22.860Z",
   "source": "https://docs.aws.amazon.com/bedrock/latest/userguide/toc-contents.json",
-  "cards": 134,
-  "cardsWithFeatures": 118,
+  "cards": 137,
+  "cardsWithFeatures": 122,
   "failedCards": 0,
   "features": {
     "streaming": {
@@ -134,7 +134,23 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "ai21.jamba-1-5-large-v1:0",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "us-east-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "amazon.nova-2-lite-v1:0": {
       "card": "model-card-amazon-nova-2-lite.html",
@@ -165,7 +181,68 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-2-lite-v1:0",
+          "geo": [
+            "us.amazon.nova-2-lite-v1:0",
+            "eu.amazon.nova-2-lite-v1:0",
+            "jp.amazon.nova-2-lite-v1:0"
+          ],
+          "global": [
+            "global.amazon.nova-2-lite-v1:0"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-northeast-1",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "amazon.nova-2-lite-v1:0:256k": {
       "card": "model-card-amazon-nova-2-lite.html",
@@ -196,7 +273,68 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-2-lite-v1:0",
+          "geo": [
+            "us.amazon.nova-2-lite-v1:0",
+            "eu.amazon.nova-2-lite-v1:0",
+            "jp.amazon.nova-2-lite-v1:0"
+          ],
+          "global": [
+            "global.amazon.nova-2-lite-v1:0"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-northeast-1",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "amazon.nova-2-multimodal-embeddings-v1:0": {
       "card": "model-card-amazon-amazon-nova-multimodal-embeddings.html",
@@ -215,7 +353,24 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-2-multimodal-embeddings-v1:0",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "us-east-1",
+            "us-gov-west-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "amazon.nova-2-sonic-v1:0": {
       "card": "model-card-amazon-nova-2-sonic.html",
@@ -234,7 +389,26 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-2-sonic-v1:0",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-1",
+            "eu-north-1",
+            "us-east-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "amazon.nova-lite-v1:0": {
       "card": "model-card-amazon-nova-lite.html",
@@ -256,7 +430,53 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-lite-v1:0",
+          "geo": [
+            "us.amazon.nova-lite-v1:0",
+            "eu.amazon.nova-lite-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "eu-north-1",
+            "eu-west-2",
+            "me-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ca-central-1",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "il-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "amazon.nova-lite-v1:0:24k": {
       "card": "model-card-amazon-nova-lite.html",
@@ -278,7 +498,53 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-lite-v1:0",
+          "geo": [
+            "us.amazon.nova-lite-v1:0",
+            "eu.amazon.nova-lite-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "eu-north-1",
+            "eu-west-2",
+            "me-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ca-central-1",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "il-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "amazon.nova-lite-v1:0:300k": {
       "card": "model-card-amazon-nova-lite.html",
@@ -300,7 +566,53 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-lite-v1:0",
+          "geo": [
+            "us.amazon.nova-lite-v1:0",
+            "eu.amazon.nova-lite-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "eu-north-1",
+            "eu-west-2",
+            "me-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ca-central-1",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "il-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "amazon.nova-micro-v1:0": {
       "card": "model-card-amazon-nova-micro.html",
@@ -322,7 +634,45 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-micro-v1:0",
+          "geo": [
+            "us.amazon.nova-micro-v1:0",
+            "eu.amazon.nova-micro-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-southeast-2",
+            "eu-west-2",
+            "us-east-1",
+            "us-gov-west-1"
+          ],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "il-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "amazon.nova-micro-v1:0:128k": {
       "card": "model-card-amazon-nova-micro.html",
@@ -344,7 +694,45 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-micro-v1:0",
+          "geo": [
+            "us.amazon.nova-micro-v1:0",
+            "eu.amazon.nova-micro-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-southeast-2",
+            "eu-west-2",
+            "us-east-1",
+            "us-gov-west-1"
+          ],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "il-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "amazon.nova-micro-v1:0:24k": {
       "card": "model-card-amazon-nova-micro.html",
@@ -366,7 +754,45 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-micro-v1:0",
+          "geo": [
+            "us.amazon.nova-micro-v1:0",
+            "eu.amazon.nova-micro-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-southeast-2",
+            "eu-west-2",
+            "us-east-1",
+            "us-gov-west-1"
+          ],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "il-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "amazon.nova-pro-v1:0": {
       "card": "model-card-amazon-nova-pro.html",
@@ -397,7 +823,55 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-pro-v1:0",
+          "geo": [
+            "us.amazon.nova-pro-v1:0",
+            "eu.amazon.nova-pro-v1:0",
+            "apac.amazon.nova-pro-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "eu-west-2",
+            "me-central-1",
+            "us-east-1",
+            "us-gov-west-1"
+          ],
+          "geo": [
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-7",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "amazon.nova-pro-v1:0:24k": {
       "card": "model-card-amazon-nova-pro.html",
@@ -428,7 +902,55 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-pro-v1:0",
+          "geo": [
+            "us.amazon.nova-pro-v1:0",
+            "eu.amazon.nova-pro-v1:0",
+            "apac.amazon.nova-pro-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "eu-west-2",
+            "me-central-1",
+            "us-east-1",
+            "us-gov-west-1"
+          ],
+          "geo": [
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-7",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "amazon.nova-pro-v1:0:300k": {
       "card": "model-card-amazon-nova-pro.html",
@@ -459,7 +981,55 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "amazon.nova-pro-v1:0",
+          "geo": [
+            "us.amazon.nova-pro-v1:0",
+            "eu.amazon.nova-pro-v1:0",
+            "apac.amazon.nova-pro-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "eu-west-2",
+            "me-central-1",
+            "us-east-1",
+            "us-gov-west-1"
+          ],
+          "geo": [
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-7",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "anthropic.claude-fable-5": {
       "card": "model-card-anthropic-claude-fable-5.html",
@@ -480,7 +1050,78 @@
           "mantle"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-fable-5",
+          "geo": [
+            "us.anthropic.claude-fable-5"
+          ],
+          "global": [
+            "global.anthropic.claude-fable-5"
+          ]
+        },
+        "bedrock-mantle": {
+          "modelId": "anthropic.claude-fable-5",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ca-central-1",
+            "ca-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-east-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "anthropic.claude-fable-5-1": {
       "card": "model-card-anthropic-claude-fable-5-1.html",
@@ -497,7 +1138,80 @@
           "mantle"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-fable-5-1",
+          "geo": [
+            "us.anthropic.claude-fable-5-1"
+          ],
+          "global": [
+            "global.anthropic.claude-fable-5-1"
+          ]
+        },
+        "bedrock-mantle": {
+          "modelId": "anthropic.claude-fable-5-1",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ca-central-1",
+            "ca-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-east-1",
+            "us-gov-west-1",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-gov-west-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "anthropic.claude-haiku-4-5-20251001-v1:0": {
       "card": "model-card-anthropic-claude-haiku-4-5.html",
@@ -545,7 +1259,244 @@
           "toolType": "computer_20250124",
           "betaHeader": "computer-use-2025-01-24"
         }
-      ]
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": null,
+          "geo": [
+            "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+            "eu.anthropic.claude-haiku-4-5-20251001-v1:0",
+            "au.anthropic.claude-haiku-4-5-20251001-v1:0",
+            "jp.anthropic.claude-haiku-4-5-20251001-v1:0",
+            "in.anthropic.claude-haiku-4-5-20251001-v1:0"
+          ],
+          "global": [
+            "global.anthropic.claude-haiku-4-5-20251001-v1:0"
+          ]
+        },
+        "bedrock-mantle": {
+          "modelId": "anthropic.claude-haiku-4-5",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-2",
+            "ap-southeast-4",
+            "ap-southeast-6",
+            "ca-central-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-southeast-4",
+            "eu-north-1",
+            "eu-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
+    },
+    "anthropic.claude-haiku-5-5": {
+      "card": "model-card-anthropic-claude-haiku-5-5.html",
+      "runtime": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": false,
+        "computerUse": true,
+        "countTokens": false,
+        "guardrails": true,
+        "abuseDetection": true,
+        "knowledgeBase": true,
+        "agents": true,
+        "flows": true,
+        "promptManagement": true,
+        "promptOptimization": true,
+        "promptRouting": false,
+        "modelEvaluation": true
+      },
+      "mantle": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": false,
+        "computerUse": true,
+        "countTokens": true,
+        "guardrails": false,
+        "abuseDetection": true,
+        "knowledgeBase": false,
+        "agents": false,
+        "flows": false,
+        "promptManagement": false,
+        "promptOptimization": false,
+        "promptRouting": false,
+        "modelEvaluation": false
+      },
+      "promptCaching": {
+        "explicit": true,
+        "minTokens": "512",
+        "maxCheckpoints": "4",
+        "ttl": "5 minutes, 1 hour",
+        "fields": "system, messages, and tools",
+        "endpoints": [
+          "runtime",
+          "mantle"
+        ]
+      },
+      "computerUse": [
+        {
+          "toolType": "computer_20251124",
+          "betaHeader": "computer-use-2025-11-24"
+        }
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-haiku-5-5",
+          "geo": [
+            "us.anthropic.claude-haiku-5-5",
+            "eu.anthropic.claude-haiku-5-5",
+            "au.anthropic.claude-haiku-5-5",
+            "jp.anthropic.claude-haiku-5-5"
+          ],
+          "global": [
+            "global.anthropic.claude-haiku-5-5"
+          ]
+        },
+        "bedrock-mantle": {
+          "modelId": "anthropic.claude-haiku-5-5",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-3",
+            "ap-southeast-2",
+            "ap-southeast-4",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-east-1",
+            "us-gov-west-1",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-gov-west-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "anthropic.claude-opus-4-1-20250805-v1:0": {
       "card": "model-card-anthropic-claude-opus-4-1.html",
@@ -580,7 +1531,27 @@
           "toolType": "computer_20250124",
           "betaHeader": "computer-use-2025-01-24"
         }
-      ]
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-opus-4-1-20250805-v1:0",
+          "geo": [
+            "us.anthropic.claude-opus-4-1-20250805-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "anthropic.claude-opus-4-5-20251101-v1:0": {
       "card": "model-card-anthropic-claude-opus-4-5.html",
@@ -620,7 +1591,74 @@
           "toolType": "computer_20250124",
           "betaHeader": "computer-use-2025-01-24"
         }
-      ]
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-opus-4-5-20251101-v1:0",
+          "geo": [
+            "us.anthropic.claude-opus-4-5-20251101-v1:0",
+            "eu.anthropic.claude-opus-4-5-20251101-v1:0"
+          ],
+          "global": [
+            "global.anthropic.claude-opus-4-5-20251101-v1:0"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ca-central-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "anthropic.claude-opus-4-6-v1": {
       "card": "model-card-anthropic-claude-opus-4-6.html",
@@ -656,7 +1694,81 @@
           "toolType": "computer_20251124",
           "betaHeader": "computer-use-2025-11-24"
         }
-      ]
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-opus-4-6-v1",
+          "geo": [
+            "us.anthropic.claude-opus-4-6-v1",
+            "eu.anthropic.claude-opus-4-6-v1",
+            "au.anthropic.claude-opus-4-6-v1"
+          ],
+          "global": [
+            "global.anthropic.claude-opus-4-6-v1"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "eu-west-2"
+          ],
+          "geo": [
+            "ap-southeast-2",
+            "ap-southeast-4",
+            "ap-southeast-6",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "anthropic.claude-opus-4-7": {
       "card": "model-card-anthropic-claude-opus-4-7.html",
@@ -710,7 +1822,97 @@
           "toolType": "computer_20251124",
           "betaHeader": "computer-use-2025-11-24"
         }
-      ]
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-opus-4-7",
+          "geo": [
+            "us.anthropic.claude-opus-4-7",
+            "eu.anthropic.claude-opus-4-7",
+            "jp.anthropic.claude-opus-4-7",
+            "au.anthropic.claude-opus-4-7"
+          ],
+          "global": [
+            "global.anthropic.claude-opus-4-7"
+          ]
+        },
+        "bedrock-mantle": {
+          "modelId": "anthropic.claude-opus-4-7",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-3",
+            "ap-southeast-2",
+            "ap-southeast-4",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-southeast-4",
+            "eu-north-1",
+            "eu-west-1",
+            "us-east-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "anthropic.claude-opus-4-8": {
       "card": "model-card-anthropic-claude-opus-4-8.html",
@@ -764,7 +1966,100 @@
           "toolType": "computer_20251124",
           "betaHeader": "computer-use-2025-11-24"
         }
-      ]
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-opus-4-8",
+          "geo": [
+            "us.anthropic.claude-opus-4-8",
+            "eu.anthropic.claude-opus-4-8",
+            "jp.anthropic.claude-opus-4-8",
+            "au.anthropic.claude-opus-4-8"
+          ],
+          "global": [
+            "global.anthropic.claude-opus-4-8"
+          ]
+        },
+        "bedrock-mantle": {
+          "modelId": "anthropic.claude-opus-4-8",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-3",
+            "ap-southeast-2",
+            "ap-southeast-4",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-east-1",
+            "us-gov-west-1",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-southeast-4",
+            "eu-north-1",
+            "eu-west-1",
+            "us-east-1",
+            "us-gov-west-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "anthropic.claude-opus-5": {
       "card": "model-card-anthropic-claude-opus-5.html",
@@ -818,7 +2113,247 @@
           "toolType": "computer_20251124",
           "betaHeader": "computer-use-2025-11-24"
         }
-      ]
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-opus-5",
+          "geo": [
+            "us.anthropic.claude-opus-5",
+            "eu.anthropic.claude-opus-5",
+            "au.anthropic.claude-opus-5",
+            "in.anthropic.claude-opus-5"
+          ],
+          "global": [
+            "global.anthropic.claude-opus-5"
+          ]
+        },
+        "bedrock-mantle": {
+          "modelId": "anthropic.claude-opus-5",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-2"
+          ],
+          "geo": [
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-2",
+            "ap-southeast-4",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-east-1",
+            "us-gov-west-1",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-southeast-4",
+            "eu-north-1",
+            "eu-west-1",
+            "us-east-1",
+            "us-gov-west-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
+    },
+    "anthropic.claude-opus-5-5": {
+      "card": "model-card-anthropic-claude-opus-5-5.html",
+      "runtime": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": false,
+        "computerUse": true,
+        "countTokens": false,
+        "guardrails": true,
+        "abuseDetection": true,
+        "knowledgeBase": true,
+        "agents": true,
+        "flows": true,
+        "promptManagement": true,
+        "promptOptimization": true,
+        "promptRouting": false,
+        "modelEvaluation": true
+      },
+      "mantle": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": false,
+        "computerUse": true,
+        "countTokens": true,
+        "guardrails": false,
+        "abuseDetection": true,
+        "knowledgeBase": false,
+        "agents": false,
+        "flows": false,
+        "promptManagement": false,
+        "promptOptimization": false,
+        "promptRouting": false,
+        "modelEvaluation": false
+      },
+      "promptCaching": {
+        "explicit": true,
+        "minTokens": "512",
+        "maxCheckpoints": "4",
+        "ttl": "5 minutes, 1 hour",
+        "fields": "system, messages, and tools",
+        "endpoints": [
+          "runtime",
+          "mantle"
+        ]
+      },
+      "computerUse": [
+        {
+          "toolType": "computer_20251124",
+          "betaHeader": "computer-use-2025-11-24"
+        }
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-opus-5-5",
+          "geo": [
+            "us.anthropic.claude-opus-5-5",
+            "eu.anthropic.claude-opus-5-5",
+            "au.anthropic.claude-opus-5-5",
+            "jp.anthropic.claude-opus-5-5"
+          ],
+          "global": [
+            "global.anthropic.claude-opus-5-5"
+          ]
+        },
+        "bedrock-mantle": {
+          "modelId": "anthropic.claude-opus-5-5",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "eu-west-2"
+          ],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-3",
+            "ap-southeast-2",
+            "ap-southeast-4",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-east-1",
+            "us-gov-west-1",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-southeast-4",
+            "us-east-1",
+            "us-gov-west-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "anthropic.claude-sonnet-4-20250514-v1:0": {
       "card": "model-card-anthropic-claude-sonnet-4.html",
@@ -848,7 +2383,57 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-sonnet-4-20250514-v1:0",
+          "geo": [
+            "us.anthropic.claude-sonnet-4-20250514-v1:0",
+            "eu.anthropic.claude-sonnet-4-20250514-v1:0",
+            "apac.anthropic.claude-sonnet-4-20250514-v1:0"
+          ],
+          "global": [
+            "global.anthropic.claude-sonnet-4-20250514-v1:0"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-7",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "il-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "ap-northeast-1",
+            "eu-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "anthropic.claude-sonnet-4-20250514-v1:0:200k": {
       "card": "model-card-anthropic-claude-sonnet-4.html",
@@ -878,7 +2463,57 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-sonnet-4-20250514-v1:0",
+          "geo": [
+            "us.anthropic.claude-sonnet-4-20250514-v1:0",
+            "eu.anthropic.claude-sonnet-4-20250514-v1:0",
+            "apac.anthropic.claude-sonnet-4-20250514-v1:0"
+          ],
+          "global": [
+            "global.anthropic.claude-sonnet-4-20250514-v1:0"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-7",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "il-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "ap-northeast-1",
+            "eu-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "anthropic.claude-sonnet-4-20250514-v1:0:32k": {
       "card": "model-card-anthropic-claude-sonnet-4.html",
@@ -908,7 +2543,57 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-sonnet-4-20250514-v1:0",
+          "geo": [
+            "us.anthropic.claude-sonnet-4-20250514-v1:0",
+            "eu.anthropic.claude-sonnet-4-20250514-v1:0",
+            "apac.anthropic.claude-sonnet-4-20250514-v1:0"
+          ],
+          "global": [
+            "global.anthropic.claude-sonnet-4-20250514-v1:0"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-7",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-3",
+            "il-central-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "ap-northeast-1",
+            "eu-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "anthropic.claude-sonnet-4-5-20250929-v1:0": {
       "card": "model-card-anthropic-claude-sonnet-4-5.html",
@@ -944,7 +2629,83 @@
           "toolType": "computer_20250124",
           "betaHeader": "computer-use-2025-01-24"
         }
-      ]
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "geo": [
+            "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+            "eu.anthropic.claude-sonnet-4-5-20250929-v1:0",
+            "au.anthropic.claude-sonnet-4-5-20250929-v1:0",
+            "jp.anthropic.claude-sonnet-4-5-20250929-v1:0"
+          ],
+          "global": [
+            "global.anthropic.claude-sonnet-4-5-20250929-v1:0"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-3",
+            "ap-southeast-2",
+            "ap-southeast-4",
+            "ap-southeast-6",
+            "ca-central-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-east-1",
+            "us-gov-west-1",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "anthropic.claude-sonnet-4-6": {
       "card": "model-card-anthropic-claude-sonnet-4-6.html",
@@ -981,7 +2742,84 @@
           "toolType": "computer_20251124",
           "betaHeader": "computer-use-2025-11-24"
         }
-      ]
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-sonnet-4-6",
+          "geo": [
+            "us.anthropic.claude-sonnet-4-6",
+            "eu.anthropic.claude-sonnet-4-6",
+            "au.anthropic.claude-sonnet-4-6",
+            "jp.anthropic.claude-sonnet-4-6"
+          ],
+          "global": [
+            "global.anthropic.claude-sonnet-4-6"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "eu-west-2"
+          ],
+          "geo": [
+            "ap-northeast-1",
+            "ap-northeast-3",
+            "ap-southeast-2",
+            "ap-southeast-4",
+            "ap-southeast-6",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "anthropic.claude-sonnet-5": {
       "card": "model-card-anthropic-claude-sonnet-5.html",
@@ -1035,7 +2873,239 @@
           "toolType": "computer_20251124",
           "betaHeader": "computer-use-2025-11-24"
         }
-      ]
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-sonnet-5",
+          "geo": [
+            "us.anthropic.claude-sonnet-5",
+            "eu.anthropic.claude-sonnet-5",
+            "au.anthropic.claude-sonnet-5",
+            "in.anthropic.claude-sonnet-5"
+          ],
+          "global": [
+            "global.anthropic.claude-sonnet-5"
+          ]
+        },
+        "bedrock-mantle": {
+          "modelId": "anthropic.claude-sonnet-5",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-2",
+            "ap-southeast-1",
+            "eu-west-2"
+          ],
+          "geo": [
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-2",
+            "ap-southeast-4",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-east-1",
+            "us-gov-west-1",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-southeast-4",
+            "eu-north-1",
+            "eu-west-1",
+            "us-east-1",
+            "us-gov-west-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
+    },
+    "anthropic.claude-sonnet-5-5": {
+      "card": "model-card-anthropic-claude-sonnet-5-5.html",
+      "runtime": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": false,
+        "computerUse": true,
+        "countTokens": false,
+        "guardrails": true,
+        "abuseDetection": true,
+        "knowledgeBase": true,
+        "agents": true,
+        "flows": true,
+        "promptManagement": true,
+        "promptOptimization": true,
+        "promptRouting": false,
+        "modelEvaluation": true
+      },
+      "mantle": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": false,
+        "computerUse": true,
+        "countTokens": true,
+        "guardrails": false,
+        "abuseDetection": true,
+        "knowledgeBase": false,
+        "agents": false,
+        "flows": false,
+        "promptManagement": false,
+        "promptOptimization": false,
+        "promptRouting": false,
+        "modelEvaluation": false
+      },
+      "promptCaching": {
+        "explicit": true,
+        "minTokens": "512",
+        "maxCheckpoints": "4",
+        "ttl": "5 minutes, 1 hour",
+        "fields": "system, messages, and tools",
+        "endpoints": [
+          "runtime",
+          "mantle"
+        ]
+      },
+      "computerUse": [
+        {
+          "toolType": "computer_20251124",
+          "betaHeader": "computer-use-2025-11-24"
+        }
+      ],
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "anthropic.claude-sonnet-5-5",
+          "geo": [
+            "us.anthropic.claude-sonnet-5-5",
+            "eu.anthropic.claude-sonnet-5-5"
+          ],
+          "global": [
+            "global.anthropic.claude-sonnet-5-5"
+          ]
+        },
+        "bedrock-mantle": {
+          "modelId": "anthropic.claude-sonnet-5-5",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-east-1",
+            "us-gov-west-1",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-gov-west-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "cohere.embed-v4:0": {
       "card": "model-card-cohere-embed-v4.html",
@@ -1054,7 +3124,67 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "cohere.embed-v4:0",
+          "geo": [
+            "us.cohere.embed-v4:0",
+            "eu.cohere.embed-v4:0"
+          ],
+          "global": [
+            "global.cohere.embed-v4:0"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-1",
+            "eu-west-1",
+            "us-east-1"
+          ],
+          "geo": [
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ca-central-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "deepseek.r1-v1:0": {
       "card": "model-card-deepseek-deepseek-r1.html",
@@ -1073,7 +3203,27 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "deepseek.r1-v1:0",
+          "geo": [
+            "us.deepseek.r1-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "deepseek.v3-v1:0": {
       "card": "model-card-deepseek-deepseek-v3-1.html",
@@ -1098,7 +3248,36 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "deepseek.v3-v1:0",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "deepseek.v3.1",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "eu-north-1",
+            "eu-west-2",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "deepseek.v3.2": {
       "card": "model-card-deepseek-deepseek-v3-2.html",
@@ -1122,7 +3301,37 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "deepseek.v3.2",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "deepseek.v3.2",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "eu-north-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "google.gemma-3-12b-it": {
       "card": "model-card-google-gemma-3-12b-it.html",
@@ -1146,7 +3355,41 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "google.gemma-3-12b-it",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "google.gemma-3-12b-it",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "google.gemma-3-27b-it": {
       "card": "model-card-google-gemma-3-27b-pt.html",
@@ -1168,7 +3411,41 @@
         "clientToolCalling": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "google.gemma-3-27b-it",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "google.gemma-3-27b-it",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "google.gemma-3-4b-it": {
       "card": "model-card-google-gemma-3-4b-it.html",
@@ -1191,7 +3468,41 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "google.gemma-3-4b-it",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "google.gemma-3-4b-it",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "meta.llama3-1-70b-instruct-v1:0": {
       "card": "model-card-meta-llama-3-1-70b-instruct.html",
@@ -1212,7 +3523,29 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama3-1-70b-instruct-v1:0",
+          "geo": [
+            "us.meta.llama3-1-70b-instruct-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "us-west-2"
+          ],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "meta.llama3-1-70b-instruct-v1:0:128k": {
       "card": "model-card-meta-llama-3-1-70b-instruct.html",
@@ -1233,7 +3566,29 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama3-1-70b-instruct-v1:0",
+          "geo": [
+            "us.meta.llama3-1-70b-instruct-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "us-west-2"
+          ],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "meta.llama3-1-8b-instruct-v1:0": {
       "card": "model-card-meta-llama-3-1-8b-instruct.html",
@@ -1254,7 +3609,29 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama3-1-8b-instruct-v1:0",
+          "geo": [
+            "us.meta.llama3-1-8b-instruct-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "us-west-2"
+          ],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "meta.llama3-1-8b-instruct-v1:0:128k": {
       "card": "model-card-meta-llama-3-1-8b-instruct.html",
@@ -1275,7 +3652,29 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama3-1-8b-instruct-v1:0",
+          "geo": [
+            "us.meta.llama3-1-8b-instruct-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "us-west-2"
+          ],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "meta.llama3-3-70b-instruct-v1:0": {
       "card": "model-card-meta-llama-3-3-70b-instruct.html",
@@ -1295,7 +3694,29 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama3-3-70b-instruct-v1:0",
+          "geo": [
+            "us.meta.llama3-3-70b-instruct-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "us-east-2"
+          ],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "meta.llama3-3-70b-instruct-v1:0:128k": {
       "card": "model-card-meta-llama-3-3-70b-instruct.html",
@@ -1315,7 +3736,29 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama3-3-70b-instruct-v1:0",
+          "geo": [
+            "us.meta.llama3-3-70b-instruct-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "us-east-2"
+          ],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "meta.llama3-70b-instruct-v1:0": {
       "card": "model-card-meta-llama-3-70b-instruct.html",
@@ -1334,7 +3777,28 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama3-70b-instruct-v1:0",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-south-1",
+            "ca-central-1",
+            "eu-west-2",
+            "us-east-1",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "meta.llama3-8b-instruct-v1:0": {
       "card": "model-card-meta-llama-3-8b-instruct.html",
@@ -1353,7 +3817,28 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama3-8b-instruct-v1:0",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-south-1",
+            "ca-central-1",
+            "eu-west-2",
+            "us-east-1",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "meta.llama4-maverick-17b-instruct-v1:0": {
       "card": "model-card-meta-llama-4-maverick-17b-instruct.html",
@@ -1374,7 +3859,28 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama4-maverick-17b-instruct-v1:0",
+          "geo": [
+            "us.meta.llama4-maverick-17b-instruct-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "meta.llama4-maverick-17b-instruct-v1:0:128k": {
       "card": "model-card-meta-llama-4-maverick-17b-instruct.html",
@@ -1395,7 +3901,28 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama4-maverick-17b-instruct-v1:0",
+          "geo": [
+            "us.meta.llama4-maverick-17b-instruct-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "meta.llama4-maverick-17b-instruct-v1:0:1m": {
       "card": "model-card-meta-llama-4-maverick-17b-instruct.html",
@@ -1416,7 +3943,28 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama4-maverick-17b-instruct-v1:0",
+          "geo": [
+            "us.meta.llama4-maverick-17b-instruct-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "meta.llama4-scout-17b-instruct-v1:0": {
       "card": "model-card-meta-llama-4-scout-17b-instruct.html",
@@ -1436,7 +3984,28 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama4-scout-17b-instruct-v1:0",
+          "geo": [
+            "us.meta.llama4-scout-17b-instruct-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "meta.llama4-scout-17b-instruct-v1:0:10m": {
       "card": "model-card-meta-llama-4-scout-17b-instruct.html",
@@ -1456,7 +4025,28 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama4-scout-17b-instruct-v1:0",
+          "geo": [
+            "us.meta.llama4-scout-17b-instruct-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "meta.llama4-scout-17b-instruct-v1:0:128k": {
       "card": "model-card-meta-llama-4-scout-17b-instruct.html",
@@ -1476,7 +4066,28 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "meta.llama4-scout-17b-instruct-v1:0",
+          "geo": [
+            "us.meta.llama4-scout-17b-instruct-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "minimax.minimax-m2": {
       "card": "model-card-minimax-minimax-m2.html",
@@ -1500,7 +4111,41 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "minimax.minimax-m2",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "minimax.minimax-m2",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "minimax.minimax-m2.1": {
       "card": "model-card-minimax-minimax-m2-1.html",
@@ -1525,7 +4170,41 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "minimax.minimax-m2.1",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "minimax.minimax-m2.1",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "minimax.minimax-m2.5": {
       "card": "model-card-minimax-minimax-m2-5.html",
@@ -1549,7 +4228,41 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "minimax.minimax-m2.5",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "minimax.minimax-m2.5",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "mistral.devstral-2-123b": {
       "card": "model-card-mistral-ai-devstral-2-123b.html",
@@ -1573,7 +4286,40 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.devstral-2-123b",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "mistral.devstral-2-123b",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "mistral.magistral-small-2509": {
       "card": "model-card-mistral-ai-magistral-small-2509.html",
@@ -1597,7 +4343,41 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.magistral-small-2509",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "mistral.magistral-small-2509",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "mistral.ministral-3-14b-instruct": {
       "card": "model-card-mistral-ai-ministral-14b-3-0.html",
@@ -1619,7 +4399,41 @@
         "clientToolCalling": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.ministral-3-14b-instruct",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "mistral.ministral-3-14b-instruct",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "mistral.ministral-3-3b-instruct": {
       "card": "model-card-mistral-ai-ministral-3b.html",
@@ -1641,7 +4455,41 @@
         "clientToolCalling": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.ministral-3-3b-instruct",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "mistral.ministral-3-3b-instruct",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "mistral.ministral-3-8b-instruct": {
       "card": "model-card-mistral-ai-ministral-3-8b.html",
@@ -1665,7 +4513,37 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.ministral-3-8b-instruct",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "mistral.ministral-3-8b-instruct",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "mistral.mistral-7b-instruct-v0:2": {
       "card": "model-card-mistral-ai-mistral-7b-instruct.html",
@@ -1686,7 +4564,31 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.mistral-7b-instruct-v0:2",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-south-1",
+            "ap-southeast-2",
+            "ca-central-1",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "sa-east-1",
+            "us-east-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "mistral.mistral-large-2402-v1:0": {
       "card": "model-card-mistral-ai-mistral-large.html",
@@ -1706,7 +4608,31 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.mistral-large-2402-v1:0",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-south-1",
+            "ap-southeast-2",
+            "ca-central-1",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "sa-east-1",
+            "us-east-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "mistral.mistral-large-3-675b-instruct": {
       "card": "model-card-mistral-ai-mistral-large-3.html",
@@ -1731,7 +4657,34 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.mistral-large-3-675b-instruct",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "mistral.mistral-large-3-675b-instruct",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "mistral.mistral-small-2402-v1:0": {
       "card": "model-card-mistral-ai-mistral-small.html",
@@ -1752,7 +4705,23 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.mistral-small-2402-v1:0",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "us-east-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "mistral.mixtral-8x7b-instruct-v0:1": {
       "card": "model-card-mistral-ai-mixtral-8x7b-instruct.html",
@@ -1773,7 +4742,31 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.mixtral-8x7b-instruct-v0:1",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-south-1",
+            "ap-southeast-2",
+            "ca-central-1",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "sa-east-1",
+            "us-east-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "mistral.pixtral-large-2502-v1:0": {
       "card": "model-card-mistral-ai-pixtral-large.html",
@@ -1794,7 +4787,32 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.pixtral-large-2502-v1:0",
+          "geo": [
+            "us.mistral.pixtral-large-2502-v1:0",
+            "eu.mistral.pixtral-large-2502-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "eu-central-1",
+            "eu-north-1",
+            "eu-west-1",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "mistral.voxtral-mini-3b-2507": {
       "card": "model-card-mistral-ai-voxtral-mini-3b-2507.html",
@@ -1818,7 +4836,41 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.voxtral-mini-3b-2507",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "mistral.voxtral-mini-3b-2507",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "mistral.voxtral-small-24b-2507": {
       "card": "model-card-mistral-ai-voxtral-small-24b-2507.html",
@@ -1842,7 +4894,41 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "mistral.voxtral-small-24b-2507",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "mistral.voxtral-small-24b-2507",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "moonshot.kimi-k2-thinking": {
       "card": "model-card-moonshot-ai-kimi-k2-thinking.html",
@@ -1866,7 +4952,38 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "moonshot.kimi-k2-thinking",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "moonshotai.kimi-k2-thinking",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-north-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "moonshotai.kimi-k2.5": {
       "card": "model-card-moonshot-ai-kimi-k2-5.html",
@@ -1890,7 +5007,38 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "moonshotai.kimi-k2.5",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "moonshotai.kimi-k2.5",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-north-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "moonshotai.kimi-k3": {
       "card": "model-card-moonshot-ai-kimi-k3.html",
@@ -1915,7 +5063,68 @@
           "runtime"
         ]
       },
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "moonshotai.kimi-k3",
+          "geo": [
+            "us.moonshotai.kimi-k3",
+            "in.moonshotai.kimi-k3"
+          ],
+          "global": [
+            "global.moonshotai.kimi-k3"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-south-1",
+            "ap-south-2",
+            "ca-central-1",
+            "ca-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "nvidia.nemotron-nano-12b-v2": {
       "card": "model-card-nvidia-nvidia-nemotron-nano-12b-v2-vl-bf16.html",
@@ -1939,7 +5148,44 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "nvidia.nemotron-nano-12b-v2",
+          "geo": [
+            "us-gov.nvidia.nemotron-nano-12b-v2"
+          ],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "nvidia.nemotron-nano-12b-v2",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "nvidia.nemotron-nano-3-30b": {
       "card": "model-card-nvidia-nemotron-nano-3-30b.html",
@@ -1963,7 +5209,44 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "nvidia.nemotron-nano-3-30b",
+          "geo": [
+            "us-gov.nvidia.nemotron-nano-3-30b"
+          ],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "nvidia.nemotron-nano-3-30b",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "nvidia.nemotron-nano-9b-v2": {
       "card": "model-card-nvidia-nvidia-nemotron-nano-9b-v2.html",
@@ -1987,7 +5270,44 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "nvidia.nemotron-nano-9b-v2",
+          "geo": [
+            "us-gov.nvidia.nemotron-nano-9b-v2"
+          ],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "nvidia.nemotron-nano-9b-v2",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "nvidia.nemotron-super-3-120b": {
       "card": "model-card-nvidia-nemotron-super-3-120b.html",
@@ -2011,7 +5331,98 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "nvidia.nemotron-super-3-120b",
+          "geo": [
+            "us-gov.nvidia.nemotron-super-3-120b"
+          ],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "nvidia.nemotron-super-3-120b",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-southeast-2",
+            "ap-southeast-4",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
+    },
+    "openai.gpt-5.4": {
+      "card": "model-card-openai-gpt-54.html",
+      "runtime": null,
+      "mantle": {
+        "clientToolCalling": true,
+        "serverToolCalling": true,
+        "projects": true
+      },
+      "promptCaching": null,
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-5.4",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-east-1",
+            "us-east-2",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
+    },
+    "openai.gpt-5.5": {
+      "card": "model-card-openai-gpt-55.html",
+      "runtime": null,
+      "mantle": {
+        "clientToolCalling": true,
+        "serverToolCalling": true,
+        "projects": true
+      },
+      "promptCaching": null,
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-5.5",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-east-1",
+            "us-east-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "openai.gpt-5.6-luna": {
       "card": "model-card-openai-gpt-56-luna.html",
@@ -2037,7 +5448,84 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-5.6-luna",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "modelId": "openai.gpt-5.6-luna",
+          "geo": [
+            "us.openai.gpt-5.6-luna",
+            "in.openai.gpt-5.6-luna"
+          ],
+          "global": [
+            "global.openai.gpt-5.6-luna"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-east-1",
+            "us-east-2",
+            "us-gov-east-1",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-south-1",
+            "ap-south-2",
+            "ca-central-1",
+            "ca-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "openai.gpt-5.6-sol": {
       "card": "model-card-openai-gpt-56-sol.html",
@@ -2063,7 +5551,78 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "openai.gpt-5.6-sol",
+          "geo": [
+            "us.openai.gpt-5.6-sol"
+          ],
+          "global": [
+            "global.openai.gpt-5.6-sol"
+          ]
+        },
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-5.6-sol",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-east-1",
+            "us-east-2"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ca-central-1",
+            "ca-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "openai.gpt-5.6-terra": {
       "card": "model-card-openai-gpt-56-terra.html",
@@ -2089,7 +5648,84 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-5.6-terra",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "modelId": "openai.gpt-5.6-terra",
+          "geo": [
+            "us.openai.gpt-5.6-terra",
+            "in.openai.gpt-5.6-terra"
+          ],
+          "global": [
+            "global.openai.gpt-5.6-terra"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-east-1",
+            "us-east-2",
+            "us-gov-east-1",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ap-south-1",
+            "ap-south-2",
+            "ca-central-1",
+            "ca-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "openai.gpt-6-astra": {
       "card": "model-card-openai-gpt-6-astra.html",
@@ -2113,7 +5749,333 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-6-astra",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "modelId": "openai.gpt-6-astra",
+          "geo": [
+            "us.openai.gpt-6-astra"
+          ],
+          "global": [
+            "global.openai.gpt-6-astra"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-east-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ca-central-1",
+            "ca-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
+    },
+    "openai.gpt-6-luna": {
+      "card": "model-card-openai-gpt-6-luna.html",
+      "runtime": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": true,
+        "serverToolCalling": false,
+        "countTokens": false,
+        "guardrails": true,
+        "abuseDetection": true,
+        "knowledgeBase": false,
+        "promptRouting": false,
+        "applicationInferenceProfiles": true,
+        "invocationLogs": true,
+        "projectsDefaultOnly": true
+      },
+      "mantle": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": true,
+        "serverToolCalling": true,
+        "countTokens": false,
+        "guardrails": false,
+        "knowledgeBase": false,
+        "promptOptimization": false,
+        "promptRouting": false,
+        "applicationInferenceProfiles": false,
+        "invocationLogs": false,
+        "projects": true
+      },
+      "promptCaching": null,
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-6-luna",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "modelId": "openai.gpt-6-luna",
+          "geo": [
+            "us.openai.gpt-6-luna"
+          ],
+          "global": [
+            "global.openai.gpt-6-luna"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-east-1"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ca-central-1",
+            "ca-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
+    },
+    "openai.gpt-6-sol": {
+      "card": "model-card-openai-gpt-6-sol.html",
+      "runtime": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": true,
+        "serverToolCalling": false,
+        "countTokens": false,
+        "guardrails": true,
+        "abuseDetection": true,
+        "knowledgeBase": false,
+        "promptRouting": false,
+        "applicationInferenceProfiles": true,
+        "invocationLogs": true,
+        "projectsDefaultOnly": true
+      },
+      "mantle": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": true,
+        "serverToolCalling": true,
+        "countTokens": false,
+        "guardrails": false,
+        "knowledgeBase": false,
+        "promptOptimization": false,
+        "promptRouting": false,
+        "applicationInferenceProfiles": false,
+        "invocationLogs": false,
+        "projects": true
+      },
+      "promptCaching": null,
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "openai.gpt-6-sol",
+          "geo": [
+            "us.openai.gpt-6-sol"
+          ],
+          "global": [
+            "global.openai.gpt-6-sol"
+          ]
+        },
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-6-sol",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-east-1"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ca-central-1",
+            "ca-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
+    },
+    "openai.gpt-6.1-sol": {
+      "card": "model-card-openai-gpt-6-1-sol.html",
+      "runtime": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": true,
+        "serverSystemTools": false,
+        "countTokens": false,
+        "guardrails": true,
+        "abuseDetection": true,
+        "knowledgeBase": false,
+        "promptOptimization": false,
+        "promptRouting": false,
+        "applicationInferenceProfiles": true,
+        "invocationLogs": true,
+        "projectsDefaultOnly": true
+      },
+      "mantle": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": true,
+        "serverSystemTools": false,
+        "countTokens": false,
+        "guardrails": false,
+        "knowledgeBase": false,
+        "promptOptimization": false,
+        "promptRouting": false,
+        "applicationInferenceProfiles": false,
+        "invocationLogs": false,
+        "projects": true
+      },
+      "promptCaching": null,
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-6.1-sol",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "modelId": "openai.gpt-6.1-sol",
+          "geo": [
+            "us.openai.gpt-6.1-sol"
+          ],
+          "global": [
+            "global.openai.gpt-6.1-sol"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-east-1"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "openai.gpt-oss-120b-1:0": {
       "card": "model-card-openai-gpt-oss-120b.html",
@@ -2137,7 +6099,44 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "openai.gpt-oss-120b-1:0",
+          "geo": [
+            "us-gov.openai.gpt-oss-120b-1:0"
+          ],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-oss-120b",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "openai.gpt-oss-20b-1:0": {
       "card": "model-card-openai-gpt-oss-20b.html",
@@ -2161,7 +6160,44 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "openai.gpt-oss-20b-1:0",
+          "geo": [
+            "us-gov.openai.gpt-oss-20b-1:0"
+          ],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-oss-20b",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-west-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "openai.gpt-oss-safeguard-120b": {
       "card": "model-card-openai-gpt-oss-safeguard-120b.html",
@@ -2185,7 +6221,41 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "openai.gpt-oss-safeguard-120b",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-oss-safeguard-120b",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "openai.gpt-oss-safeguard-20b": {
       "card": "model-card-openai-gpt-oss-safeguard-20b.html",
@@ -2209,7 +6279,41 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "openai.gpt-oss-safeguard-20b",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "openai.gpt-oss-safeguard-20b",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "qwen.qwen3-235b-a22b-2507-v1:0": {
       "card": "model-card-qwen-qwen3-235b-a22b-2507.html",
@@ -2234,7 +6338,59 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "qwen.qwen3-235b-a22b-2507-v1:0",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "qwen.qwen3-235b-a22b-2507",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-2",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "qwen.qwen3-32b-v1:0": {
       "card": "model-card-qwen-qwen3-32b.html",
@@ -2258,7 +6414,62 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "qwen.qwen3-32b-v1:0",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "qwen.qwen3-32b",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "qwen.qwen3-coder-30b-a3b-v1:0": {
       "card": "model-card-qwen-qwen3-coder-30b-a3b-instruct.html",
@@ -2282,7 +6493,62 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "qwen.qwen3-coder-30b-a3b-v1:0",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "qwen.qwen3-coder-30b-a3b-instruct",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "qwen.qwen3-coder-480b-a35b-v1:0": {
       "card": "model-card-qwen-qwen3-coder-480b-a35b-instruct.html",
@@ -2307,7 +6573,54 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "qwen.qwen3-coder-480b-a35b-v1:0",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "qwen.qwen3-coder-480b-a35b-instruct",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "eu-north-1",
+            "eu-west-2",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-north-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "qwen.qwen3-coder-next": {
       "card": "model-card-qwen-qwen3-coder-next.html",
@@ -2331,7 +6644,52 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "qwen.qwen3-coder-next",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "qwen.qwen3-coder-next",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-southeast-2",
+            "eu-west-2",
+            "us-east-1"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "qwen.qwen3-next-80b-a3b": {
       "card": "model-card-qwen-qwen3-next-80b-a3b.html",
@@ -2355,7 +6713,59 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "qwen.qwen3-next-80b-a3b",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "qwen.qwen3-next-80b-a3b-instruct",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "qwen.qwen3-vl-235b-a22b": {
       "card": "model-card-qwen-qwen3-vl-235b-a22b.html",
@@ -2379,7 +6789,94 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "qwen.qwen3-vl-235b-a22b",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "qwen.qwen3-vl-235b-a22b-instruct",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-south-1",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
+    },
+    "stability.sd3-5-large-v1:0": {
+      "card": "model-card-stability-ai-stable-diffusion-3-5-large.html",
+      "runtime": {
+        "streaming": false,
+        "countTokens": false,
+        "guardrails": true,
+        "abuseDetection": true,
+        "knowledgeBase": false,
+        "agents": false,
+        "flows": false,
+        "promptManagement": false,
+        "promptOptimization": false,
+        "promptRouting": false,
+        "modelEvaluation": false
+      },
+      "mantle": null,
+      "promptCaching": null,
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.sd3-5-large-v1:0",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "stability.stable-conservative-upscale-v1:0": {
       "card": "model-card-stability-ai-stable-image-conservative-upscale.html",
@@ -2398,7 +6895,27 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-conservative-upscale-v1:0",
+          "geo": [
+            "us.stability.stable-conservative-upscale-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "stability.stable-creative-upscale-v1:0": {
       "card": "model-card-stability-ai-stable-image-creative-upscale.html",
@@ -2417,7 +6934,27 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-creative-upscale-v1:0",
+          "geo": [
+            "us.stability.stable-creative-upscale-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "stability.stable-fast-upscale-v1:0": {
       "card": "model-card-stability-ai-stable-image-fast-upscale.html",
@@ -2436,7 +6973,27 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-fast-upscale-v1:0",
+          "geo": [
+            "us.stability.stable-fast-upscale-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "stability.stable-image-control-sketch-v1:0": {
       "card": "model-card-stability-ai-stable-image-control-sketch.html",
@@ -2455,7 +7012,27 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-image-control-sketch-v1:0",
+          "geo": [
+            "us.stability.stable-image-control-sketch-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "stability.stable-image-control-structure-v1:0": {
       "card": "model-card-stability-ai-stable-image-control-structure.html",
@@ -2474,7 +7051,62 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-image-control-structure-v1:0",
+          "geo": [
+            "us.stability.stable-image-control-structure-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
+    },
+    "stability.stable-image-core-v1:1": {
+      "card": "model-card-stability-ai-stable-image-core-1-0.html",
+      "runtime": {
+        "streaming": false,
+        "countTokens": false,
+        "guardrails": true,
+        "abuseDetection": true,
+        "knowledgeBase": false,
+        "agents": false,
+        "flows": false,
+        "promptManagement": false,
+        "promptOptimization": false,
+        "promptRouting": false,
+        "modelEvaluation": false
+      },
+      "mantle": null,
+      "promptCaching": null,
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-image-core-v1:1",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "stability.stable-image-erase-object-v1:0": {
       "card": "model-card-stability-ai-stable-image-erase-object.html",
@@ -2493,7 +7125,27 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-image-erase-object-v1:0",
+          "geo": [
+            "us.stability.stable-image-erase-object-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "stability.stable-image-inpaint-v1:0": {
       "card": "model-card-stability-ai-stable-image-inpaint.html",
@@ -2512,7 +7164,27 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-image-inpaint-v1:0",
+          "geo": [
+            "us.stability.stable-image-inpaint-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "stability.stable-image-remove-background-v1:0": {
       "card": "model-card-stability-ai-stable-image-remove-background.html",
@@ -2531,7 +7203,27 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-image-remove-background-v1:0",
+          "geo": [
+            "us.stability.stable-image-remove-background-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "stability.stable-image-search-recolor-v1:0": {
       "card": "model-card-stability-ai-stable-image-search-and-recolor.html",
@@ -2550,7 +7242,27 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-image-search-recolor-v1:0",
+          "geo": [
+            "us.stability.stable-image-search-recolor-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "stability.stable-image-search-replace-v1:0": {
       "card": "model-card-stability-ai-stable-image-search-and-replace.html",
@@ -2569,7 +7281,27 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-image-search-replace-v1:0",
+          "geo": [
+            "us.stability.stable-image-search-replace-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "stability.stable-image-style-guide-v1:0": {
       "card": "model-card-stability-ai-stable-image-style-guide.html",
@@ -2588,7 +7320,62 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-image-style-guide-v1:0",
+          "geo": [
+            "us.stability.stable-image-style-guide-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
+    },
+    "stability.stable-image-ultra-v1:1": {
+      "card": "model-card-stability-ai-stable-image-ultra-1-0.html",
+      "runtime": {
+        "streaming": false,
+        "countTokens": false,
+        "guardrails": true,
+        "abuseDetection": true,
+        "knowledgeBase": false,
+        "agents": false,
+        "flows": false,
+        "promptManagement": false,
+        "promptOptimization": false,
+        "promptRouting": false,
+        "modelEvaluation": false
+      },
+      "mantle": null,
+      "promptCaching": null,
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-image-ultra-v1:1",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "stability.stable-outpaint-v1:0": {
       "card": "model-card-stability-ai-stable-image-outpaint.html",
@@ -2607,7 +7394,27 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-outpaint-v1:0",
+          "geo": [
+            "us.stability.stable-outpaint-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "stability.stable-style-transfer-v1:0": {
       "card": "model-card-stability-ai-stable-image-style-transfer.html",
@@ -2626,7 +7433,27 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "stability.stable-style-transfer-v1:0",
+          "geo": [
+            "us.stability.stable-style-transfer-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "twelvelabs.marengo-embed-3-0-v1:0": {
       "card": "model-card-twelvelabs-marengo-embed-3-0.html",
@@ -2645,7 +7472,31 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "twelvelabs.marengo-embed-3-0-v1:0",
+          "geo": [
+            "us.twelvelabs.marengo-embed-3-0-v1:0",
+            "eu.twelvelabs.marengo-embed-3-0-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-2",
+            "eu-west-1",
+            "us-east-1"
+          ],
+          "geo": [
+            "eu-west-1",
+            "us-east-1"
+          ],
+          "global": []
+        }
+      }
     },
     "twelvelabs.pegasus-1-2-v1:0": {
       "card": "model-card-twelvelabs-pegasus-v1-2.html",
@@ -2664,7 +7515,77 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "twelvelabs.pegasus-1-2-v1:0",
+          "geo": [
+            "us.twelvelabs.pegasus-1-2-v1:0",
+            "eu.twelvelabs.pegasus-1-2-v1:0",
+            "apac.twelvelabs.pegasus-1-2-v1:0"
+          ],
+          "global": [
+            "global.twelvelabs.pegasus-1-2-v1:0"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [
+            "ap-northeast-2",
+            "us-east-1"
+          ],
+          "geo": [
+            "ap-northeast-2",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "writer.palmyra-vision-7b": {
       "card": "model-card-writer-palmyra-vision-7b.html",
@@ -2688,7 +7609,40 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "writer.palmyra-vision-7b",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "writer.palmyra-vision-7b",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "writer.palmyra-x4-v1:0": {
       "card": "model-card-writer-palmyra-x4.html",
@@ -2708,7 +7662,28 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "writer.palmyra-x4-v1:0",
+          "geo": [
+            "us.writer.palmyra-x4-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "writer.palmyra-x5-v1:0": {
       "card": "model-card-writer-palmyra-x5.html",
@@ -2728,7 +7703,28 @@
       },
       "mantle": null,
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "writer.palmyra-x5-v1:0",
+          "geo": [
+            "us.writer.palmyra-x5-v1:0"
+          ],
+          "global": []
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": []
+        }
+      }
     },
     "xai.grok-4.6": {
       "card": "model-card-xai-grok-4-6.html",
@@ -2755,7 +7751,154 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-mantle": {
+          "modelId": "xai.grok-4.6",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "modelId": "xai.grok-4.6",
+          "geo": [
+            "us.xai.grok-4.6"
+          ],
+          "global": [
+            "global.xai.grok-4.6"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-mantle": {
+          "inRegion": [
+            "us-gov-east-1",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        },
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ca-central-1",
+            "ca-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-gov-east-1",
+            "us-gov-west-1",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "me-south-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
+    },
+    "xai.grok-4.7": {
+      "card": "model-card-xai-grok-4-7.html",
+      "runtime": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "structuredOutputs": true,
+        "serverToolCalling": false,
+        "reasoning": true,
+        "countTokens": false,
+        "guardrails": true,
+        "promptRouting": false,
+        "applicationInferenceProfiles": true,
+        "invocationLogs": true,
+        "projectsDefaultOnly": true
+      },
+      "mantle": null,
+      "promptCaching": null,
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "xai.grok-4.7",
+          "geo": [
+            "us.xai.grok-4.7"
+          ],
+          "global": [
+            "global.xai.grok-4.7"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "ca-central-1",
+            "ca-west-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "me-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     },
     "zai.glm-4.7": {
       "card": "model-card-zai-glm-4-7.html",
@@ -2779,7 +7922,38 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "zai.glm-4.7",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "zai.glm-4.7",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-north-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "zai.glm-4.7-flash": {
       "card": "model-card-zai-glm-4-7-flash.html",
@@ -2803,7 +7977,41 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "zai.glm-4.7-flash",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "zai.glm-4.7-flash",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-central-1",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-west-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
     },
     "zai.glm-5": {
       "card": "model-card-zai-glm-5.html",
@@ -2827,7 +8035,124 @@
         "projects": true
       },
       "promptCaching": null,
-      "computerUse": null
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "zai.glm-5",
+          "geo": [],
+          "global": []
+        },
+        "bedrock-mantle": {
+          "modelId": "zai.glm-5",
+          "geo": [],
+          "global": []
+        }
+      },
+      "regions": {
+        "shared": {
+          "inRegion": [
+            "ap-northeast-1",
+            "ap-south-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "eu-north-1",
+            "eu-west-2",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-2"
+          ],
+          "geo": [],
+          "global": []
+        }
+      }
+    },
+    "zai.glm-5.3": {
+      "card": "model-card-zai-glm-5-3.html",
+      "runtime": {
+        "streaming": true,
+        "implicitPromptCaching": true,
+        "explicitPromptCaching": true,
+        "structuredOutputs": true,
+        "countTokens": false,
+        "guardrails": true,
+        "abuseDetection": false,
+        "knowledgeBase": false,
+        "agents": true,
+        "flows": true,
+        "promptManagement": true,
+        "promptOptimization": false,
+        "promptRouting": false,
+        "modelEvaluation": true
+      },
+      "mantle": null,
+      "promptCaching": {
+        "explicit": true,
+        "minTokens": "1,024",
+        "maxCheckpoints": null,
+        "ttl": "At least 30 minutes",
+        "fields": null,
+        "endpoints": [
+          "runtime"
+        ]
+      },
+      "computerUse": null,
+      "endpoints": {
+        "bedrock-runtime": {
+          "modelId": "zai.glm-5.3",
+          "geo": [
+            "us.zai.glm-5.3"
+          ],
+          "global": [
+            "global.zai.glm-5.3"
+          ]
+        }
+      },
+      "regions": {
+        "bedrock-runtime": {
+          "inRegion": [],
+          "geo": [
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ],
+          "global": [
+            "af-south-1",
+            "ap-east-2",
+            "ap-northeast-1",
+            "ap-northeast-2",
+            "ap-northeast-3",
+            "ap-south-1",
+            "ap-south-2",
+            "ap-southeast-1",
+            "ap-southeast-2",
+            "ap-southeast-3",
+            "ap-southeast-4",
+            "ap-southeast-5",
+            "ap-southeast-6",
+            "ap-southeast-7",
+            "ca-central-1",
+            "ca-west-1",
+            "eu-central-1",
+            "eu-central-2",
+            "eu-north-1",
+            "eu-south-1",
+            "eu-south-2",
+            "eu-west-1",
+            "eu-west-2",
+            "eu-west-3",
+            "il-central-1",
+            "mx-central-1",
+            "sa-east-1",
+            "us-east-1",
+            "us-east-2",
+            "us-west-1",
+            "us-west-2"
+          ]
+        }
+      }
     }
   },
   "unmatchedCards": [
@@ -2840,16 +8165,6 @@
       "card": "model-card-anthropic-claude-mythos-5.html",
       "modelId": null,
       "reason": "no-runtime-id"
-    },
-    {
-      "card": "model-card-anthropic-claude-opus-5-5.html",
-      "modelId": "anthropic.claude-opus-5-5",
-      "reason": "not-found"
-    },
-    {
-      "card": "model-card-anthropic-claude-sonnet-5-5.html",
-      "modelId": "anthropic.claude-sonnet-5-5",
-      "reason": "not-found"
     },
     {
       "card": "model-card-cohere-command-r-plus.html",
@@ -2902,34 +8217,9 @@
       "reason": "not-found"
     },
     {
-      "card": "model-card-openai-gpt-54.html",
-      "modelId": null,
-      "reason": "no-runtime-id"
-    },
-    {
-      "card": "model-card-openai-gpt-55.html",
-      "modelId": null,
-      "reason": "no-runtime-id"
-    },
-    {
       "card": "model-card-openai-gpt-56-cyber.html",
       "modelId": null,
       "reason": "no-runtime-id"
-    },
-    {
-      "card": "model-card-openai-gpt-6-1-sol.html",
-      "modelId": "openai.gpt-6.1-sol",
-      "reason": "not-found"
-    },
-    {
-      "card": "model-card-openai-gpt-6-luna.html",
-      "modelId": "openai.gpt-6-luna",
-      "reason": "not-found"
-    },
-    {
-      "card": "model-card-openai-gpt-6-sol.html",
-      "modelId": "openai.gpt-6-sol",
-      "reason": "not-found"
     },
     {
       "card": "model-card-openai-gpt-daybreak-blue-56-sol.html",
@@ -2940,16 +8230,6 @@
       "card": "model-card-xai-grok-4-3.html",
       "modelId": null,
       "reason": "no-runtime-id"
-    },
-    {
-      "card": "model-card-xai-grok-4-7.html",
-      "modelId": "xai.grok-4.7",
-      "reason": "not-found"
-    },
-    {
-      "card": "model-card-zai-glm-5-3.html",
-      "modelId": "zai.glm-5.3",
-      "reason": "not-found"
     }
   ],
   "unknownFeatures": []

@@ -116,16 +116,39 @@ export const en = {
   },
 
   // PRICE-001: pricing. All unit prices are USD per 1M tokens.
+  endpoint: {
+    runtimeTitle: "bedrock-runtime: from the API (ListFoundationModels / ListInferenceProfiles)",
+    mantleTitle: "bedrock-mantle: from the regional table on the docs model card",
+    mantleShared: "bedrock-mantle: from the regional table on the docs model card (not split by endpoint)",
+    mantleUnknown: "bedrock-mantle: not listed in the docs",
+  },
+
+  mismatch: {
+    mark: "differs from docs",
+    heading: "This differs from the docs model card (the table follows the API).",
+    detail: "ListInferenceProfiles: {api} / docs (bedrock-runtime): {docs}",
+    none: "none",
+    notSupported: "not listed (Not supported)",
+    docs: "Model card (docs)",
+  },
+
   price: {
     sort: { none: "Sort by displayed price ↕", asc: "Low to high ↑", desc: "High to low ↓" },
 
     "shortContext": "Input ≤ {count} tokens",
     "longContext": "Input > {count} tokens",
+    "longContextTier": "long context",
+    runtimeHeading: "bedrock-runtime",
+    sourceMarketplace: "Source: Marketplace",
+    sourceMarketplaceDetail: "Source: AWS Marketplace offer ({offerId}). Not in the Price List, so this shows the rate card returned by Bedrock ListFoundationModelAgreementOffers",
+    docsLink: "docs",
+    docsLinkDetail: "Check pricing in the docs",
+    mantleHeading: "bedrock-mantle",
+    mantleNote: "bedrock-mantle prices come from the Mantle SKUs in the price list and are set separately from bedrock-runtime",
     "units": {"image": "image", "second": "second", "request": "request", "searchUnit": "search unit"},
 
     unrecorded: "Price not recorded",
     referenceRegion: "Reference: {region}",
-    modelCardSource: "Supplemental AWS price (verified: {date})",
     inputColumn: "Input price",
     outputColumn: "Output price",
     heading: "Pricing",
@@ -135,7 +158,9 @@ export const en = {
     unit: "USD per 1M tokens ({place}); other units are shown per row. List price; discounts, commitments and free tiers not included",
     geoSame: "Geo inference profiles are billed at the standard price",
     globalMissing: "Global batch and cache prices are not included in this dataset",
-    unavailableLane: "Prices are published, but this model cannot be called this way",
+    globalMissingRuntime: "Global batch and cache prices for bedrock-runtime are not included in this dataset",
+    unavailableLaneHidden: "This model cannot be called this way, so no prices are shown",
+    unavailableLaneSeeOther: "This model cannot be called this way, so no prices are shown. The same standard prices are on the \"{lane}\" tab",
     none: "No pricing data for this source Region",
     globalHint: "Input / output unit price when inferring globally (USD per 1M tokens)",
     fetchedAt: "Pricing fetched: {date}",
@@ -149,6 +174,9 @@ export const en = {
       cacheWrite: "Cache write",
       priority: "Priority",
       flex: "Flex",
+      globalBatch: "Global batch",
+      globalCacheRead: "Global cache read",
+      globalCacheWrite: "Global cache write",
     },
   },
   // FEATURE-001: Capabilities and Features. Feature names stay in the docs' English, so they are not in the dictionary.
