@@ -192,6 +192,8 @@ node scripts/fetch-bedrock-features.mjs
 - `--dry-run` は取得と生データの保存だけ行い `data/features.json` を書かない
 - 生データは `data/raw/<日付>/features/` (`toc-contents.json` と `<カード名>.md`、gitignore 対象)。
   機能の増減の要約は同じ場所の `summary.md` に書かれ、定期実行の PR 本文になる。
+  要約の比較相手は、その日の初回に控えた取り直す前の `data/features.json` (`features-baseline.json`)。
+  同じ日付で取り直しや `--from-raw` を繰り返しても、要約は取り直す前の版との差分になる。
   パースの規則や対応表を変えたときは、取り直さずに作り直せる:
 
   ```
@@ -277,8 +279,8 @@ Endpoint availability を転記した手書きファイルが正 (D-010)。出�
 **記憶で足さず、必ず doc を読んでから転記する。**
 
 - `geo` は推論プロファイルの接頭辞の地理圏に合わせる
-  (`jp` = ap-northeast-1/3、`au` = ap-southeast-2/4/6、`us` / `eu` = 各リージョン、
-  それ以外のアジア太平洋が `apac`、どの接頭辞にも属さないものが `other`)
+  (`jp` = ap-northeast-1/3、`au` = ap-southeast-2/4/6、`in` = ap-south-1/2、`ca` = ca-central-1 / ca-west-1、
+  `us` / `eu` = 各リージョン、それ以外のアジア太平洋が `apac`、どの接頭辞にも属さないものが `other`)
 - GovCloud (`us-gov-*`) は `aws-us-gov` パーティションで商用アカウントから呼べないため対象外
 
 ## 判定ルール (技術設計 §3)
@@ -290,11 +292,12 @@ source region R、モデル M について:
 | In-Region | R の `models.json[M].availability[R]` が `ON_DEMAND` を含む |
 | Geo | `profiles.json` に接頭辞が `global` **以外**で M を対象とし `sources[R]` を持つものがある（接頭辞の固定リストは持たない、D-012） |
 | Global | 同じく接頭辞 `global`。destination は API から取れないので `["*"]` で、画面では注記にする |
+| 上段の判定 | 下段の Runtime / Mantle のどちらかが ✓ なら可。片方だけ ✓ でもう片方が ✕ なら「Runtime のみ / Mantle のみ」を添える (Mantle が「—」なら添えない)。並べ替え・「呼べるものだけ」・限定の In-Region も同じ判定 (D-021)。`row.inRegion` / `geo` / `global` は Runtime の判定のまま |
 | 接続先 (セルの下段) | Runtime は上の判定と同じ API。Mantle は `features.json` の `regions["bedrock-mantle"]` (無ければ `shared`)、Programmatic Access に mantle の行が無ければ不可、地域の表が無ければ In-Region だけ `mantle.json`。記載なしは「—」(D-020) |
 | docs と相違 | Geo / Global の推論 ID が、`features.json` の `endpoints` (docs のモデルカードの Programmatic Access の bedrock-runtime の行) と食い違う。判定は API のまま変えず、注釈だけ出す (D-019) |
 | データなし | `fetch-log.json.regions[R].status` が `denied` |
 | 入力 / 出力 $/1M | `prices.json.byModel[M][R].standard` の `input` / `output` (bedrock-runtime)。無ければ「—」。`.mantle` の下は bedrock-mantle の単価で、詳細パネルにだけ出す (D-017) |
-| 機能列 | `features.json.byModel[M].runtime[K]` / `.mantle[K]` が true / false / キーなし (記載なし)。記載なしを false に倒さない。起点リージョンには依らない |
+| 機能列 | `features.json.byModel[M].runtime[K]` / `.mantle[K]` が true / false / キーなし (記載なし)。記載なしを false に倒さない。値は起点リージョンには依らないが、起点で 3 区分とも ✕ の接続先の側は薄くする (D-021) |
 
 `PROVISIONED` は `availability` に保持するが、3 列の判定には使わない。
 `inferenceTypesSupported` には API Reference の enum に無い `INFERENCE_PROFILE` が返るので、
