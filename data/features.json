@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-10-26T04:09:24.152Z",
+  "generatedAt": "2026-11-02T00:20:16.941Z",
   "source": "https://docs.aws.amazon.com/bedrock/latest/userguide/toc-contents.json",
-  "cards": 137,
-  "cardsWithFeatures": 124,
+  "cards": 138,
+  "cardsWithFeatures": 125,
   "failedCards": 0,
   "features": {
     "streaming": {
@@ -1546,6 +1546,7 @@
           "modelId": "anthropic.claude-haiku-5-5",
           "geo": [
             "us.anthropic.claude-haiku-5-5",
+            "ca.anthropic.claude-haiku-5-5",
             "eu.anthropic.claude-haiku-5-5",
             "au.anthropic.claude-haiku-5-5",
             "jp.anthropic.claude-haiku-5-5"
@@ -8456,6 +8457,11 @@
       "card": "model-card-openai-gpt-56-cyber.html",
       "modelId": null,
       "reason": "no-runtime-id"
+    },
+    {
+      "card": "model-card-openai-gpt-6-1-terra.html",
+      "modelId": "openai.gpt-6.1-terra",
+      "reason": "not-found"
     },
     {
       "card": "model-card-openai-gpt-daybreak-blue-56-sol.html",
