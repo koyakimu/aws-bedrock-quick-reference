@@ -1,0 +1,15 @@
+# Orca が新しい worktree を作ったときに走らせる setup。
+# Node の版は .nvmrc が正（nvm use が読む。GitHub Actions の setup-node の node-version: 22 と同じ）。
+# nvm はシェル関数なので、setup のシェルで nvm.sh を読み込んでから使う。
+# 探す順: $NVM_DIR/nvm.sh（Linux などで nvm を ~/.nvm に入れた場合）→ Homebrew の nvm（Mac）
+scripts:
+  setup: |
+    export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+    for f in "$NVM_DIR/nvm.sh" /opt/homebrew/opt/nvm/nvm.sh /usr/local/opt/nvm/nvm.sh; do
+      if [ -s "$f" ]; then . "$f"; break; fi
+    done
+    if ! command -v nvm >/dev/null 2>&1; then
+      echo "orca.yaml setup: nvm.sh が見つからない（$NVM_DIR/nvm.sh、/opt/homebrew/opt/nvm/nvm.sh、/usr/local/opt/nvm/nvm.sh）。nvm を入れてから、この worktree で nvm use && npm ci を手で走らせる" >&2
+      exit 1
+    fi
+    nvm use && npm ci
